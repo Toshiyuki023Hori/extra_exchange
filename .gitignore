@@ -1,0 +1,19 @@
+# General
+.vscode
+.DS_Store
+__pycache__
+*.pyc
+
+# Python3 Virtual Environment
+/venv/
+
+# Django Statics and Medias
+/static/
+/media/
+
+# Django Local Settings
+local.py
+
+# Django Local Database Files
+**/migrations/*
+!**/migrations/__init__.py
