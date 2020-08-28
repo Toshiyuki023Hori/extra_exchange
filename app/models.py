@@ -13,14 +13,14 @@ class User(models.Model):
     createdAt = models.DateField(editable=False)
     updatedAt = models.DateField()
 
-    def __str__(self):
-        return self.username
-
     def save(self, *args, **kwargs):
         if not self.id:
             self.createdAt = timezone.now()
         self.updatedAt = timezone.now()
         return super(User, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.username
 
     class Meta:
         db_table = "users"
@@ -88,7 +88,7 @@ class Give_Item(models.Model):
     state = models.CharField(max_length=20, choices=ITEM_STATE, default="新品")
     detail = models.TextField(max_length=800, blank=True, null=True)
     owner = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name="give_item")
-    category = models.ManyToManyField("Category", related_name="give_item")
+    category = models.ForeignKey("Category", related_name="give_item")
     createdAt = models.DateField(editable=False)
     updatedAt = models.DateField()
 
@@ -135,4 +135,72 @@ class Item_Image(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=50)
     parent = models.ManyToManyField("Category")
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        db_table = "categories"
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+class Bland(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        db_table = "blands"
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+class Keyword(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        db_table = "keywords"
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+class Want_Item(models.Model):
+    name = models.CharField(max_length=100)
+    url = models.URLField(max_length=250)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="want_item")
+    createdAt = models.DateField(editable=False)
+    updatedAt = models.DateField()
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.createdAt = timezone.now()
+        self.updatedAt = timezone.now()
+        return super(Want_Item, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+        
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+class Parent_Item(models.Model):
+    give_item = models.OneToOneField(Give_Item, on_delete=models.CASCADE, null=True,　related_name="parent_item")
+    want_item = models.OneToOneField(Want_Item, on_delete=models.CASCADE, null=True, related_name="parent_item")
+    keyword = models.ManyToManyField(Keyword, related_name = "parent_item")
+    bland = models.ForeignKey(Bland, related_name="parent_item")
+    createdAt = models.DateField(editable=False)
+    updatedAt = models.DateField()
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.createdAt = timezone.now()
+        self.updatedAt = timezone.now()
+        return super(class_name, self).save(*args, **kwargs)
+
+    class Meta:
+        db_table = "parent_items"
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
 
