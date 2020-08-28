@@ -11,7 +11,9 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 import pymysql
+pymysql.version_info = (1, 4, 0, "final", 0)
 pymysql.install_as_MySQLdb()
 
 
@@ -128,4 +130,4 @@ USE_TZ = True
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) 
 PROJECT_NAME = os.path.basename(BASE_DIR)
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')] 
-STATIC_ROOT = '/var/www/{}/static'.format(extra_exchange)
+STATIC_ROOT = '/var/www/{}/static'.format("extra_exchange")
