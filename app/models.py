@@ -10,6 +10,7 @@ class User(models.Model):
     profile = models.TextField(max_length=800, blank=True, null=True)
     icon = models.ImageField(blank = True, null = True)
     login = models.BooleanField(default=False)
+    # createdAt, updatedAt は時系列順等に並べたいモデルに付与
     createdAt = models.DateField(editable=False)
     updatedAt = models.DateField()
 
@@ -108,6 +109,7 @@ class Give_Item(models.Model):
 
 class Comment(models.Model):
     comment = models.CharField(max_length=400)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comment")
     item = models.ForeignKey(Give_Item, on_delete=models.CASCADE, null=True)
     createdAt = models.DateField(editable=False)
     updatedAt = models.DateField()
@@ -134,6 +136,7 @@ class Item_Image(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
+    # 階層構造を表現するために隣接リストを採用
     parent = models.ManyToManyField("Category")
 
     def __str__(self):
@@ -184,10 +187,12 @@ class Want_Item(models.Model):
         
 # ======      =======      ======      ======     ======     ======      =======      =======
 
+# Want_Item と Give_Item でポリモーフィック 関連になるから、共通の親テーブル"Parent_Item"を作成
 class Parent_Item(models.Model):
-    give_item = models.OneToOneField(Give_Item, on_delete=models.CASCADE, null=True,　related_name="parent_item")
+    give_item = models.OneToOneField(Give_Item, on_delete=models.CASCADE, null=True, related_name="parent_item")
     want_item = models.OneToOneField(Want_Item, on_delete=models.CASCADE, null=True, related_name="parent_item")
     keyword = models.ManyToManyField(Keyword, related_name = "parent_item")
+    # Blandは一つしか選べないため、OneToMany関係
     bland = models.ForeignKey(Bland, related_name="parent_item")
     createdAt = models.DateField(editable=False)
     updatedAt = models.DateField()
@@ -196,11 +201,64 @@ class Parent_Item(models.Model):
         if not self.id:
             self.createdAt = timezone.now()
         self.updatedAt = timezone.now()
-        return super(class_name, self).save(*args, **kwargs)
+        return super(Parent_Item, self).save(*args, **kwargs)
 
     class Meta:
         db_table = "parent_items"
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
+class Request(models.Model):
+    note = models.CharField(max_length=400, blank=True, null=True)
+    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name="request")
+    createdAt = models.DateField(editable=False)
+    updatedAt = models.DateField()
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.createdAt = timezone.now()
+        self.updatedAt = timezone.now()
+        return super(Request, self).save(*args, **kwargs)
+
+    class Meta:
+        db_table = "requests"
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+class Meeting_Time(models.Model):
+    what_time = models.DateTimeField()
+    request = models.ForeignKey(Request, on_delete=models.CASCADE, related_name="meeting_time")
+
+    class Meta:
+        db_table = "requests"
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+class Deal(models.Model):
+    # 取引時には、時刻が一つに決定しているため外部キーを使用しない。
+    meeting_time = models.DateTimeField()
+    completed = models.BooleanField(default = False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    history = models.ForeignKey("History", on_delete=models.CASCADE, null=True, related_name="done_deal")
+    createdAt = models.DateField(editable=False)
+    updatedAt = models.DateField()
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.createdAt = timezone.now()
+        self.updatedAt = timezone.now()
+        return super(Deal, self).save(*args, **kwargs)
+
+    class Meta:
+        db_table = "deals"
+    
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+class Private_Message(models.Model):
+    message = models.CharField(max_length=400)
+    user =models.ForeignKey(User, on_delete=models.CASCADE, related_name = "private_message")
+    deal = models.ForeignKey(Deal, on_delete=models.CASCADE, null=True, related_name="message")
+    createdAt = models.DateField(editable=False)
+    updatedAt = models.DateField()
+
+    
