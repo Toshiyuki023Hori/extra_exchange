@@ -1,5 +1,5 @@
 from django.db import models
-form django.utils import timezone
+from django.utils import timezone
 
 
 class User(models.Model):
@@ -25,11 +25,12 @@ class User(models.Model):
     class Meta:
         db_table = "users"
 
-
+# ======      =======      ======      ======     ======     ======      =======      =======
 
 class Review(models.Model):
     score = models.DecimalField()
     comment = models.CharField(blank=True, null=True)
+    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     createdAt = models.DateField(editable=False)
     updatedAt = models.DateField()
 
@@ -42,7 +43,7 @@ class Review(models.Model):
     class Meta:
         db_table = "reviews"
 
-
+# ======      =======      ======      ======     ======     ======      =======      =======
 
 class Follow(models.Model):
     # フォロー、フォロワーはユーザーに対し依存リレーションシップ。また、共に0も有り得る。
@@ -55,12 +56,12 @@ class Follow(models.Model):
         if not self.id:
             self.createdAt = timezone.now()
         self.updatedAt = timezone.now()
-        return super(class_name, self).save(*args, **kwargs)
+        return super(Follow, self).save(*args, **kwargs)
 
     class Meta:
         db_table = "follows"
 
-
+# ======      =======      ======      ======     ======     ======      =======      =======
 
 class PickUp_Places(models.Model):
     name = models.CharField(max_length=200)
@@ -72,4 +73,66 @@ class PickUp_Places(models.Model):
     class Meta:
         db_table = "pickup_places"
 
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+class Give_Item(models.Model):
+    name = models.CharField(max_length=100)
+    ITEM_STATE = (
+        ("新品", "新品、未使用"),
+        ("未使用", "未使用に近い"),
+        ("傷や汚れなし", "目立った傷や汚れなし"),
+        ("やや傷や汚れあり", "やや傷や汚れあり"),
+        ("傷や汚れあり", "傷や汚れあり"),
+        ("状態が悪い", "全体的に状態が悪い")
+    )
+    state = models.CharField(max_length=20, choices=ITEM_STATE, default="新品")
+    detail = models.TextField(max_length=800, blank=True, null=True)
+    owner = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name="give_item")
+    category = models.ManyToManyField("Category", related_name="give_item")
+    createdAt = models.DateField(editable=False)
+    updatedAt = models.DateField()
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.createdAt = timezone.now()
+        self.updatedAt = timezone.now()
+        return super(Give_Item, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        db_table = "give_items"
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+class Comment(models.Model):
+    comment = models.CharField(max_length=400)
+    item = models.ForeignKey(Give_Item, on_delete=models.CASCADE, null=True)
+    createdAt = models.DateField(editable=False)
+    updatedAt = models.DateField()
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.createdAt = timezone.now()
+        self.updatedAt = timezone.now()
+        return super(Comment, self).save(*args, **kwargs)
+
+    class Meta:
+        db_table = "comments"
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+class Item_Image(models.Model):
+    image = models.ImageField()
+    item = models.ForeignKey(Give_Item, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = "item_images"
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+class Category(models.Model):
+    name = models.CharField(max_length=50)
+    parent = models.ManyToManyField("Category")
 
