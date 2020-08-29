@@ -168,7 +168,7 @@ class Parent_Item(models.Model):
     name = models.CharField(max_length=100)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="item")
     # テーブル内のフィールドはRequst, Deal の外部キー(requet, deal)
-    keyword = models.ManyToManyField(Keyword, related_name = "parent_item", null = True)
+    keyword = models.ManyToManyField(Keyword, related_name = "parent_item")
     # Blandは一つしか選べないため、OneToMany関係
     bland = models.ForeignKey(Bland, related_name="parent_item", on_delete=models.SET_NULL, null=True)
     request_deal = models.ForeignKey("Request_Deal", null=True, on_delete=models.CASCADE, related_name="want_item")
