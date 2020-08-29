@@ -59,7 +59,6 @@ class PickUp_Places(models.Model):
 # ======      =======      ======      ======     ======     ======      =======      =======
 
 class Give_Item(models.Model):
-    name = models.CharField(max_length=100)
     ITEM_STATE = (
         ("新品", "新品、未使用"),
         ("未使用", "未使用に近い"),
@@ -70,10 +69,8 @@ class Give_Item(models.Model):
     )
     state = models.CharField(max_length=20, choices=ITEM_STATE, default="新品")
     detail = models.TextField(max_length=800, blank=True, null=True)
-    owner = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name="give_item")
     category = models.ForeignKey("Category", related_name="give_item", on_delete = models.SET_NULL, null = True)
     parent_item = models.ForeignKey("Parent_Item", null=True, on_delete=models.CASCADE, related_name="give_item")
-    request_deal = models.ForeignKey("Request_Deal", null=True, on_delete=models.CASCADE, related_name="give_item")
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 
@@ -153,11 +150,8 @@ class Keyword(models.Model):
 # ======      =======      ======      ======     ======     ======      =======      =======
 
 class Want_Item(models.Model):
-    name = models.CharField(max_length=100)
     url = models.URLField(max_length=250, null=True, blank=True)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="want_item")
     parent_item = models.ForeignKey("Parent_Item", null=True, on_delete=models.CASCADE, related_name="want_item")
-    request_deal = models.ForeignKey("Request_Deal", null=True, on_delete=models.CASCADE, related_name="want_item")
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 
@@ -171,10 +165,13 @@ class Want_Item(models.Model):
 
 # Want_Item と Give_Item でポリモーフィック 関連になるから、共通の親テーブル"Parent_Item"を作成
 class Parent_Item(models.Model):
+    name = models.CharField(max_length=100)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="item")
     # テーブル内のフィールドはRequst, Deal の外部キー(requet, deal)
-    keyword = models.ManyToManyField(Keyword, related_name = "parent_item")
+    keyword = models.ManyToManyField(Keyword, related_name = "parent_item", null = True)
     # Blandは一つしか選べないため、OneToMany関係
     bland = models.ForeignKey(Bland, related_name="parent_item", on_delete=models.SET_NULL, null=True)
+    request_deal = models.ForeignKey("Request_Deal", null=True, on_delete=models.CASCADE, related_name="want_item")
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 
