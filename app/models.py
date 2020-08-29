@@ -85,6 +85,17 @@ class Give_Item(models.Model):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
+class Favorite(models.Model):
+    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name="favorite")
+    item = models.ForeignKey(Give_Item, null=True, on_delete=models.CASCADE, related_name="favorite")
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+
+    class Meta:
+        db_table = "favorites"
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
 class Comment(models.Model):
     comment = models.CharField(max_length=400)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comment")
@@ -109,7 +120,7 @@ class Item_Image(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=50)
     # 階層構造を表現するために隣接リストを採用
-    parent = models.ManyToManyField("Category")
+    parent = models.ForeignKey("Category", null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -143,7 +154,7 @@ class Keyword(models.Model):
 
 class Want_Item(models.Model):
     name = models.CharField(max_length=100)
-    url = models.URLField(max_length=250)
+    url = models.URLField(max_length=250, null=True, blank=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="want_item")
     parent_item = models.ForeignKey("Parent_Item", null=True, on_delete=models.CASCADE, related_name="want_item")
     request_deal = models.ForeignKey("Request_Deal", null=True, on_delete=models.CASCADE, related_name="want_item")
