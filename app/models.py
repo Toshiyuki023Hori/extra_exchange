@@ -11,14 +11,8 @@ class User(models.Model):
     icon = models.ImageField(blank = True, null = True)
     login = models.BooleanField(default=False)
     # createdAt, updatedAt は時系列順等に並べたいモデルに付与
-    createdAt = models.DateField(editable=False)
-    updatedAt = models.DateField()
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.createdAt = timezone.now()
-        self.updatedAt = timezone.now()
-        return super(User, self).save(*args, **kwargs)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
 
     def __str__(self):
         return self.username
@@ -32,14 +26,8 @@ class Review(models.Model):
     score = models.DecimalField(max_digits=2, decimal_places=1)
     comment = models.CharField(max_length=100, blank=True, null=True)
     owner = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
-    createdAt = models.DateField(editable=False)
-    updatedAt = models.DateField()
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.createdAt = timezone.now()
-        self.updatedAt = timezone.now()
-        return super(Review, self).save(*args, **kwargs)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
 
     class Meta:
         db_table = "reviews"
@@ -50,14 +38,8 @@ class Follow(models.Model):
     # フォロー、フォロワーはユーザーに対し依存リレーションシップ。また、共に0も有り得る。
     owner = models.ForeignKey(User, null = True, on_delete=models.CASCADE, related_name="fromUser")
     follow = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name="following")
-    createdAt = models.DateField(editable=False)
-    updatedAt = models.DateField()
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.createdAt = timezone.now()
-        self.updatedAt = timezone.now()
-        return super(Follow, self).save(*args, **kwargs)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
 
     class Meta:
         db_table = "follows"
@@ -92,14 +74,8 @@ class Give_Item(models.Model):
     category = models.ForeignKey("Category", related_name="give_item", on_delete = models.SET_NULL, null = True)
     parent_item = models.ForeignKey("Parent_Item", null=True, on_delete=models.CASCADE, related_name="give_item")
     request_deal = models.ForeignKey("Request_Deal", null=True, on_delete=models.CASCADE, related_name="give_item")
-    createdAt = models.DateField(editable=False)
-    updatedAt = models.DateField()
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.createdAt = timezone.now()
-        self.updatedAt = timezone.now()
-        return super(Give_Item, self).save(*args, **kwargs)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
 
     def __str__(self):
         return self.name
@@ -113,14 +89,8 @@ class Comment(models.Model):
     comment = models.CharField(max_length=400)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comment")
     item = models.ForeignKey(Give_Item, on_delete=models.CASCADE, null=True)
-    createdAt = models.DateField(editable=False)
-    updatedAt = models.DateField()
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.createdAt = timezone.now()
-        self.updatedAt = timezone.now()
-        return super(Comment, self).save(*args, **kwargs)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
 
     class Meta:
         db_table = "comments"
@@ -177,14 +147,8 @@ class Want_Item(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="want_item")
     parent_item = models.ForeignKey("Parent_Item", null=True, on_delete=models.CASCADE, related_name="want_item")
     request_deal = models.ForeignKey("Request_Deal", null=True, on_delete=models.CASCADE, related_name="want_item")
-    createdAt = models.DateField(editable=False)
-    updatedAt = models.DateField()
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.createdAt = timezone.now()
-        self.updatedAt = timezone.now()
-        return super(Want_Item, self).save(*args, **kwargs)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
 
     def __str__(self):
         return self.name
@@ -200,14 +164,8 @@ class Parent_Item(models.Model):
     keyword = models.ManyToManyField(Keyword, related_name = "parent_item")
     # Blandは一つしか選べないため、OneToMany関係
     bland = models.ForeignKey(Bland, related_name="parent_item", on_delete=models.SET_NULL, null=True)
-    createdAt = models.DateField(editable=False)
-    updatedAt = models.DateField()
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.createdAt = timezone.now()
-        self.updatedAt = timezone.now()
-        return super(Parent_Item, self).save(*args, **kwargs)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
 
     class Meta:
         db_table = "parent_items"
@@ -217,14 +175,8 @@ class Parent_Item(models.Model):
 class Request(models.Model):
     note = models.CharField(max_length=400, blank=True, null=True)
     owner = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name="request")
-    createdAt = models.DateField(editable=False)
-    updatedAt = models.DateField()
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.createdAt = timezone.now()
-        self.updatedAt = timezone.now()
-        return super(Request, self).save(*args, **kwargs)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
 
     class Meta:
         db_table = "requests"
@@ -246,14 +198,8 @@ class Deal(models.Model):
     completed = models.BooleanField(default = False)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     history = models.ForeignKey("History", on_delete=models.CASCADE, null=True, related_name="done_deal")
-    createdAt = models.DateField(editable=False)
-    updatedAt = models.DateField()
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.createdAt = timezone.now()
-        self.updatedAt = timezone.now()
-        return super(Deal, self).save(*args, **kwargs)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
 
     class Meta:
         db_table = "deals"
@@ -264,14 +210,8 @@ class Private_Message(models.Model):
     message = models.CharField(max_length=400)
     owner =models.ForeignKey(User, on_delete=models.CASCADE, related_name = "private_message")
     deal = models.ForeignKey(Deal, on_delete=models.CASCADE, null=True, related_name="message")
-    createdAt = models.DateField(editable=False)
-    updatedAt = models.DateField()
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.createdAt = timezone.now()
-        self.updatedAt = timezone.now()
-        return super(Private_Message, self).save(*args, **kwargs)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
 
     class Meta:
         db_table = "private_messages"
@@ -280,14 +220,8 @@ class Private_Message(models.Model):
 
 class History(models.Model):
     owner = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name="done_deal")
-    createdAt = models.DateField(editable=False)
-    updatedAt = models.DateField()
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.createdAt = timezone.now()
-        self.updatedAt = timezone.now()
-        return super(class_name, self).save(*args, **kwargs)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
 
     class Meta:
         db_table = "histories"
@@ -297,14 +231,8 @@ class History(models.Model):
 # Request と Deal でポリモーフィック 関連になるから、共通の親テーブル"Request_Deal"を作成
 class Request_Deal(models.Model):
     # テーブル内のフィールドはRequst, Deal の外部キー(requet, deal)
-    createdAt = models.DateField(editable=False)
-    updatedAt = models.DateField()
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.createdAt = timezone.now()
-        self.updatedAt = timezone.now()
-        return super(Request_Deal, self).save(*args, **kwargs)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
     
     class Meta:
         db_table  = "request_deal"
