@@ -29,6 +29,9 @@ class Review(models.Model):
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 
+    def __str__(self):
+        return self.owner.username
+
     class Meta:
         db_table = "reviews"
 
@@ -40,6 +43,9 @@ class Follow(models.Model):
     follow = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name="following")
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
+
+    def __str__(self):
+        return self.owner.username
 
     class Meta:
         db_table = "follows"
@@ -75,7 +81,7 @@ class Give_Item(models.Model):
     updated_at = models.DateTimeField(auto_now = True)
 
     def __str__(self):
-        return self.name
+        return self.parent_item.name
 
     class Meta:
         db_table = "give_items"
@@ -87,6 +93,9 @@ class Favorite(models.Model):
     item = models.ForeignKey(Give_Item, null=True, on_delete=models.CASCADE, related_name="favorite")
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
+
+    def __str__(self):
+        return self.item.parent_item.name
 
     class Meta:
         db_table = "favorites"
@@ -100,6 +109,9 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 
+    def __str__(self):
+        return self.owner.username
+
     class Meta:
         db_table = "comments"
 
@@ -108,6 +120,9 @@ class Comment(models.Model):
 class Item_Image(models.Model):
     image = models.ImageField()
     item = models.ForeignKey(Give_Item, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.item.parent_item.name
 
     class Meta:
         db_table = "item_images"
@@ -171,7 +186,7 @@ class Parent_Item(models.Model):
     keyword = models.ManyToManyField(Keyword, related_name = "parent_item")
     # Blandは一つしか選べないため、OneToMany関係
     bland = models.ForeignKey(Bland, related_name="parent_item", on_delete=models.SET_NULL, null=True)
-    request_deal = models.ForeignKey("Request_Deal", null=True, on_delete=models.CASCADE, related_name="want_item")
+    request_deal = models.ForeignKey("Request_Deal", null=True, on_delete=models.CASCADE, related_name="parent_item")
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 
@@ -182,7 +197,6 @@ class Parent_Item(models.Model):
 
 class Request(models.Model):
     note = models.CharField(max_length=400, blank=True, null=True)
-    owner = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name="request")
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 
@@ -201,10 +215,9 @@ class Meeting_Time(models.Model):
 # ======      =======      ======      ======     ======     ======      =======      =======
 
 class Deal(models.Model):
-    # 取引時には、時刻が一つに決定しているため外部キーを使用しない。
+    # 取引時には、時刻が一つに決定しているため外部キーを使用せずDeal内のattributeに。
     meeting_time = models.DateTimeField()
     completed = models.BooleanField(default = False)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     history = models.ForeignKey("History", on_delete=models.CASCADE, null=True, related_name="done_deal")
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
@@ -238,7 +251,7 @@ class History(models.Model):
 
 # Request と Deal でポリモーフィック 関連になるから、共通の親テーブル"Request_Deal"を作成
 class Request_Deal(models.Model):
-    # テーブル内のフィールドはRequst, Deal の外部キー(requet, deal)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
     
