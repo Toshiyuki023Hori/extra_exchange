@@ -25,8 +25,8 @@ class User(models.Model):
 class Review(models.Model):
     score = models.DecimalField(max_digits=2, decimal_places=1)
     comment = models.CharField(max_length=100, blank=True, null=True)
-    commenter = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
-    commentedUser = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+    reviewer = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name="done_review")
+    reviewedUser = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name="get_review")
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 
