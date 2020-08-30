@@ -25,7 +25,8 @@ class User(models.Model):
 class Review(models.Model):
     score = models.DecimalField(max_digits=2, decimal_places=1)
     comment = models.CharField(max_length=100, blank=True, null=True)
-    owner = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+    commenter = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+    commentedUser = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 
@@ -171,7 +172,7 @@ class Want_Item(models.Model):
     updated_at = models.DateTimeField(auto_now = True)
 
     def __str__(self):
-        return self.name
+        return self.parent_item.name
 
     class Meta:
         db_table = "want_items"
@@ -190,6 +191,9 @@ class Parent_Item(models.Model):
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         db_table = "parent_items"
 
@@ -197,8 +201,12 @@ class Parent_Item(models.Model):
 
 class Request(models.Model):
     note = models.CharField(max_length=400, blank=True, null=True)
+    request_deal = models.ForeignKey("Request_Deal", null=True, on_delete=models.CASCADE, related_name="request")
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
+
+    def __str__(self):
+        return self.request_deal.owner.username
 
     class Meta:
         db_table = "requests"
@@ -208,6 +216,9 @@ class Request(models.Model):
 class Meeting_Time(models.Model):
     what_time = models.DateTimeField()
     request = models.ForeignKey(Request, on_delete=models.CASCADE, related_name="meeting_time")
+
+    def __str__(self):
+        return self.what_time
 
     class Meta:
         db_table = "meeting_times"
@@ -219,8 +230,12 @@ class Deal(models.Model):
     meeting_time = models.DateTimeField()
     completed = models.BooleanField(default = False)
     history = models.ForeignKey("History", on_delete=models.CASCADE, null=True, related_name="done_deal")
+    request_deal = models.ForeignKey("Request_Deal", null=True, on_delete=models.CASCADE, related_name="deal")
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
+
+    def __str__(self):
+        return self.request_deal.owner.username
 
     class Meta:
         db_table = "deals"
@@ -234,6 +249,9 @@ class Private_Message(models.Model):
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 
+    def __str__(self):
+        return self.owner.username
+
     class Meta:
         db_table = "private_messages"
 
@@ -243,6 +261,9 @@ class History(models.Model):
     owner = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name="done_deal")
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
+
+    def __str__(self):
+        return self.owner.username
 
     class Meta:
         db_table = "histories"
@@ -255,6 +276,9 @@ class Request_Deal(models.Model):
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
     
+    def __str__(self):
+        return self.owner.username
+
     class Meta:
         db_table  = "request_deal"
 
