@@ -272,7 +272,8 @@ class History(models.Model):
 
 # Request と Deal でポリモーフィック 関連になるから、共通の親テーブル"Request_Deal"を作成
 class Request_Deal(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    host_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="host_request_deal")
+    join_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="join_request_deal")
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
     
@@ -281,4 +282,3 @@ class Request_Deal(models.Model):
 
     class Meta:
         db_table  = "request_deal"
-
