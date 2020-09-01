@@ -1,8 +1,8 @@
 from app.models import *
-from rest_framework import viewssets, permissions
+from rest_framework import viewsets, permissions
 from .serializers import *
 
-class UserViewSet(viewssets.ModelViewSet):
+class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     permission_classes = [
         permissions.AllowAny
@@ -11,7 +11,7 @@ class UserViewSet(viewssets.ModelViewSet):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
-class ReviewViewSet(viewssets.ModelViewSet):
+class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     permission_classes = [
         permissions.AllowAny
@@ -20,7 +20,7 @@ class ReviewViewSet(viewssets.ModelViewSet):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
-class FollowViewSet(viewssets.ModelViewSet):
+class FollowViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     permission_classes = [
         permissions.AllowAny
@@ -29,7 +29,7 @@ class FollowViewSet(viewssets.ModelViewSet):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
-class PickUp_PlacesViewSet(viewssets.ModelViewSet):
+class PickUp_PlacesViewSet(viewsets.ModelViewSet):
     queryset = PickUp_Places.objects.all()
     permission_classes = [
         permissions.AllowAny
@@ -38,7 +38,7 @@ class PickUp_PlacesViewSet(viewssets.ModelViewSet):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
-class Give_ItemViewSet(viewssets.ModelViewSet):
+class Give_ItemViewSet(viewsets.ModelViewSet):
     queryset = Give_Item.objects.all()
     permission_classes = [
         permissions.AllowAny
@@ -47,7 +47,7 @@ class Give_ItemViewSet(viewssets.ModelViewSet):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
-class FavoriteViewSet(viewssets.ModelViewSet):
+class FavoriteViewSet(viewsets.ModelViewSet):
     queryset = Favorite.objects.all()
     permission_classes = [
         permissions.AllowAny
@@ -56,7 +56,7 @@ class FavoriteViewSet(viewssets.ModelViewSet):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
-class CommentViewSet(viewssets.ModelViewSet):
+class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     permission_classes = [
         permissions.AllowAny
@@ -65,7 +65,7 @@ class CommentViewSet(viewssets.ModelViewSet):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
-class Item_ImageViewSet(viewssets.ModelViewSet):
+class Item_ImageViewSet(viewsets.ModelViewSet):
     queryset = Item_Image.objects.all()
     permission_classes = [
         permissions.AllowAny
@@ -74,7 +74,7 @@ class Item_ImageViewSet(viewssets.ModelViewSet):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
-class CategoryViewSet(viewssets.ModelViewSet):
+class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     permission_classes = [
         permissions.AllowAny
@@ -83,7 +83,7 @@ class CategoryViewSet(viewssets.ModelViewSet):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
-class BlandViewSet(viewssets.ModelViewSet):
+class BlandViewSet(viewsets.ModelViewSet):
     queryset = Bland.objects.all()
     permission_classes = [
         permissions.AllowAny
@@ -92,7 +92,7 @@ class BlandViewSet(viewssets.ModelViewSet):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
-class KeywordViewSet(viewssets.ModelViewSet):
+class KeywordViewSet(viewsets.ModelViewSet):
     queryset = Keyword.objects.all()
     permission_classes = [
         permissions.AllowAny
@@ -101,7 +101,7 @@ class KeywordViewSet(viewssets.ModelViewSet):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
-class Want_ItemViewSet(viewssets.ModelViewSet):
+class Want_ItemViewSet(viewsets.ModelViewSet):
     queryset = Want_Item.objects.all()
     permission_classes = [
         permissions.AllowAny
@@ -110,7 +110,7 @@ class Want_ItemViewSet(viewssets.ModelViewSet):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
-class Parent_ItemViewSet(viewssets.ModelViewSet):
+class Parent_ItemViewSet(viewsets.ModelViewSet):
     queryset = Parent_Item.objects.all()
     permission_classes = [
         permissions.AllowAny
@@ -119,7 +119,7 @@ class Parent_ItemViewSet(viewssets.ModelViewSet):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
-class RequestViewSet(viewssets.ModelViewSet):
+class RequestViewSet(viewsets.ModelViewSet):
     queryset = Request.objects.all()
     permission_classes = [
         permissions.AllowAny
@@ -128,7 +128,7 @@ class RequestViewSet(viewssets.ModelViewSet):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
-class Meeting_TimeViewSet(viewssets.ModelViewSet):
+class Meeting_TimeViewSet(viewsets.ModelViewSet):
     queryset = Meeting_Time.objects.all()
     permission_classes = [
         permissions.AllowAny
@@ -137,7 +137,7 @@ class Meeting_TimeViewSet(viewssets.ModelViewSet):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
-class DealViewSet(viewssets.ModelViewSet):
+class DealViewSet(viewsets.ModelViewSet):
     queryset = Deal.objects.all()
     permission_classes = [
         permissions.AllowAny
@@ -146,7 +146,7 @@ class DealViewSet(viewssets.ModelViewSet):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
-class Private_MessageViewSet(viewssets.ModelViewSet):
+class Private_MessageViewSet(viewsets.ModelViewSet):
     queryset = Private_Message.objects.all()
     permission_classes = [
         permissions.AllowAny
@@ -155,7 +155,7 @@ class Private_MessageViewSet(viewssets.ModelViewSet):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
-class HistoryViewSet(viewssets.ModelViewSet):
+class HistoryViewSet(viewsets.ModelViewSet):
     queryset = History.objects.all()
     permission_classes = [
         permissions.AllowAny
@@ -164,7 +164,7 @@ class HistoryViewSet(viewssets.ModelViewSet):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
-class Request_DealViewSet(viewssets.ModelViewSet):
+class Request_DealViewSet(viewsets.ModelViewSet):
     queryset = Request_Deal.objects.all()
     permission_classes = [
         permissions.AllowAny
