@@ -44,15 +44,18 @@ class Review(models.Model):
 
 class Follow(models.Model):
     # フォロー、フォロワーはユーザーに対し依存リレーションシップ。また、共に0も有り得る。
+    # Note:
+        # Userが"following"を呼び出し => Userのフォローを読み込むためのFollow objectsを取得
+        # Userが`"followed"を呼び出し => Userのフォロワーを読み込むためのFollow objectsを取得
     owner = models.ForeignKey(
-        User, null=True, on_delete=models.CASCADE, related_name="fromUser")
-    follow = models.ForeignKey(
         User, null=True, on_delete=models.CASCADE, related_name="following")
+    follow = models.ForeignKey(
+        User, null=True, on_delete=models.CASCADE, related_name="followed")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.owner.username
+        return self.follow.username
 
     class Meta:
         db_table = "follows"
@@ -102,7 +105,7 @@ class Give_Item(models.Model):
 
 
 class Favorite(models.Model):
-    user = models.ForeignKey(
+    owner = models.ForeignKey(
         User, null=True, on_delete=models.CASCADE, related_name="favorite")
     item = models.ForeignKey(Give_Item, null=True, on_delete=models.CASCADE, related_name="favorite")
     created_at = models.DateTimeField(auto_now_add=True)
