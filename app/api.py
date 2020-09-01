@@ -21,7 +21,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 # ======      =======      ======      ======     ======     ======      =======      =======
 
 class FollowViewSet(viewsets.ModelViewSet):
-    queryset = Review.objects.all()
+    queryset = Follow.objects.all()
     permission_classes = [
         permissions.AllowAny
     ]
