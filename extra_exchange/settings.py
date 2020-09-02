@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "rest_framework",
     "app",
-    "frontend",
 ]
 
 MIDDLEWARE = [
@@ -136,5 +135,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
-    ]
+    ],
+    "EXCEPTION_HANDLER" : "extra_exchange.app.utils.custom_exception_handler"
 }
