@@ -48,8 +48,8 @@ class Notification(models.Model):
     def __str__(self):
         return self.message
 
-        class Meta:
-            db_table = "notifications"
+    class Meta:
+        db_table = "notifications"
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
