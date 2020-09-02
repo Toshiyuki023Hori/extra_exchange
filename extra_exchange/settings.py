@@ -44,9 +44,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "rest_framework",
     "app",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -138,3 +141,7 @@ REST_FRAMEWORK = {
     ],
     "EXCEPTION_HANDLER" : "extra_exchange.app.utils.custom_exception_handler"
 }
+
+CORS_ORIGIN_WHITELIST = [
+    'http://www.mypress.jp:3000',
+]
