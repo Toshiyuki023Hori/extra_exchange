@@ -3,6 +3,7 @@ from .models import *
 
 admin.site.register(User)
 admin.site.register(Review)
+admin.site.register(Notification)
 admin.site.register(Follow)
 admin.site.register(PickUp_Places)
 admin.site.register(Give_Item)

@@ -20,6 +20,15 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
+class NotificationViewSet(viewsets.ModelViewSet):
+    queryset = Notification.objects.all()
+    permission_classes = [
+        permissions.AllowAny
+    ]
+    serializer_class = NotificationSerializer
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
 class FollowViewSet(viewsets.ModelViewSet):
     queryset = Follow.objects.all()
     permission_classes = [

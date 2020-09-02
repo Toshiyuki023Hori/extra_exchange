@@ -20,6 +20,15 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
+class NotificationSerializer(serializers.ModelSerializer):
+    owner = serializers.StringRelatedField()
+
+    class Meta:
+        model = Notification
+        fields = "__all__"
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
 class FollowSerializer(serializers.ModelSerializer):
     owner = serializers.StringRelatedField()
     follow = serializers.StringRelatedField()

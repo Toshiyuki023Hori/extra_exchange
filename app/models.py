@@ -41,6 +41,17 @@ class Review(models.Model):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
+class Notification(models.Model):
+    message = models.CharField(null=True, blank=True, max_length=150)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notification")
+
+    def __str__(self):
+        return self.message
+
+        class Meta:
+            db_table = "notifications"
+
+# ======      =======      ======      ======     ======     ======      =======      =======
 
 class Follow(models.Model):
     # フォロー、フォロワーはユーザーに対し依存リレーションシップ。また、共に0も有り得る。
