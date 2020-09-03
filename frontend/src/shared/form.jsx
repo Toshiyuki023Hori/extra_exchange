@@ -12,7 +12,7 @@ function Form(props){
 }
 
 Form.propTypes = {
-    label : PropTypes.string
+    label : PropTypes.string,
     type : PropTypes.string
 };
 

@@ -1,7 +1,7 @@
 import React, {useEffect} from "react"
 import axios from "axios"
 
-import Form from "../shared/form"
+import Form from "../shared/Form"
 
 function Register(){
 
