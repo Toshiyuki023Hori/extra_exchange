@@ -1,8 +1,7 @@
 import React,{useState} from "react"
 import PropTypes from "prop-types"
 import axios from "axios"
-
-import MiddleButton from "./MiddleButton"
+import MiddleButton from "../shared/MiddleButton"
 
 function RegisterForm(props){
     const [username, setUsername] = useState(props.initialValue);
@@ -27,7 +26,22 @@ function RegisterForm(props){
     }
 
     const handleSubmit = () => {
-        
+        axios({
+            method : props.method,
+            url : props.url,
+            data : {
+                username,
+                email,
+                password,
+                confirm_pass : confirmPass
+            }
+        })
+        .then((res) => {
+            console.log(res.data)
+        })
+        .catch((error) => {
+            console.log(error)
+        });
     }
 
     return(

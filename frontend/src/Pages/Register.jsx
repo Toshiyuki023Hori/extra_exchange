@@ -1,6 +1,6 @@
 import React, {useState} from "react"
 
-import RegisterForm from "../shared/RegisterForm";
+import RegisterForm from "../Organisms/RegisterForm";
 
 function Register(){
     
@@ -8,7 +8,7 @@ function Register(){
     return(
         <>
             <div>
-                <RegisterForm initialValue = "" method = "POST" url=""/>
+                <RegisterForm initialValue = "" method = "post" url="http://localhost:8000/api/user/"/>
             </div>
         </>
     )
