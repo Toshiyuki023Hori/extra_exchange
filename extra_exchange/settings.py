@@ -143,5 +143,5 @@ REST_FRAMEWORK = {
 }
 
 CORS_ORIGIN_WHITELIST = [
-    'http://www.mypress.jp:3000',
+    "http://localhost:3000"
 ]
