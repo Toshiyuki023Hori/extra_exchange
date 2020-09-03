@@ -1,16 +1,15 @@
-import React, {useEffect} from "react"
-import axios from "axios"
+import React, {useState} from "react"
 
-import Form from "../shared/Form"
+import RegisterForm from "../shared/RegisterForm";
 
 function Register(){
+    
 
     return(
         <>
-            <Form label = "ユーザーネーム" type = "text"/>
-            <Form label = "メールアドレス" type = "email"/>
-            <Form label = "パスワード" type = "password"/>
-            <Form label = "パスワード確認" type = "password"/>
+            <div>
+                <RegisterForm initialValue = "" method = "POST" url=""/>
+            </div>
         </>
     )
 }
