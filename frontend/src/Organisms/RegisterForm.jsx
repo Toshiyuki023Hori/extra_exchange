@@ -33,8 +33,7 @@ function RegisterForm(props){
                 username,
                 email,
                 password,
-                confirm_pass : confirmPass,
-                login
+                confirm_pass : confirmPass
             }
         })
         .then((res) => {
