@@ -8,6 +8,7 @@ class User(models.Model):
     confirm_pass = models.CharField(max_length=20)
     profile = models.TextField(max_length=800, blank=True, null=True)
     icon = models.ImageField(blank=True, null=True)
+    background = models.ImageField(blank=True, null=True)
     login = models.BooleanField(default=False)
     # createdAt, updatedAt は時系列順等に並べたいモデルに付与
     created_at = models.DateTimeField(auto_now_add=True)
