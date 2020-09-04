@@ -33,7 +33,8 @@ function RegisterForm(props){
                 username,
                 email,
                 password,
-                confirm_pass : confirmPass
+                confirm_pass : confirmPass,
+                login
             }
         })
         .then((res) => {
@@ -42,6 +43,12 @@ function RegisterForm(props){
         .catch((error) => {
             console.log(error)
         });
+
+        // インプットを空白に戻すためのコード
+        setUsername("");
+        setEmail("");
+        setPassword("");
+        setConfirmPass("");
     }
 
     return(
@@ -55,7 +62,7 @@ function RegisterForm(props){
             <label>パスワード</label>
             <input name="password" type="password" value={password} onChange={handlePassword}/>
 
-            <label>ユーザーネーム</label>
+            <label>パスワード確認</label>
             <input name="confirmPass" type="password" value={confirmPass} onChange={handleConfirmPass}/>
 
             <MiddleButton btn_name="登録" btn_type="submit" btn_func={handleSubmit}/>
