@@ -29,6 +29,7 @@ SECRET_KEY = 'd2zv$0o(ut5dg65i)c&m#hob2%ofho^vv)!pc7@wb3)=c8t1*f'
 
 JWT_AUTH = {
     'JWT_SECRET_KEY': SECRET_KEY,
+    'JWT_VERIFY_EXPIRATION': False,
 }
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -141,7 +142,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 #Rest Frame Work
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+        'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
@@ -152,10 +153,6 @@ REST_FRAMEWORK = {
         'djangorestframework_camel_case.render.CamelCaseJSONRenderer',
         'djangorestframework_camel_case.render.CamelCaseBrowsableAPIRenderer',
     ),
-    'DEFAULT_FILTER_BACKENDS': (
-        'django_filters.rest_framework.DjangoFilterBackend',
-    ),
-
     'DEFAULT_PARSER_CLASSES': (
         'djangorestframework_camel_case.parser.CamelCaseFormParser',
         'djangorestframework_camel_case.parser.CamelCaseMultiPartParser',
