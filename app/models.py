@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils import timezone
 
 
 class User(models.Model):
@@ -248,7 +247,7 @@ class Request(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.request_deal.owner.username
+        return self.request_deal.host_user.username
 
     class Meta:
         db_table = "requests"
@@ -262,7 +261,7 @@ class Meeting_Time(models.Model):
         Request, on_delete=models.CASCADE, related_name="meeting_time")
 
     def __str__(self):
-        return self.what_time
+            return self.what_time.strftime("%m/%d/%Y, %H:%M:%S")
 
     class Meta:
         db_table = "meeting_times"
@@ -282,7 +281,7 @@ class Deal(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.request_deal.owner.username
+        return self.request_deal.host_user.username
 
     class Meta:
         db_table = "deals"
@@ -334,7 +333,7 @@ class Request_Deal(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.owner.username
+        return self.host_user.username
 
     class Meta:
         db_table = "request_deal"

@@ -1,6 +1,8 @@
 from  rest_framework  import serializers
 from .models import *
 
+from django.utils import timezone
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -14,6 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
     def validate_password(self, value):
         if len(value) <= 8:
             raise serializers.ValidationError("パスワードは最低8文字以上で入力してください")
+        return value
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
@@ -26,6 +29,15 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = "__all__"
+
+    def validate_score(self, value):
+        if value < 0.5:
+            raise serializers.ValidationError("最低0.5以上の評価をつけてください")
+
+        if value > 5.0:
+            raise serializers.ValidationError("スコアの最大は5までです。")
+
+        return value
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
@@ -64,6 +76,8 @@ class Give_ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Give_Item
         fields = "__all__"
+
+    
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
@@ -117,6 +131,10 @@ class KeywordSerializer(serializers.ModelSerializer):
         model = Keyword
         fields = "__all__"
 
+    def validate_name(self, value):
+        if len(value) <= 1:
+            raise serializers.ValidationError("キーワードは必ず2文字以上で設定してください")
+
 # ======      =======      ======      ======     ======     ======      =======      =======
 
 class Want_ItemSerializer(serializers.ModelSerializer):
@@ -138,6 +156,10 @@ class Parent_ItemSerializer(serializers.ModelSerializer):
         model = Parent_Item
         fields = "__all__"
 
+    def validate_name(self, value):
+        if len(value) <= 4:
+            raise serializers.ValidationError("商品名は必ず5文字以上入力してください")
+
 # ======      =======      ======      ======     ======     ======      =======      =======
 
 class RequestSerializer(serializers.ModelSerializer):
@@ -155,6 +177,10 @@ class Meeting_TimeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Meeting_Time
         fields = "__all__"
+
+    def validate_what_time(self, value):
+        if value < timezone.now():
+            raise serializers.ValidationError("過去の日付を選択することはできません。")
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
