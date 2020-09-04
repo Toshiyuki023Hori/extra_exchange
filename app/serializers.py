@@ -6,6 +6,15 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = "__all__"
 
+    def validate_username(self, value):
+        if len(value) <= 5:
+            raise serializers.ValidationError("ユーザーネームは5文字以上で入力してください")
+        return value
+
+    def validate_password(self, value):
+        if len(value) <= 8:
+            raise serializers.ValidationError("パスワードは最低8文字以上で入力してください")
+
 # ======      =======      ======      ======     ======     ======      =======      =======
 
 class ReviewSerializer(serializers.ModelSerializer):
