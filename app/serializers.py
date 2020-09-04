@@ -14,9 +14,14 @@ class UserSerializer(serializers.ModelSerializer):
         return value
 
     def validate_password(self, value):
-        if len(value) <= 8:
+        if len(value) <= 7:
             raise serializers.ValidationError("パスワードは最低8文字以上で入力してください")
         return value
+
+    def validate(self, data):
+        if data.get('password') != data.get('confirm_pass'):
+            raise serializers.ValidationError("パスワードが一致しません")
+        return data
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
