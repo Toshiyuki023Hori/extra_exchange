@@ -24,5 +24,5 @@ urlpatterns = [
     path("api/", include("app.urls")),
     path('admin/', admin.site.urls),
     path(r'^rest-auth/', include('rest_auth.urls')),
-    url(r'^rest-auth/registration/', include('rest_auth.registration.urls'))
+    path(r'^rest-auth/registration/', include('rest_auth.registration.urls'))
 ]
