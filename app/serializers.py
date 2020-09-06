@@ -1,7 +1,8 @@
-from  rest_framework  import serializers
+from rest_framework import serializers
 from .models import *
 
 from django.utils import timezone
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,6 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
+
 class ReviewSerializer(serializers.ModelSerializer):
     # JSON内で、Stringとして外部キーをIDではなくStringで表示させるために、
     # ForeignKeyを持つ全てのfieldに以下のように記述
@@ -46,6 +48,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
+
 class NotificationSerializer(serializers.ModelSerializer):
     owner = serializers.StringRelatedField()
 
@@ -54,6 +57,7 @@ class NotificationSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 # ======      =======      ======      ======     ======     ======      =======      =======
+
 
 class FollowSerializer(serializers.ModelSerializer):
     owner = serializers.StringRelatedField()
@@ -65,14 +69,16 @@ class FollowSerializer(serializers.ModelSerializer):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
+
 class PickUp_PlacesSerializer(serializers.ModelSerializer):
-    choosingUser = serializers.StringRelatedField(many = True)
+    choosingUser = serializers.StringRelatedField(many=True)
 
     class Meta:
         model = PickUp_Places
         fields = "__all__"
 
 # ======      =======      ======      ======     ======     ======      =======      =======
+
 
 class Give_ItemSerializer(serializers.ModelSerializer):
     category = serializers.StringRelatedField()
@@ -82,7 +88,6 @@ class Give_ItemSerializer(serializers.ModelSerializer):
         model = Give_Item
         fields = "__all__"
 
-    
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
@@ -96,6 +101,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
+
 class CommentSerializer(serializers.ModelSerializer):
     owner = serializers.StringRelatedField()
     item = serializers.StringRelatedField()
@@ -106,6 +112,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
+
 class Item_ImageSerializer(serializers.ModelSerializer):
     item = serializers.StringRelatedField()
 
@@ -114,6 +121,7 @@ class Item_ImageSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 # ======      =======      ======      ======     ======     ======      =======      =======
+
 
 class CategorySerializer(serializers.ModelSerializer):
     parent = serializers.StringRelatedField()
@@ -124,12 +132,14 @@ class CategorySerializer(serializers.ModelSerializer):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
+
 class BlandSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bland
         fields = "__all__"
 
 # ======      =======      ======      ======     ======     ======      =======      =======
+
 
 class KeywordSerializer(serializers.ModelSerializer):
     class Meta:
@@ -142,6 +152,7 @@ class KeywordSerializer(serializers.ModelSerializer):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
+
 class Want_ItemSerializer(serializers.ModelSerializer):
     parent_item = serializers.StringRelatedField()
 
@@ -151,9 +162,10 @@ class Want_ItemSerializer(serializers.ModelSerializer):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
+
 class Parent_ItemSerializer(serializers.ModelSerializer):
     owner = serializers.StringRelatedField()
-    keyword = serializers.StringRelatedField(many = True)
+    keyword = serializers.StringRelatedField(many=True)
     bland = serializers.StringRelatedField()
     request_deal = serializers.StringRelatedField()
 
@@ -167,6 +179,7 @@ class Parent_ItemSerializer(serializers.ModelSerializer):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
+
 class RequestSerializer(serializers.ModelSerializer):
     request_deal = serializers.StringRelatedField()
 
@@ -175,6 +188,7 @@ class RequestSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 # ======      =======      ======      ======     ======     ======      =======      =======
+
 
 class Meeting_TimeSerializer(serializers.ModelSerializer):
     request = serializers.StringRelatedField()
@@ -189,6 +203,7 @@ class Meeting_TimeSerializer(serializers.ModelSerializer):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
+
 class DealSerializer(serializers.ModelSerializer):
     history = serializers.StringRelatedField()
     request_deal = serializers.StringRelatedField()
@@ -198,6 +213,7 @@ class DealSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 # ======      =======      ======      ======     ======     ======      =======      =======
+
 
 class Private_MessageSerializer(serializers.ModelSerializer):
     owner = serializers.StringRelatedField()
@@ -209,6 +225,7 @@ class Private_MessageSerializer(serializers.ModelSerializer):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
+
 class HistorySerializer(serializers.ModelSerializer):
     owner = serializers.StringRelatedField()
 
@@ -217,6 +234,7 @@ class HistorySerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 # ======      =======      ======      ======     ======     ======      =======      =======
+
 
 class Request_DealSerializer(serializers.ModelSerializer):
     host_user = serializers.StringRelatedField()
