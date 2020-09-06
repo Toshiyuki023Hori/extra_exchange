@@ -1,17 +1,20 @@
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+
 
 class UserManager(BaseUserManager):
     def create_user(self, username, password=None, **extra_fields):
         if not username:
             raise ValueError("ユーザーネームは必ず必要です。")
-        user = self.model(username = username, **extra_fields)
+        user = self.model(username=username, **extra_fields)
         user.set_password(password)
-        user.save(using = self._db)
+        user.save(using=self._db)
         return user
 
     def create_superuser(self, username, password):
         return self.create_user(username, password)
+
 
 class User(AbstractBaseUser):
     username = models.CharField(max_length=150, unique=True)
@@ -57,9 +60,9 @@ class Review(models.Model):
     score = models.DecimalField(max_digits=2, decimal_places=1)
     comment = models.CharField(max_length=100, blank=True, null=True)
     reviewer = models.ForeignKey(
-        User, null=True, on_delete=models.CASCADE, related_name="done_review")
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE, related_name="done_review")
     reviewedUser = models.ForeignKey(
-        User, null=True, on_delete=models.CASCADE, related_name="get_review")
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE, related_name="get_review")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -71,9 +74,11 @@ class Review(models.Model):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
+
 class Notification(models.Model):
     message = models.CharField(null=True, blank=True, max_length=150)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notification")
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="notification")
 
     def __str__(self):
         return self.message
@@ -83,15 +88,16 @@ class Notification(models.Model):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
+
 class Follow(models.Model):
     # フォロー、フォロワーはユーザーに対し依存リレーションシップ。また、共に0も有り得る。
     # Note:
         # Userが"following"を呼び出し => Userのフォローを読み込むためのFollow objectsを取得
         # Userが`"followed"を呼び出し => Userのフォロワーを読み込むためのFollow objectsを取得
     owner = models.ForeignKey(
-        User, null=True, on_delete=models.CASCADE, related_name="following")
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE, related_name="following")
     follow = models.ForeignKey(
-        User, null=True, on_delete=models.CASCADE, related_name="followed")
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE, related_name="followed")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -106,7 +112,8 @@ class Follow(models.Model):
 
 class PickUp_Places(models.Model):
     name = models.CharField(max_length=200)
-    choosingUser = models.ManyToManyField(User, related_name="pick_up")
+    choosingUser = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, related_name="pick_up")
 
     def __str__(self):
         return self.name
@@ -147,8 +154,9 @@ class Give_Item(models.Model):
 
 class Favorite(models.Model):
     owner = models.ForeignKey(
-        User, null=True, on_delete=models.CASCADE, related_name="favorite")
-    item = models.ForeignKey(Give_Item, null=True, on_delete=models.CASCADE, related_name="favorite")
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE, related_name="favorite")
+    item = models.ForeignKey(Give_Item, null=True,
+                             on_delete=models.CASCADE, related_name="favorite")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -164,7 +172,7 @@ class Favorite(models.Model):
 class Comment(models.Model):
     comment = models.CharField(max_length=400)
     owner = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="comment")
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="comment")
     item = models.ForeignKey(Give_Item, on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -250,7 +258,7 @@ class Want_Item(models.Model):
 class Parent_Item(models.Model):
     name = models.CharField(max_length=100)
     owner = models.ForeignKey(
-        User, on_delete=models.CASCADE, null=True, related_name="item")
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, related_name="item")
     keyword = models.ManyToManyField(Keyword, related_name="parent_item")
     # Blandは一つしか選べないため、OneToMany関係
     # Categoryと同じく、Parent_Itemが削除された時、ブランドも同時に削除されるのを防ぐためにnull = True
@@ -292,7 +300,7 @@ class Meeting_Time(models.Model):
         Request, on_delete=models.CASCADE, related_name="meeting_time")
 
     def __str__(self):
-            return self.what_time.strftime("%m/%d/%Y, %H:%M:%S")
+        return self.what_time.strftime("%m/%d/%Y, %H:%M:%S")
 
     class Meta:
         db_table = "meeting_times"
@@ -323,7 +331,7 @@ class Deal(models.Model):
 class Private_Message(models.Model):
     message = models.CharField(max_length=400)
     owner = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="private_message")
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="private_message")
     deal = models.ForeignKey(
         Deal, on_delete=models.CASCADE, null=True, related_name="message")
     created_at = models.DateTimeField(auto_now_add=True)
@@ -340,7 +348,7 @@ class Private_Message(models.Model):
 
 class History(models.Model):
     owner = models.ForeignKey(
-        User, null=True, on_delete=models.CASCADE, related_name="done_deal")
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE, related_name="done_deal")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -357,9 +365,9 @@ class History(models.Model):
 
 class Request_Deal(models.Model):
     host_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="host_request_deal")
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="host_request_deal")
     join_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="join_request_deal")
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="join_request_deal")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
