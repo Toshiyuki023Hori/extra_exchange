@@ -2,10 +2,22 @@ from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
-class User(models.Model):
+class UserManager(BaseUserManager):
+    def create_user(self, username, password=None, **extra_fields):
+        if not username:
+            raise ValueError("ユーザーネームは必ず必要です。")
+        user = self.model(username=username, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, username, password):
+        return self.create_user(username, password)
+
+
+class User(AbstractBaseUser):
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(max_length=100, unique=True)
-    password = models.CharField(max_length=20)
     profile = models.TextField(max_length=800, blank=True, null=True)
     icon = models.ImageField(blank=True, null=True)
     background = models.ImageField(blank=True, null=True)
@@ -13,6 +25,8 @@ class User(models.Model):
     # createdAt, updatedAt は時系列順等に並べたいモデルに付与
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    USERNAME_FIELD = "username"
 
     def __str__(self):
         return self.username
