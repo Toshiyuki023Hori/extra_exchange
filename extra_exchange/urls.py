@@ -23,4 +23,6 @@ urlpatterns = [
     path('api-verify/', verify_jwt_token),
     path("api/", include("app.urls")),
     path('admin/', admin.site.urls),
+    path(r'^rest-auth/', include('rest_auth.urls')),
+    path(r'^rest-auth/registration/', include('rest_auth.registration.urls'))
 ]

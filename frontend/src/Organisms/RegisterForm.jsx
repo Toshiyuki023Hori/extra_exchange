@@ -1,77 +1,162 @@
-import React,{useState} from "react"
-import PropTypes from "prop-types"
-import axios from "axios"
-import MiddleButton from "../shared/MiddleButton"
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import axios from "axios";
+import MiddleButton from "../shared/MiddleButton";
 
-function RegisterForm(props){
-    const [username, setUsername] = useState(props.initialValue);
-    const [email, setEmail] = useState(props.initialValue);
-    const [password, setPassword] = useState(props.initialValue);
-    const [confirmPass, setConfirmPass] = useState(props.initialValue);
+class RegisterForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      info: {
+        username: "",
+        email: "",
+        password: "",
+        confirmPass: "",
+      },
+      message: {
+        username: "",
+        email: "",
+        password: "",
+        confirmPass: "",
+      },
+    };
+    this.handleChange = this.handleChange.bind(this);
+  }
 
-    const handleUserName = (e) => {
-        setUsername(e.target.value);
+  handleChange(event) {
+    const name = event.target.name;
+    const value = event.target.value;
+    const { info, message } = this.state;
+    this.setState({
+      info: { ...info, [name]: value },
+    });
+    this.setState({
+      message: { ...message, [name]: this.validator(name, value) },
+    });
+  }
+
+  validator(name, value) {
+    switch (name) {
+      case "username":
+        return this.usernameValidation(value);
+      case "email":
+        return this.emailValidation(value);
+      case "password":
+        return this.passwordValidation(value);
+      case "confirmPass":
+        return this.confirmPassValidation(value);
     }
+  }
 
-    const handleEmail = (e) => {
-        setEmail(e.target.value);
-    }
+  usernameValidation(value) {
+    if (!value) return "ユーザーネームは必須項目です。";
+    if (value.length < 5)
+      return "ユーザーネームは最低5文字以上入力してください。";
+    return "";
+  }
 
-    const handlePassword = (e) => {
-        setPassword(e.target.value);
-    }
+  emailValidation(value) {
+    if (!value) return "メールアドレスは必須項目です。";
+    const regex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    if (!regex.test(value)) return "正しい形式で入力をしてください。";
+    return "";
+  }
 
-    const handleConfirmPass = (e) => {
-        setConfirmPass(e.target.value);
-    }
+  passwordValidation(value) {
+    if (!value) return "パスワードは必須項目です。";
+    if (value.length < 8) return "パスワードは最低8文字入力してください。";
+    const regex = /^(?=.*?[a-z])(?=.*?\d)[a-z\d]{8,100}$/i;
+    if (!regex.test(value))
+      return "パスワードは半角英数字をそれぞれ一種類以上含める必要があります。";
+    return "";
+  }
+    
+  confirmPassValidation(value) {
+    if (!value) return "確認用パスワードは必須項目です。";
+    if (this.state.info.password !== value)
+      return "パスワードが一致しません";
+    return "";
+  }
 
-    const handleSubmit = () => {
-        axios({
-            method : props.method,
-            url : props.url,
-            data : {
-                username,
-                email,
-                password,
-                confirm_pass : confirmPass
-            }
-        })
-        .then((res) => {
-            console.log(res.data)
-        })
-        .catch((error) => {
-            console.log(error)
-        });
+  handleSubmit = () => {
+    axios({
+      method: this.props.method,
+      url: this.props.url,
+      data: {
+        username: this.state.username,
+        email: this.state.email,
+        password: this.state.password,
+      },
+    })
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
 
-        // インプットを空白に戻すためのコード
-        setUsername("");
-        setEmail("");
-        setPassword("");
-        setConfirmPass("");
-    }
+    // インプットを空白に戻すためのコード
+    this.setState({
+      username: "",
+      email: "",
+      password: "",
+      confirmPass: "",
+    });
+  };
 
-    return(
-        <>
-            <label>ユーザーネーム</label>
-            <input name="username" type="text" value={username} onChange={handleUserName}/>
+  render() {
+    const { info, message } = this.state;
+    return (
+      <>
+        <label>ユーザーネーム</label>
+        <input
+          name="username"
+          type="text"
+          value={this.state.info.username}
+          onChange={this.handleChange}
+        />
+        <p>{this.state.message.username}</p>
 
-            <label>メール</label>
-            <input name="email" type="email" value={email} onChange={handleEmail}/>
-            
-            <label>パスワード</label>
-            <input name="password" type="password" value={password} onChange={handlePassword}/>
+        <label>メール</label>
+        <input
+          name="email"
+          type="email"
+          value={this.state.info.email}
+          onChange={this.handleChange}
+        />
+        <p>{this.state.message.email}</p>
 
-            <label>パスワード確認</label>
-            <input name="confirmPass" type="password" value={confirmPass} onChange={handleConfirmPass}/>
+        <label>パスワード</label>
+        <input
+          name="password"
+          type="password"
+          value={this.state.info.password}
+          onChange={this.handleChange}
+        />
+        <p>{this.state.message.password}</p>
 
-            <MiddleButton btn_name="登録" btn_type="submit" btn_func={handleSubmit}/>
-        </>
-    )
+        <label>パスワード確認</label>
+        <input
+          name="confirmPass"
+          type="password"
+          value={this.state.info.confirmPass}
+          onChange={this.handleChange}
+        />
+        <p>{this.state.message.confirmPass}</p>
+
+        <MiddleButton
+          btn_name="登録"
+          btn_type="submit"
+          btn_func={this.handleSubmit}
+        />
+      </>
+    );
+  }
 }
 
 RegisterForm.propTypes = {
-    url : PropTypes.string,
-    method : PropTypes.string
+  url: PropTypes.string,
+  method: PropTypes.string,
 };
 
 export default RegisterForm;

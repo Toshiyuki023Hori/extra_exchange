@@ -36,6 +36,7 @@ JWT_AUTH = {
 DEBUG = True
 
 ALLOWED_HOSTS = []
+# AUTH_USER_MODEL = 'app.User'
 
 
 # Application definition
@@ -50,6 +51,12 @@ INSTALLED_APPS = [
     "rest_framework",
     "app",
     "corsheaders",
+    'rest_framework.authtoken',
+    'rest_auth',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'rest_auth.registration',
 ]
 
 MIDDLEWARE = [
@@ -112,7 +119,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-},
+    },
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
@@ -139,7 +146,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-#Rest Frame Work
+# Rest Frame Work
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
@@ -163,3 +170,7 @@ REST_FRAMEWORK = {
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:3000"
 ]
+
+SITE_ID = 1
+
+REST_USE_JWT = True

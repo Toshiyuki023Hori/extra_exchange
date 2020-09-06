@@ -1,11 +1,44 @@
+from django.conf import settings
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
+
+# class UserManager(BaseUserManager):
+#     def create_user(self, username, password=None, **extra_fields):
+#         if not username:
+#             raise ValueError("ユーザーネームは必ず必要です。")
+#         user = self.model(username=username, **extra_fields)
+#         user.set_password(password)
+#         user.save(using=self._db)
+#         return user
+
+#     def create_superuser(self, username, password):
+#         return self.create_user(username, password)
+
+
+# class User(AbstractBaseUser):
+#     username = models.CharField(max_length=150, unique=True)
+#     email = models.EmailField(max_length=100, unique=True)
+#     profile = models.TextField(max_length=800, blank=True, null=True)
+#     icon = models.ImageField(blank=True, null=True)
+#     background = models.ImageField(blank=True, null=True)
+#     login = models.BooleanField(default=False)
+#     # createdAt, updatedAt は時系列順等に並べたいモデルに付与
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
+
+#     USERNAME_FIELD = "username"
+
+#     def __str__(self):
+#         return self.username
+
+#     class Meta:
+#         db_table = "users"
 
 class User(models.Model):
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(max_length=100, unique=True)
     password = models.CharField(max_length=20)
-    confirm_pass = models.CharField(max_length=20)
     profile = models.TextField(max_length=800, blank=True, null=True)
     icon = models.ImageField(blank=True, null=True)
     background = models.ImageField(blank=True, null=True)
@@ -41,9 +74,11 @@ class Review(models.Model):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
+
 class Notification(models.Model):
     message = models.CharField(null=True, blank=True, max_length=150)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notification")
+    owner = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="notification")
 
     def __str__(self):
         return self.message
@@ -52,6 +87,7 @@ class Notification(models.Model):
         db_table = "notifications"
 
 # ======      =======      ======      ======     ======     ======      =======      =======
+
 
 class Follow(models.Model):
     # フォロー、フォロワーはユーザーに対し依存リレーションシップ。また、共に0も有り得る。
@@ -76,7 +112,8 @@ class Follow(models.Model):
 
 class PickUp_Places(models.Model):
     name = models.CharField(max_length=200)
-    choosingUser = models.ManyToManyField(User, related_name="pick_up")
+    choosingUser = models.ManyToManyField(
+        User, related_name="pick_up")
 
     def __str__(self):
         return self.name
@@ -118,7 +155,8 @@ class Give_Item(models.Model):
 class Favorite(models.Model):
     owner = models.ForeignKey(
         User, null=True, on_delete=models.CASCADE, related_name="favorite")
-    item = models.ForeignKey(Give_Item, null=True, on_delete=models.CASCADE, related_name="favorite")
+    item = models.ForeignKey(Give_Item, null=True,
+                             on_delete=models.CASCADE, related_name="favorite")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -262,7 +300,7 @@ class Meeting_Time(models.Model):
         Request, on_delete=models.CASCADE, related_name="meeting_time")
 
     def __str__(self):
-            return self.what_time.strftime("%m/%d/%Y, %H:%M:%S")
+        return self.what_time.strftime("%m/%d/%Y, %H:%M:%S")
 
     class Meta:
         db_table = "meeting_times"
