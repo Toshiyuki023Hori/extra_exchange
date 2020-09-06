@@ -18,5 +18,4 @@ __pycache__
 local.py
 
 # Django Local Database Files
-**/migrations/*
-!**/migrations/__init__.py
+

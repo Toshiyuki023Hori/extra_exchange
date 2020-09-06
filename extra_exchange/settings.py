@@ -36,7 +36,6 @@ JWT_AUTH = {
 DEBUG = True
 
 ALLOWED_HOSTS = []
-# AUTH_USER_MODEL = 'app.User'
 
 
 # Application definition
@@ -173,4 +172,6 @@ CORS_ORIGIN_WHITELIST = [
 
 SITE_ID = 1
 
-REST_USE_JWT = True
+ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_AUTHENTICATION_METHOD = "username"
+ACCOUNT_EMAIL_REQUIRED = False
