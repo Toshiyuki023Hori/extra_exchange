@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import *
+from django.contrib.auth.hashers import make_password
 
 from django.utils import timezone
 
@@ -17,12 +18,12 @@ class UserSerializer(serializers.ModelSerializer):
     def validate_password(self, value):
         if len(value) <= 7:
             raise serializers.ValidationError("パスワードは最低8文字以上で入力してください")
-        return value
+        return make_password(value)
 
-    def validate(self, data):
-        if data.get('password') != data.get('confirm_pass'):
-            raise serializers.ValidationError("パスワードが一致しません")
-        return data
+    # def validate(self, data):
+    #     if data.get('password') != data.get('confirm_pass'):
+    #         raise serializers.ValidationError("パスワードが一致しません")
+    #     return data
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 

@@ -27,19 +27,10 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'd2zv$0o(ut5dg65i)c&m#hob2%ofho^vv)!pc7@wb3)=c8t1*f'
 
-JWT_AUTH = {
-    'JWT_SECRET_KEY': SECRET_KEY,
-    'JWT_VERIFY_EXPIRATION': False,
-}
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
-<<<<<<< HEAD
-
-=======
->>>>>>> 7e7c867b4d1a4e2ef80b986b91698be221db52cc
 
 # Application definition
 
@@ -176,11 +167,9 @@ CORS_ORIGIN_WHITELIST = [
 SITE_ID = 1
 
 ACCOUNT_EMAIL_VERIFICATION = "none"
-<<<<<<< HEAD
-ACCOUNT_AUTHENTICATION_METHOD = "username"
-=======
 
-ACCOUNT_AUTHENTICATION_METHOD = "username"
+ACCOUNT_AUTHENTICATION_METHOD = "email"
 
->>>>>>> 7e7c867b4d1a4e2ef80b986b91698be221db52cc
-ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_EMAIL_REQUIRED = True
+
+AUTH_USER_MODEL = 'app.User'
