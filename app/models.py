@@ -2,9 +2,8 @@ from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, AbstractUser, BaseUserManager, PermissionsMixin, UserManager
 
-# ＃Djangoの認証をユーザーネームからメールアドレスへ変えるために記述
 
-
+# Djangoの認証をユーザーネームからメールアドレスへ変えるために記述
 class CustomUserManager(UserManager):
 
     use_in_migrations = True
@@ -34,9 +33,8 @@ class CustomUserManager(UserManager):
             raise ValueError('Superuser must have is_superuser=True.')
         return self._create_user(email, password, **extra_fields)
 
+
 # Django提供のカスタムユーザーのFieldを決定
-
-
 class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(max_length=100, unique=True)
@@ -45,16 +43,16 @@ class User(AbstractBaseUser, PermissionsMixin):
     background = models.ImageField(blank=True, null=True)
 
     is_staff = models.BooleanField(
-        _('staff status'),
+        ('staff status'),
         default=False,
-        help_text=_(
+        help_text=(
             '管理サイトへのアクセス権を持っているかどうか'),
     )
 
     is_active = models.BooleanField(
-        _('active'),
+        ('active'),
         default=True,
-        help_text=_(
+        help_text=(
             'ユーザーがアクティブかどうか'
         ),
     )
