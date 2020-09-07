@@ -35,16 +35,19 @@ class CustomUserManager(UserManager):
 
 
 # Django提供のカスタムユーザーのFieldを決定
-class User(AbstractBaseUser, PermissionsMixin):
+class User(AbstractUser):
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(max_length=100, unique=True)
     profile = models.TextField(max_length=800, blank=True, null=True)
     icon = models.ImageField(blank=True, null=True)
     background = models.ImageField(blank=True, null=True)
+    # AbstractUserはfirst_name,last_nameを保持しているため無効化
+    first_name = None
+    last_name = None
 
     is_staff = models.BooleanField(
         ('staff status'),
-        default=False,
+        default=True,
         help_text=(
             '管理サイトへのアクセス権を持っているかどうか'),
     )
@@ -56,6 +59,15 @@ class User(AbstractBaseUser, PermissionsMixin):
             'ユーザーがアクティブかどうか'
         ),
     )
+
+    is_superuser = models.BooleanField(
+        ('superuser status'),
+        default=True,
+        help_text=(
+            'Designates that this user has all permissions without '
+            'explicitly assigning them.'
+        ),
+    )
     # createdAt, updatedAt は時系列順等に並べたいモデルに付与
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -64,7 +76,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     EMAIL_FIELD = 'email'
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELD = ["usename", "email"]
+    REQUIRED_FIELD = ["username", "email"]
 
     class Meta:
         db_table = "users"
@@ -108,8 +120,8 @@ class Notification(models.Model):
 class Follow(models.Model):
     # フォロー、フォロワーはユーザーに対し依存リレーションシップ。また、共に0も有り得る。
     # Note:
-        # Userが"following"を呼び出し => Userのフォローを読み込むためのFollow objectsを取得
-        # Userが`"followed"を呼び出し => Userのフォロワーを読み込むためのFollow objectsを取得
+    # Userが"following"を呼び出し => Userのフォローを読み込むためのFollow objectsを取得
+    # Userが`"followed"を呼び出し => Userのフォロワーを読み込むためのFollow objectsを取得
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE, related_name="following")
     follow = models.ForeignKey(
