@@ -23,7 +23,7 @@ function Register(props){
                 <h1>Don't give up!!</h1>
             }
             <div>
-                <RegisterForm initialValue = "" method = "post" url="http://localhost:8000/api/user/"/>
+                <RegisterForm initialValue = "" method = "post" url="http://localhost:8000/rest-auth/registration/"/>
             </div>
         </>
     )

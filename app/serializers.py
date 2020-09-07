@@ -5,7 +5,7 @@ from django.contrib.auth.hashers import make_password
 from django.utils import timezone
 from allauth.account import app_settings as allauth_settings
 from allauth.utils import (email_address_exists,
-                               get_username_max_length)
+                           get_username_max_length)
 from allauth.account.adapter import get_adapter
 
 
@@ -251,13 +251,14 @@ class Request_DealSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-
+# ======      =======      ======      ======     ======     ======      =======      =======
 
 # ======      =======      ======      以下、Django REST Authのログイン関連     ======      =======      =======
 
+# ======      =======      ======      ======     ======     ======      =======      =======
 
-#usernameを消すために上書き
-class CustomLoginSerializer(serializers.Serializer):
+# usernameを消すために上書き
+class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField(required=False, allow_blank=True)
     password = serializers.CharField(style={'input_type': 'password'})
 
@@ -306,7 +307,8 @@ class CustomLoginSerializer(serializers.Serializer):
             # Authentication without using allauth
             if email:
                 try:
-                    username = UserModel.objects.get(email__iexact=email).get_username()
+                    username = UserModel.objects.get(
+                        email__iexact=email).get_username()
                 except UserModel.DoesNotExist:
                     pass
 
@@ -328,7 +330,8 @@ class CustomLoginSerializer(serializers.Serializer):
             if app_settings.EMAIL_VERIFICATION == app_settings.EmailVerificationMethod.MANDATORY:
                 email_address = user.emailaddress_set.get(email=user.email)
                 if not email_address.verified:
-                    raise serializers.ValidationError(_('E-mail is not verified.'))
+                    raise serializers.ValidationError(
+                        _('E-mail is not verified.'))
 
         attrs['user'] = user
         return attrs
@@ -336,7 +339,7 @@ class CustomLoginSerializer(serializers.Serializer):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
-class CustomRegisterSerializer(serializers.Serializer):
+class RegisterSerializer(serializers.Serializer):
     username = serializers.CharField(
         max_length=get_username_max_length(),
         min_length=allauth_settings.USERNAME_MIN_LENGTH,
@@ -359,7 +362,6 @@ class CustomRegisterSerializer(serializers.Serializer):
 
     def validate_password(self, password):
         return get_adapter().clean_password(password)
-
 
     def custom_signup(self, request, user):
         pass

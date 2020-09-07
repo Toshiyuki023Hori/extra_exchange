@@ -179,7 +179,7 @@ ACCOUNT_USERNAME_REQUIRED = True
 
 AUTH_USER_MODEL = 'app.User'
 
-REST_AUTH_SERIALIZERSREST_AUTH_SERIALIZERS = {
-    'LOGIN_SERIALIZER': 'app.serializers.CustomLoginSerializer',
-    'REGISTER_SERIALIZER': 'app.serializers.CustomRegisterSerializer'
-}
+# REST_AUTH_SERIALIZERSREST_AUTH_SERIALIZERS = {
+#     'LOGIN_SERIALIZER': 'extra_exchange.app.serializers.LoginSerializer',
+#     'REGISTER_SERIALIZER': 'extra_exchange.app.serializers.RegisterSerializer'
+# }
