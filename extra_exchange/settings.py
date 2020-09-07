@@ -41,15 +41,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     "rest_framework",
     "app",
     "corsheaders",
     'rest_framework.authtoken',
     'rest_auth',
-    'django.contrib.sites',
+    'rest_auth.registration',
     'allauth',
     'allauth.account',
-    'rest_auth.registration',
 ]
 
 MIDDLEWARE = [
@@ -65,6 +65,24 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'extra_exchange.urls'
+
+ACCOUNT_EMAIL_VERIFICATION = "none"
+
+# 「ログイン」で必須項目はどれにするか
+ACCOUNT_AUTHENTICATION_METHOD = "username"
+
+# 「サインアップ」でメールアドレスが必要か
+ACCOUNT_EMAIL_REQUIRED = True
+
+# 「サインアップ」でユーザーネームが必要か。
+ACCOUNT_USERNAME_REQUIRED = True
+
+AUTH_USER_MODEL = 'app.User'
+
+# REST_AUTH_SERIALIZERSREST_AUTH_SERIALIZERS = {
+#     'LOGIN_SERIALIZER': 'extra_exchange.app.serializers.LoginSerializer',
+#     'REGISTER_SERIALIZER': 'extra_exchange.app.serializers.RegisterSerializer'
+# }
 
 TEMPLATES = [
     {
@@ -133,6 +151,8 @@ USE_L10N = True
 USE_TZ = True
 
 
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
@@ -165,21 +185,3 @@ CORS_ORIGIN_WHITELIST = [
 ]
 
 SITE_ID = 1
-
-ACCOUNT_EMAIL_VERIFICATION = "none"
-
-# 「ログイン」で必須項目はどれにするか
-ACCOUNT_AUTHENTICATION_METHOD = "email"
-
-# 「サインアップ」でメールアドレスが必要か
-ACCOUNT_EMAIL_REQUIRED = True
-
-# 「サインアップ」でユーザーネームが必要か。
-ACCOUNT_USERNAME_REQUIRED = True
-
-AUTH_USER_MODEL = 'app.User'
-
-# REST_AUTH_SERIALIZERSREST_AUTH_SERIALIZERS = {
-#     'LOGIN_SERIALIZER': 'extra_exchange.app.serializers.LoginSerializer',
-#     'REGISTER_SERIALIZER': 'extra_exchange.app.serializers.RegisterSerializer'
-# }
