@@ -180,3 +180,6 @@ class Request_DealViewSet(viewsets.ModelViewSet):
     ]
     serializer_class = Request_DealSerializer
 
+
+# ======      =======      ======      以下、Django Rest AuthのViewSet     ======     ======      =======      =======
+

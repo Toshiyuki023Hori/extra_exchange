@@ -168,8 +168,18 @@ SITE_ID = 1
 
 ACCOUNT_EMAIL_VERIFICATION = "none"
 
+# 「ログイン」で必須項目はどれにするか
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 
+# 「サインアップ」でメールアドレスが必要か
 ACCOUNT_EMAIL_REQUIRED = True
 
+# 「サインアップ」でユーザーネームが必要か。
+ACCOUNT_USERNAME_REQUIRED = True
+
 AUTH_USER_MODEL = 'app.User'
+
+REST_AUTH_SERIALIZERSREST_AUTH_SERIALIZERS = {
+    'LOGIN_SERIALIZER': 'app.serializers.CustomLoginSerializer',
+    'REGISTER_SERIALIZER': 'app.serializers.CustomRegisterSerializer'
+}
