@@ -18,6 +18,7 @@ class UserSerializer(serializers.ModelSerializer):
     def validate_password(self, value):
         if len(value) <= 7:
             raise serializers.ValidationError("パスワードは最低8文字以上で入力してください")
+        # make_passwordはパスワードをハッシュ化するために使用
         return make_password(value)
 
     # def validate(self, data):
