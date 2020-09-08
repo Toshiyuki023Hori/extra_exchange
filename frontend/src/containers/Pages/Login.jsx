@@ -1,9 +1,9 @@
 import React, {useState} from "react"
 
-import RegisterForm from "../Organisms/RegisterForm";
+import LoginForm from "../Organisms/LoginForm";
 import { connect } from "react-redux"
 
-function Register(props){
+function Login(props){
     
     let errorMessage = null;
     if (props.error){
@@ -23,7 +23,7 @@ function Register(props){
                 <h1>Don't give up!!</h1>
             }
             <div>
-                <RegisterForm/>
+                <LoginForm initialValue = "" method = "post"/>
             </div>
         </>
     )
@@ -36,4 +36,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(Register)
+export default connect(mapStateToProps)(Login)

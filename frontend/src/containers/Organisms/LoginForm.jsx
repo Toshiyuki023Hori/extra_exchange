@@ -4,23 +4,18 @@ import axios from 'axios';
 import MiddleButton from '../../components/shared/MiddleButton';
 import { connect } from 'react-redux';
 import * as actions from "../../reducks/auth/actions"
-import { Redirect } from 'react-router-dom';
 
-class RegisterForm extends React.Component {
+class LoginForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       info: {
         username: '',
-        email: '',
         password: '',
-        confirmPass: '',
       },
       message: {
         username: '',
-        email: '',
         password: '',
-        confirmPass: '',
       },
     };
     this.handleChange = this.handleChange.bind(this);
@@ -42,25 +37,14 @@ class RegisterForm extends React.Component {
     switch (name) {
       case 'username':
         return this.usernameValidation(value);
-      case 'email':
-        return this.emailValidation(value);
       case 'password':
         return this.passwordValidation(value);
-      case 'confirmPass':
-        return this.confirmPassValidation(value);
     }
   }
 
   usernameValidation(value) {
     if (!value) return 'ユーザーネームは必須項目です。';
     if (value.length < 5) return 'ユーザーネームは最低5文字以上入力してください。';
-    return '';
-  }
-
-  emailValidation(value) {
-    if (!value) return 'メールアドレスは必須項目です。';
-    const regex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-    if (!regex.test(value)) return '正しい形式で入力をしてください。';
     return '';
   }
 
@@ -73,21 +57,13 @@ class RegisterForm extends React.Component {
     return '';
   }
 
-  confirmPassValidation(value) {
-    if (!value) return '確認用パスワードは必須項目です。';
-    if (this.state.info.password !== value) return 'パスワードが一致しません';
-    return '';
-  }
-
   handleSubmit = () => {
-    this.props.onAuth(this.state.info.username, this.state.info.email, this.state.info.password)
+    this.props.onAuth(this.state.info.username, this.state.info.password)
 
     // インプットを空白に戻すためのコード
     this.setState({
       username: '',
-      email: '',
       password: '',
-      confirmPass: '',
     });
   };
 
@@ -110,15 +86,6 @@ class RegisterForm extends React.Component {
         />
         <p>{this.state.message.username}</p>
 
-        <label>メール</label>
-        <input
-          name="email"
-          type="email"
-          value={this.state.info.email}
-          onChange={this.handleChange}
-        />
-        <p>{this.state.message.email}</p>
-
         <label>パスワード</label>
         <input
           name="password"
@@ -128,28 +95,15 @@ class RegisterForm extends React.Component {
         />
         <p>{this.state.message.password}</p>
 
-        <label>パスワード確認</label>
-        <input
-          name="confirmPass"
-          type="password"
-          value={this.state.info.confirmPass}
-          onChange={this.handleChange}
-        />
-        <p>{this.state.message.confirmPass}</p>
-
         <MiddleButton
-          btn_name="登録"
+          btn_name="ログイン"
           btn_type="submit"
           btn_func={this.handleSubmit}
           btn_disable={
             !this.state.info.username ||
-            this.state.info.email ||
             this.state.info.password ||
-            this.state.info.confirmPass ||
             this.state.message.username ||
-            this.state.message.email ||
-            this.state.message.password ||
-            this.state.message.confirmPass
+            this.state.content.password
           }
         />
       </>
@@ -157,7 +111,7 @@ class RegisterForm extends React.Component {
   }
 }
 
-RegisterForm.propTypes = {
+LoginForm.propTypes = {
   url: PropTypes.string,
   method: PropTypes.string,
 };
@@ -171,8 +125,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onAuth:(username,email,password) => dispatch(actions.authSignup(username, email, password))
+    onAuth:(username,password) => dispatch(actions.authLogin(username, password))
   }
 }
 
-  export default connect(mapStateToProps, mapDispatchToProps)(RegisterForm);
+  export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);

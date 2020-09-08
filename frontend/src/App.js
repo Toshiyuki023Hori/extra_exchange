@@ -3,6 +3,7 @@ import {BrowserRouter as Router, Route} from "react-router-dom"
 import { connect }  from "react-redux"
 import {Link} from "react-router-dom"
 import Register from "./containers/Pages/Register"
+import Login from "./containers/Pages/Login"
 import * as actions from "./reducks/auth/actions"
 
 
@@ -16,7 +17,8 @@ class App extends Component {
     return (
       <Router>
   
-        <Register exact path = "/registration" component = { Register }/>
+        <Route exact path = "/registration" component = { Register }/>
+        <Route exact path = "/login" component = { Login }/>
   
       </Router>
     );
