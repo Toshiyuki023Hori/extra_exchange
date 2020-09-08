@@ -36,6 +36,7 @@ class CustomUserManager(UserManager):
 
 # Django提供のカスタムユーザーのFieldを決定
 class User(AbstractUser):
+    # AbstractUserでpasswordは定義済みのため、ここではpasswordを再定義しない(DBにはちゃんと保存される。)
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(max_length=100, unique=True)
     profile = models.TextField(max_length=800, blank=True, null=True)

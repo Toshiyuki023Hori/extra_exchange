@@ -13,6 +13,8 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = "__all__"
+        write_only_fields = ('password')
+        read_only_fields = ['id']
 
     def validate_username(self, value):
         if len(value) <= 5:
@@ -22,8 +24,12 @@ class UserSerializer(serializers.ModelSerializer):
     def validate_password(self, value):
         if len(value) <= 7:
             raise serializers.ValidationError("パスワードは最低8文字以上で入力してください")
-        # make_passwordはパスワードをハッシュ化するために使用
-        return make_password(value)
+        return value
+
+    def create(self, validated_data):
+          password = validated_data.get('password')
+          validated_data['password'] = make_password(password)
+          return User.objects.create(**validated_data)
 
     # def validate(self, data):
     #     if data.get('password') != data.get('confirm_pass'):

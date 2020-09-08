@@ -66,24 +66,6 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'extra_exchange.urls'
 
-ACCOUNT_EMAIL_VERIFICATION = "none"
-
-# 「ログイン」で必須項目はどれにするか
-ACCOUNT_AUTHENTICATION_METHOD = "username"
-
-# 「サインアップ」でメールアドレスが必要か
-ACCOUNT_EMAIL_REQUIRED = True
-
-# 「サインアップ」でユーザーネームが必要か。
-ACCOUNT_USERNAME_REQUIRED = True
-
-AUTH_USER_MODEL = 'app.User'
-
-# REST_AUTH_SERIALIZERSREST_AUTH_SERIALIZERS = {
-#     'LOGIN_SERIALIZER': 'extra_exchange.app.serializers.LoginSerializer',
-#     'REGISTER_SERIALIZER': 'extra_exchange.app.serializers.RegisterSerializer'
-# }
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -102,6 +84,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'extra_exchange.wsgi.application'
 
+AUTH_USER_MODEL = 'app.User'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -151,8 +134,6 @@ USE_L10N = True
 USE_TZ = True
 
 
-
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
@@ -185,3 +166,14 @@ CORS_ORIGIN_WHITELIST = [
 ]
 
 SITE_ID = 1
+
+ACCOUNT_EMAIL_VERIFICATION = "none"
+
+# 「ログイン」で必須項目はどれにするか
+ACCOUNT_AUTHENTICATION_METHOD = "username"
+
+# 「サインアップ」でメールアドレスが必要か
+ACCOUNT_EMAIL_REQUIRED = True
+
+# 「サインアップ」でユーザーネームが必要か。
+ACCOUNT_USERNAME_REQUIRED = True
