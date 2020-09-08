@@ -1,23 +1,24 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
-import axios from "axios";
-import MiddleButton from "../shared/MiddleButton";
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import axios from 'axios';
+import MiddleButton from '../../components/shared/MiddleButton';
+import { connect } from 'react-redux';
 
 class RegisterForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       info: {
-        username: "",
-        email: "",
-        password: "",
-        confirmPass: "",
+        username: '',
+        email: '',
+        password: '',
+        confirmPass: '',
       },
       message: {
-        username: "",
-        email: "",
-        password: "",
-        confirmPass: "",
+        username: '',
+        email: '',
+        password: '',
+        confirmPass: '',
       },
     };
     this.handleChange = this.handleChange.bind(this);
@@ -37,45 +38,43 @@ class RegisterForm extends React.Component {
 
   validator(name, value) {
     switch (name) {
-      case "username":
+      case 'username':
         return this.usernameValidation(value);
-      case "email":
+      case 'email':
         return this.emailValidation(value);
-      case "password":
+      case 'password':
         return this.passwordValidation(value);
-      case "confirmPass":
+      case 'confirmPass':
         return this.confirmPassValidation(value);
     }
   }
 
   usernameValidation(value) {
-    if (!value) return "ユーザーネームは必須項目です。";
-    if (value.length < 5)
-      return "ユーザーネームは最低5文字以上入力してください。";
-    return "";
+    if (!value) return 'ユーザーネームは必須項目です。';
+    if (value.length < 5) return 'ユーザーネームは最低5文字以上入力してください。';
+    return '';
   }
 
   emailValidation(value) {
-    if (!value) return "メールアドレスは必須項目です。";
+    if (!value) return 'メールアドレスは必須項目です。';
     const regex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-    if (!regex.test(value)) return "正しい形式で入力をしてください。";
-    return "";
+    if (!regex.test(value)) return '正しい形式で入力をしてください。';
+    return '';
   }
 
   passwordValidation(value) {
-    if (!value) return "パスワードは必須項目です。";
-    if (value.length < 8) return "パスワードは最低8文字入力してください。";
+    if (!value) return 'パスワードは必須項目です。';
+    if (value.length < 8) return 'パスワードは最低8文字入力してください。';
     const regex = /^(?=.*?[a-z])(?=.*?\d)[a-z\d]{8,100}$/i;
     if (!regex.test(value))
-      return "パスワードは半角英数字をそれぞれ一種類以上含める必要があります。";
-    return "";
+      return 'パスワードは半角英数字をそれぞれ一種類以上含める必要があります。';
+    return '';
   }
-    
+
   confirmPassValidation(value) {
-    if (!value) return "確認用パスワードは必須項目です。";
-    if (this.state.info.password !== value)
-      return "パスワードが一致しません";
-    return "";
+    if (!value) return '確認用パスワードは必須項目です。';
+    if (this.state.info.password !== value) return 'パスワードが一致しません';
+    return '';
   }
 
   handleSubmit = () => {
@@ -86,7 +85,7 @@ class RegisterForm extends React.Component {
         username: this.state.username,
         email: this.state.email,
         password1: this.state.password,
-        password2: this.state.password
+        password2: this.state.password,
       },
     })
       .then((res) => {
@@ -98,17 +97,23 @@ class RegisterForm extends React.Component {
 
     // インプットを空白に戻すためのコード
     this.setState({
-      username: "",
-      email: "",
-      password: "",
-      confirmPass: "",
+      username: '',
+      email: '',
+      password: '',
+      confirmPass: '',
     });
   };
 
   render() {
+    let errorMessage = null;
+    if (this.props.error) {
+      errorMessage = <p>{this.props.error.message}</p>;
+    }
+
     const { info, message } = this.state;
     return (
       <>
+        {errorMessage}
         <label>ユーザーネーム</label>
         <input
           name="username"
@@ -149,6 +154,16 @@ class RegisterForm extends React.Component {
           btn_name="登録"
           btn_type="submit"
           btn_func={this.handleSubmit}
+          btn_disable={
+            !this.state.info.username ||
+            this.state.info.email ||
+            this.state.info.password ||
+            this.state.info.confirmPass ||
+            this.state.message.username ||
+            this.state.message.email ||
+            this.state.content.password ||
+            this.state.message.confirmPass
+          }
         />
       </>
     );
@@ -160,4 +175,11 @@ RegisterForm.propTypes = {
   method: PropTypes.string,
 };
 
-export default RegisterForm;
+const mapStateToProps = (state) => {
+  return {
+    loading: state.loading,
+    error: state.error,
+  };
+};
+
+export default connect(mapStateToProps)(RegisterForm);
