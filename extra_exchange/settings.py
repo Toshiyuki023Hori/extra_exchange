@@ -84,6 +84,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'extra_exchange.wsgi.application'
 
+AUTH_USER_MODEL = 'app.User'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -176,5 +177,3 @@ ACCOUNT_EMAIL_REQUIRED = True
 
 # 「サインアップ」でユーザーネームが必要か。
 ACCOUNT_USERNAME_REQUIRED = True
-
-AUTH_USER_MODEL = 'app.User'
