@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import MiddleButton from '../../components/shared/MiddleButton';
 import { connect } from 'react-redux';
-import * as actions from "../../reducks/auth/actions"
+import * as actions from '../../reducks/auth/actions';
 import { Redirect } from 'react-router-dom';
 
 class RegisterForm extends React.Component {
@@ -80,14 +80,16 @@ class RegisterForm extends React.Component {
   }
 
   handleSubmit = () => {
-    this.props.onAuth(this.state.info.username, this.state.info.email, this.state.info.password)
+    this.props.onAuth(this.state.info.username, this.state.info.email, this.state.info.password);
 
     // インプットを空白に戻すためのコード
     this.setState({
-      username: '',
-      email: '',
-      password: '',
-      confirmPass: '',
+      info: {
+        username: '',
+        email: '',
+        password: '',
+        confirmPass: '',
+      },
     });
   };
 
@@ -169,10 +171,10 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    onAuth:(username,email,password) => dispatch(actions.authSignup(username, email, password))
-  }
-}
+    onAuth: (username, email, password) => dispatch(actions.authSignup(username, email, password)),
+  };
+};
 
-  export default connect(mapStateToProps, mapDispatchToProps)(RegisterForm);
+export default connect(mapStateToProps, mapDispatchToProps)(RegisterForm);
