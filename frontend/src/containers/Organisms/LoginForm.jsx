@@ -103,7 +103,7 @@ class LoginForm extends React.Component {
             !this.state.info.username ||
             this.state.info.password ||
             this.state.message.username ||
-            this.state.content.password
+            this.state.message.password
           }
         />
       </>

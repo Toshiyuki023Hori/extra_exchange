@@ -9,6 +9,7 @@ const initialState = {
 };
 
 const authSuccess = (state, action) => {
+  // updateObjectによりstateの更新をfunction化
   return updateObject(state, {
     token: action.token,
     error: null,
