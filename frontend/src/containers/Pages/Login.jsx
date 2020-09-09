@@ -3,10 +3,10 @@ import React, { useState } from 'react';
 import LoginForm from '../Organisms/LoginForm';
 import { connect } from 'react-redux';
 
-function Login(props) {
+function Login({isAuthenticated}) {
   return (
     <>
-      {props.isAuthenticated ? <h1>You succeeded in Loging in</h1> : <h1>Don't give up!!</h1>}
+      {isAuthenticated ? <h1>You succeeded in Loging in</h1> : <h1>Don't give up!!</h1>}
       <div>
         <LoginForm initialValue="" method="post" />
       </div>

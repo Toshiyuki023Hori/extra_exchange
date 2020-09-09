@@ -62,8 +62,10 @@ class LoginForm extends React.Component {
 
     // インプットを空白に戻すためのコード
     this.setState({
-      username: '',
-      password: '',
+        info:{
+            username: '',
+            password: '',
+        }
     });
   };
 
@@ -106,6 +108,12 @@ class LoginForm extends React.Component {
             this.state.message.password
           }
         />
+
+        <MiddleButton
+        btn_name="サインアウト"
+        btn_type="submit"
+        btn_func={this.props.logout}
+        />
       </>
     );
   }
@@ -125,7 +133,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onAuth:(username,password) => dispatch(actions.authLogin(username, password))
+    onAuth:(username,password) => dispatch(actions.authLogin(username, password)),
+    logout:() => dispatch(actions.logout)
   }
 }
 

@@ -8,14 +8,24 @@ import * as actions from './reducks/auth/actions';
 
 class App extends Component {
   componentDidMount() {
+    // tokenがローカルに存在してるかの確認、expirationdateの期限確認
     this.props.onTryAutoSignup();
   }
 
   render() {
     return (
       <Router>
-        <Route exact path="/registration" render={(props) => <Register {...props} />} />
-        <Route exact path="/login" render={(props) => <Login {...props} />} />
+        {/* Route内のRoutePassはpropsを渡す役割を果たす */}
+        <Route
+          exact
+          path="/registration"
+          render={(routeProps) => <Register {...routeProps} {...this.props} />}
+        />
+        <Route
+          exact
+          path="/login"
+          render={(routeProps) => <Login {...routeProps} {...this.props} />}
+        />
       </Router>
     );
   }
