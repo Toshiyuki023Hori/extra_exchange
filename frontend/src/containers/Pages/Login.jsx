@@ -1,39 +1,24 @@
-import React, {useState} from "react"
+import React, { useState } from 'react';
 
-import LoginForm from "../Organisms/LoginForm";
-import { connect } from "react-redux"
+import LoginForm from '../Organisms/LoginForm';
+import { connect } from 'react-redux';
 
-function Login(props){
-    
-    let errorMessage = null;
-    if (props.error){
-        return (
-        errorMessage = 
-            <p>{props.error.message}</p>
-        )
-    }
-    return(
-        <>
-            {
-                props.isAuthenticated ?
-                <h1>You succeeded in Loging in</h1>
-
-                :
-
-                <h1>Don't give up!!</h1>
-            }
-            <div>
-                <LoginForm initialValue = "" method = "post"/>
-            </div>
-        </>
-    )
+function Login(props) {
+  return (
+    <>
+      {props.isAuthenticated ? <h1>You succeeded in Loging in</h1> : <h1>Don't give up!!</h1>}
+      <div>
+        <LoginForm initialValue="" method="post" />
+      </div>
+    </>
+  );
 }
 
 const mapStateToProps = (state) => {
-    return {
-        loading : state.loading,
-        error: state.error
-    }
-}
+  return {
+    loading: state.loading,
+    error: state.error,
+  };
+};
 
-export default connect(mapStateToProps)(Login)
+export default connect(mapStateToProps)(Login);

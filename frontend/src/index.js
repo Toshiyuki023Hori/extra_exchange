@@ -9,7 +9,7 @@ import thunk from 'redux-thunk';
 import reducer from '../src/reducks/auth/reducers';
 
 const composeEnhances = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-
+// middlewareを使うにはcreatestoreの第二引数(enhancer)を設定しなければいけない。
 const store = createStore(reducer, composeEnhances(applyMiddleware(thunk)));
 
 const app = (

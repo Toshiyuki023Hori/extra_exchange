@@ -5,13 +5,6 @@ import { connect } from "react-redux"
 
 function Register(props){
     
-    let errorMessage = null;
-    if (props.error){
-        return (
-        errorMessage = 
-            <p>{props.error.message}</p>
-        )
-    }
     return(
         <>
             {
