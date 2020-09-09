@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import MiddleButton from '../../components/shared/MiddleButton';
+import MiddleButton from '../../presentational/shared/MiddleButton';
 import { connect } from 'react-redux';
 import * as actions from "../../reducks/auth/actions"
 
