@@ -14,8 +14,16 @@ class App extends Component {
   render() {
     return (
       <Router>
-        <Route exact path="/registration" render={(props) => <Register {...props} />} />
-        <Route exact path="/login" render={(props) => <Login {...props} />} />
+        <Route exact path="/registration" 
+        render={(routeProps) => (
+          <Register {...routeProps} {...this.props} />
+        )} 
+        />
+        <Route exact path="/login" 
+        render={(routeProps) => (
+          <Login {...routeProps} {...this.props} />
+        )} 
+        />
       </Router>
     );
   }
