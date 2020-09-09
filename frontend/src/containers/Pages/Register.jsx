@@ -5,13 +5,6 @@ import { connect } from "react-redux"
 
 function Register(props){
     
-    let errorMessage = null;
-    if (props.error){
-        return (
-        errorMessage = 
-            <p>{props.error.message}</p>
-        )
-    }
     return(
         <>
             {
@@ -23,7 +16,7 @@ function Register(props){
                 <h1>Don't give up!!</h1>
             }
             <div>
-                <RegisterForm initialValue = "" method = "post" url="http://localhost:8000/rest-auth/registration/"/>
+                <RegisterForm/>
             </div>
         </>
     )
