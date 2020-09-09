@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import RegisterForm from '../Organisms/RegisterForm';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 
 function Register(props) {
+    const token = useSelector(state => state.token)
   return (
     <>
+      {console.log(token)}
       {props.isAuthenticated ? <h1>You succeeded in Loging in</h1> : <h1>Don't give up!!</h1>}
       <div>
         <RegisterForm />
@@ -15,10 +17,10 @@ function Register(props) {
 }
 
 const mapStateToProps = (state) => {
-  return {
-    loading: state.loading,
-    error: state.error,
+    return {
+      loading: state.loading,
+      error: state.error,
+    };
   };
-};
 
 export default connect(mapStateToProps)(Register);
