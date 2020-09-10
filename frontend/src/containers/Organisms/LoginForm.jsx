@@ -9,10 +9,12 @@ class LoginForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+        //   #インプット情報用
       info: {
         username: '',
         password: '',
       },
+      //   Validation用
       message: {
         username: '',
         password: '',
@@ -21,9 +23,9 @@ class LoginForm extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
-  handleChange(event) {
-    const name = event.target.name;
-    const value = event.target.value;
+  handleChange(e) {
+    const name = e.target.name;
+    const value = e.target.value;
     const { info, message } = this.state;
     this.setState({
       info: { ...info, [name]: value },

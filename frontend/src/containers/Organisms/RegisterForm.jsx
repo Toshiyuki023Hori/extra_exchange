@@ -1,4 +1,4 @@
-import React  from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import MiddleButton from '../../presentational/shared/MiddleButton';
@@ -10,12 +10,14 @@ class RegisterForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      //   #インプット情報用
       info: {
         username: '',
         email: '',
         password: '',
         confirmPass: '',
       },
+      //   Validation用
       message: {
         username: '',
         email: '',
@@ -26,9 +28,9 @@ class RegisterForm extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
-  handleChange(event) {
-    const name = event.target.name;
-    const value = event.target.value;
+  handleChange(e) {
+    const name = e.target.name;
+    const value = e.target.value;
     const { info, message } = this.state;
     this.setState({
       info: { ...info, [name]: value },
@@ -93,7 +95,7 @@ class RegisterForm extends React.Component {
     });
   };
 
-  render() {
+render() {
     let errorMessage = null;
     if (this.props.error) {
       errorMessage = <p>{this.props.error.message}</p>;
