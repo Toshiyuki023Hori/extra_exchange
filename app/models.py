@@ -281,7 +281,7 @@ class Want_Item(models.Model):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
-# Want_Item と Give_Item でポリモーフィック 関連になるから、共通の親テーブル"Parent_Item"を作成
+# Want_Item と Give_Item でポリモーフィック 関連になるので、共通の親テーブル"Parent_Item"を作成
 
 
 class Parent_Item(models.Model):

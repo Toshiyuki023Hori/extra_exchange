@@ -27,9 +27,9 @@ class UserSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-          password = validated_data.get('password')
-          validated_data['password'] = make_password(password)
-          return User.objects.create(**validated_data)
+        password = validated_data.get('password')
+        validated_data['password'] = make_password(password)
+        return User.objects.create(**validated_data)
 
     # def validate(self, data):
     #     if data.get('password') != data.get('confirm_pass'):
@@ -149,6 +149,11 @@ class BlandSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bland
         fields = "__all__"
+
+    def validate_name(self, value):
+        if len(value) == 0:
+            raise serializers.ValidationError("ブランド名は必ず1文字入力してください")
+        return value
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 

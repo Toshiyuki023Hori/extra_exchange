@@ -1,11 +1,16 @@
-import React, { useState } from 'react';
+import React, {useEffect} from 'react';
 
 import LoginForm from '../Organisms/LoginForm';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 
 function Login({isAuthenticated}) {
-  return (
-    <>
+    const token = useSelector(state => state.token)
+    useEffect(() => {
+        console.log(token)
+    },[isAuthenticated])
+    
+    return (
+        <>
       {isAuthenticated ? <h1>You succeeded in Loging in</h1> : <h1>Don't give up!!</h1>}
       <div>
         <LoginForm initialValue="" method="post" />

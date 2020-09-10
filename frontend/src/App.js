@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
+import * as actions from './reducks/auth/actions';
 import { Link } from 'react-router-dom';
+
 import Register from './containers/Pages/Register';
 import Login from './containers/Pages/Login';
-import * as actions from './reducks/auth/actions';
+import Add_Want_Item from './containers/Pages/Add_Want_Item';
 
 class App extends Component {
   componentDidMount() {
@@ -26,6 +28,7 @@ class App extends Component {
           path="/login"
           render={(routeProps) => <Login {...routeProps} {...this.props} />}
         />
+        <Route exact path="/user/want/add" component={Add_Want_Item} />
       </Router>
     );
   }
