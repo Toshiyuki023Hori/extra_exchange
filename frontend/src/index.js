@@ -2,12 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { compose, applyMiddleware } from 'redux';
-import { configureStore } from './reducks/store/store';
+import { createStore, compose, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
+import thunk from 'redux-thunk';
 
+import reducer from '../src/reducks/auth/reducers';
 
-export const store = configureStore();
+const composeEnhances = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+// middlewareを使うにはcreatestoreの第二引数(enhancer)を設定しなければいけない。
+export const store = createStore(reducer, composeEnhances(applyMiddleware(thunk)));
 
 const app = (
   <Provider store={store}>

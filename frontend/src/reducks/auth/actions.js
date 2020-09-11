@@ -1,7 +1,7 @@
 import * as actionTypes from './actionType';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-import { store } from '../store/store';
+import { store } from '../../index';
 
 export const authStart = () => {
   return {
