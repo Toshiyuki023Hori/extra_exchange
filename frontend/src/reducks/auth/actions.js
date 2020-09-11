@@ -9,11 +9,11 @@ export const authStart = () => {
   };
 };
 
-export const authSuccess = (token,uid) => {
+export const authSuccess = (token, uid) => {
   return {
     type: actionTypes.AUTH_SUCCESS,
     token: token,
-    uid:uid
+    uid: uid,
   };
 };
 
@@ -61,12 +61,18 @@ export const checkAuthTimeout = (expirationTime) => {
 
 export const getUserId = (username) => {
   return (dispatch) => {
-    axios.get('http://localhost:8000/api/user').then((res) => {
-      const users = res.data;
-      const currentUser = users.filter((user) => user.username === username)[0];
-      const uid = currentUser.id;
-      dispatch(authSuccess(localStorage.getItem('token'), uid));
-    });
+    axios
+      .get('http://localhost:8000/api/user')
+      .then((res) => {
+        const users = res.data;
+        const currentUser = users.filter((user) => user.username === username)[0];
+        const uid = currentUser.id;
+        localStorage.setItem('uid', uid);
+        dispatch(authSuccess(localStorage.getItem('token'), uid));
+      })
+      .catch((err) => {
+        localStorage.removeItem('uid');
+      });
   };
 };
 
@@ -117,7 +123,7 @@ export const authSignup = (username, email, password) => {
 };
 
 export const authCheckState = () => {
-  return async(dispatch) => {
+  return (dispatch) => {
     const token = localStorage.getItem('token');
     if (token === undefined) {
       dispatch(logout());
@@ -128,12 +134,13 @@ export const authCheckState = () => {
       } else {
         //
         //uidを取得してからauthSuccessを実行させたいです。
-        const uid = await store.getState().uid;
-        dispatch(authSuccess(token, uid));
-        console.log("uid is " + uid + " and token is " + token)
+        const uid = localStorage.getItem('uid');
+        if (uid) {
+          dispatch(authSuccess(token, uid));
+        }
+        console.log('uid is ' + uid + ' and token is ' + token);
         dispatch(checkAuthTimeout((expirationDate.getTime() - new Date().getTime()) / 1000));
       }
     }
   };
 };
-

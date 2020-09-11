@@ -17,7 +17,7 @@ class Add_Give_Item_Form extends Component {
         keyword3: '',
         bland: '',
         state: '未使用、新品',
-        category: '',
+        category:"" ,
         image: '',
         detail: '',
         url: '',
@@ -36,7 +36,7 @@ class Add_Give_Item_Form extends Component {
         detail: '',
         url: '',
       },
-      all_category: '',
+      allCategory: "",
     };
     this.handleChange = this.handleChange.bind(this);
   }
@@ -45,8 +45,8 @@ class Add_Give_Item_Form extends Component {
     axios
       .get('http://localhost:8000/api/category')
       .then((res) => {
-        this.setState({ ...this.state, all_category: res.data });
-        console.log(this.state.all_category);
+        console.log("res.data is " + res.data)
+        this.setState({ ...this.state, allCategory: res.data });
       })
       .catch((err) => {
         console.log(err);
@@ -104,7 +104,7 @@ class Add_Give_Item_Form extends Component {
   }
 
   render() {
-    const { info, message,all_category } = this.state;
+    const { info, message, allCategory } = this.state;
     return (
       <div>
         <label>商品名</label>
@@ -158,10 +158,9 @@ class Add_Give_Item_Form extends Component {
         <p>{this.state.message.bland}</p>
 
         <label>カテゴリ</label>
-        <select>
-                
-        </select>
-        
+        <ul>
+        {[this.state.allCategory].forEach((category) => { console.log(category) })}
+        </ul>
 
         <label>説明</label>
         <textarea
@@ -172,7 +171,7 @@ class Add_Give_Item_Form extends Component {
           onChange={this.handleChange}
         ></textarea>
       </div>
-    );
+    )
   }
 }
 
