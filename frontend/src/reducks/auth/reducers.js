@@ -21,7 +21,7 @@ const authSuccess = (state, action) => {
     token: action.token,
     error: null,
     loading: false,
-    uid: action.uid,
+    uid : action.uid
   });
 };
 
@@ -39,7 +39,13 @@ const authLogout = (state, action) => {
   });
 };
 
-const reducer = (state = initialState, action) => {
+const setUid = (state, action) => {
+  return updateObject(state, {
+    uid: action.uid,
+  });
+};
+
+export const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.AUTH_START:
       return authStart(state, action);

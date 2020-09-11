@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import axios from 'axios';
+import { connect } from 'react-redux';
+import * as actions from '../../reducks/auth/actions';
 
 class Add_Want_Item_Form extends Component {
   constructor(props) {
@@ -26,6 +29,13 @@ class Add_Want_Item_Form extends Component {
       },
     };
     this.handleChange = this.handleChange.bind(this);
+  }
+
+  componentDidMount() {
+    axios
+      .get('http://localhost:8000/api/user/' + this.state.uid)
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
   }
 
   handleChange(e) {
@@ -124,4 +134,10 @@ class Add_Want_Item_Form extends Component {
   }
 }
 
-export default Add_Want_Item_Form;
+const mapStateToProps = (state) => {
+  return {
+    uid: state.uid,
+  };
+};
+
+export default connect(mapStateToProps)(Add_Want_Item_Form);
