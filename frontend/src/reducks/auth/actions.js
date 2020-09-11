@@ -1,6 +1,7 @@
 import * as actionTypes from './actionType';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
+import { store } from '../../index';
 
 export const authStart = () => {
   return {
@@ -8,10 +9,17 @@ export const authStart = () => {
   };
 };
 
-export const authSuccess = (token, uid) => {
+export const authSuccess = (token,uid) => {
   return {
     type: actionTypes.AUTH_SUCCESS,
     token: token,
+    uid:uid
+  };
+};
+
+export const setUid = (uid) => {
+  return {
+    type: actionTypes.SET_UID,
     uid: uid,
   };
 };
@@ -39,11 +47,26 @@ export const logout = () => {
   };
 };
 
+// ========================    ========================    ========================    ========================
+
+// 以下redux-thunx用のasync action creator　=========      ============       =============-    ===========
+
 export const checkAuthTimeout = (expirationTime) => {
   return (dispatch) => {
     setTimeout(() => {
       dispatch(logout());
     }, expirationTime * 1000);
+  };
+};
+
+export const getUserId = (username) => {
+  return (dispatch) => {
+    axios.get('http://localhost:8000/api/user').then((res) => {
+      const users = res.data;
+      const currentUser = users.filter((user) => user.username === username)[0];
+      const uid = currentUser.id;
+      dispatch(authSuccess(localStorage.getItem('token'), uid));
+    });
   };
 };
 
@@ -94,7 +117,7 @@ export const authSignup = (username, email, password) => {
 };
 
 export const authCheckState = () => {
-  return (dispatch) => {
+  return async(dispatch) => {
     const token = localStorage.getItem('token');
     if (token === undefined) {
       dispatch(logout());
@@ -103,20 +126,14 @@ export const authCheckState = () => {
       if (expirationDate <= new Date()) {
         dispatch(logout());
       } else {
-          dispatch(authSuccess(token));
-          dispatch(checkAuthTimeout((expirationDate.getTime() - new Date().getTime()) / 1000));
-        }
+        //
+        //uidを取得してからauthSuccessを実行させたいです。
+        const uid = await store.getState().uid;
+        dispatch(authSuccess(token, uid));
+        console.log("uid is " + uid + " and token is " + token)
+        dispatch(checkAuthTimeout((expirationDate.getTime() - new Date().getTime()) / 1000));
       }
     }
   };
-
-export const getUserId = (username) => {
-  return (dispatch) => {
-    axios.get('http://localhost:8000/api/user').then((res) => {
-      const users = res.data;
-      const currentUser = users.filter((user) => user.username === username)[0];
-      const uid = currentUser.id;
-      dispatch(authSuccess(localStorage.getItem('token'), uid));
-    });
-  };
 };
+

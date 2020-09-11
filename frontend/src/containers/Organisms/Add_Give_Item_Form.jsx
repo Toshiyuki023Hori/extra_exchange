@@ -4,7 +4,7 @@ import axios from 'axios';
 import { connect } from 'react-redux';
 import * as actions from '../../reducks/auth/actions';
 
-class Add_Want_Item_Form extends Component {
+class Add_Give_Item_Form extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -16,6 +16,10 @@ class Add_Want_Item_Form extends Component {
         keyword2: '',
         keyword3: '',
         bland: '',
+        state: '未使用、新品',
+        category: '',
+        image: '',
+        detail: '',
         url: '',
       },
       //   Validation用
@@ -26,12 +30,28 @@ class Add_Want_Item_Form extends Component {
         keyword2: '',
         keyword3: '',
         bland: '',
+        state: '',
+        category: '',
+        image: '',
+        detail: '',
+        url: '',
       },
+      all_category: '',
     };
     this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidMount() {
+    axios
+      .get('http://localhost:8000/api/category')
+      .then((res) => {
+        this.setState({ ...this.state, all_category: res.data });
+        console.log(this.state.all_category);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
     axios
       .get('http://localhost:8000/api/user/' + this.state.uid)
       .then((res) => console.log(res))
@@ -84,12 +104,22 @@ class Add_Want_Item_Form extends Component {
   }
 
   render() {
-    const { info, message } = this.state;
+    const { info, message,all_category } = this.state;
     return (
       <div>
         <label>商品名</label>
         <input name="name" type="text" value={this.state.info.name} onChange={this.handleChange} />
         <p>{this.state.message.name}</p>
+
+        <label>状態</label>
+        <select name="state">
+          <option value="新品、未使用">新品、未使用</option>
+          <option value="未使用に近い">未使用に近い</option>
+          <option value="目立った傷や汚れなし">目立った傷や汚れなし</option>
+          <option value="やや傷や汚れあり">やや傷や汚れあり</option>
+          <option value="傷や汚れあり">傷や汚れあり</option>
+          <option value="全体的に状態が悪い">全体的に状態が悪い</option>
+        </select>
 
         <p>{this.state.message.keyword1}</p>
         <p>{this.state.message.keyword2}</p>
@@ -127,8 +157,20 @@ class Add_Want_Item_Form extends Component {
         />
         <p>{this.state.message.bland}</p>
 
-        <label>商品参考URL</label>
-        <input name="url" type="text" value={this.state.info.url} onChange={this.handleChange} />
+        <label>カテゴリ</label>
+        <select>
+                
+        </select>
+        
+
+        <label>説明</label>
+        <textarea
+          name="detail"
+          cols="30"
+          rows="10"
+          value={this.state.info.detail}
+          onChange={this.handleChange}
+        ></textarea>
       </div>
     );
   }
@@ -140,4 +182,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(Add_Want_Item_Form);
+export default connect(mapStateToProps)(Add_Give_Item_Form);
