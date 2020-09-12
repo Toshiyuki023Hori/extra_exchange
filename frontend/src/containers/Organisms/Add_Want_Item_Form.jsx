@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import * as actions from '../../reducks/auth/actions';
+import CircularProgress from "@material-ui/core"
 
 class Add_Want_Item_Form extends Component {
   constructor(props) {
@@ -137,6 +138,8 @@ class Add_Want_Item_Form extends Component {
 const mapStateToProps = (state) => {
   return {
     uid: state.uid,
+    loading : state.loading,
+    error:state.error
   };
 };
 

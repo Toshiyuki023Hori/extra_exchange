@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import * as actions from '../../reducks/auth/actions';
+import CircularProgress from "@material-ui/core/"
 
 class Add_Give_Item_Form extends Component {
   constructor(props) {
@@ -36,7 +37,7 @@ class Add_Give_Item_Form extends Component {
         detail: '',
         url: '',
       },
-      allCategory: "",
+      allCategory: null,
     };
     this.handleChange = this.handleChange.bind(this);
   }
@@ -45,16 +46,17 @@ class Add_Give_Item_Form extends Component {
     axios
       .get('http://localhost:8000/api/category')
       .then((res) => {
-        console.log("res.data is " + res.data)
-        this.setState({ ...this.state, allCategory: res.data });
+        this.setState({ ...this.state, allCategory: res.data })
       })
       .catch((err) => {
         console.log(err);
       });
 
     axios
-      .get('http://localhost:8000/api/user/' + this.state.uid)
-      .then((res) => console.log(res))
+      .get('http://localhost:8000/api/user/' + localStorage.getItem("uid"))
+      .then((res) => {
+          console.log(res)
+      })
       .catch((err) => console.log(err));
   }
 
@@ -105,6 +107,7 @@ class Add_Give_Item_Form extends Component {
 
   render() {
     const { info, message, allCategory } = this.state;
+    if(this.state.allCategory === null){return null}
     return (
       <div>
         <label>商品名</label>
@@ -158,9 +161,15 @@ class Add_Give_Item_Form extends Component {
         <p>{this.state.message.bland}</p>
 
         <label>カテゴリ</label>
-        <ul>
-        {[this.state.allCategory].forEach((category) => { console.log(category) })}
-        </ul>
+        <select name="category" id="">
+          {
+            this.state.allCategory.filter((category) => category.parent === null).map((filteredCategory) => {
+              return (
+                <option value={filteredCategory.name} placeholder="大カテゴリ">{filteredCategory.name}</option>
+              )
+            })
+          }
+        </select>
 
         <label>説明</label>
         <textarea
