@@ -5,16 +5,33 @@ import * as serviceWorker from './serviceWorker';
 import { createStore, compose, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
+import { persistReducer, persistStore } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import { PersistGate } from 'redux-persist/integration/react';
 
 import reducer from '../src/reducks/auth/reducers';
 
+// redux-persistの設定
+const persistConfig = {
+  key: 'root',
+  storage,
+  whitelist: ['uid', 'token'],
+};
+
+const persistedReducer = persistReducer(persistConfig, reducer);
+
 const composeEnhances = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 // middlewareを使うにはcreatestoreの第二引数(enhancer)を設定しなければいけない。
-export const store = createStore(reducer, composeEnhances(applyMiddleware(thunk)));
+const store = createStore(persistedReducer, composeEnhances(applyMiddleware(thunk)));
+
+const persistor = persistStore(store);
+export default store;
 
 const app = (
   <Provider store={store}>
-    <App />
+    <PersistGate loading={null} persistor={persistor} >
+      <App />
+    </PersistGate>
   </Provider>
 );
 
