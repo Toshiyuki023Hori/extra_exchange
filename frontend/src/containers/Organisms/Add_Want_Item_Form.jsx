@@ -93,41 +93,21 @@ class Add_Want_Item_Form extends Component {
     let keyword2;
     let parentItem;
 
-    await axios
-      .post('http://localhost:8000/api/bland/', {
+    await axios.all([
+      axios.post('http://localhost:8000/api/bland/', {
         name: this.state.info.bland,
-      })
-      .then((res) => {
-        const bland = res.data;
-        console.log('Bland is ' + bland);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    await axios
-      .post('http://localhost:8000/api/keyword/', {
+      }),
+      axios.post('http://localhost:8000/api/keyword/', {
         name: this.state.info.keyword1,
-      })
-      .then((res) => {
-        const keyword1 = res.data;
-        console.log('Keyword1 is ' + keyword1);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    await axios
-      .post('http://localhost:8000/api/keyword/', {
+      }),
+      axios.post('http://localhost:8000/api/keyword/', {
         name: this.state.info.keyword2,
-      })
-      .then((res) => {
-        const keyword2 = res.data;
-        console.log('Keyword2 is ' + keyword2);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      }),
+    ])
+    .then(axios.spread((blandData, key1Data, key2Data) => {
+      console.log("bland", blandData, "key1", key1Data, "key2", key2Data)
+    }))
+    .catch((err) => console.log(err))
 
     await axios
       .post('http://localhost:8000/api/parent/', {
