@@ -83,7 +83,7 @@ class Add_Want_Item_Form extends Component {
   }
 
   blandValidation(value) {
-    if (!value) return 'ブランド名は最低1文字入力してください';
+    if (value ===1 ) return 'ブランド名は最低1文字入力してください';
     return '';
   }
 
@@ -93,49 +93,69 @@ class Add_Want_Item_Form extends Component {
     let keyword2;
     let parentItem;
 
-    await axios.all([
-      axios.post('http://localhost:8000/api/bland/', {
-        name: this.state.info.bland,
-      }),
-      axios.post('http://localhost:8000/api/keyword/', {
-        name: this.state.info.keyword1,
-      }),
-      axios.post('http://localhost:8000/api/keyword/', {
-        name: this.state.info.keyword2,
-      }),
-    ])
-    .then(axios.spread((blandData, key1Data, key2Data) => {
-      console.log("bland", blandData, "key1", key1Data, "key2", key2Data)
-    }))
-    .catch((err) => console.log(err))
-
     await axios
-      .post('http://localhost:8000/api/parent/', {
-        name: this.state.info.name,
-        owner: this.state.info.owner,
-        bland: bland,
-        keyword: { keyword1, keyword2 },
+      .post('http://localhost:8000/api/bland/', {
+        name: this.state.info.bland,
       })
       .then((res) => {
-        const parentItem = res.data;
-        console.log('Parent is ' + parentItem);
+        bland = res.data.id;
+        console.log('Bland is ' + bland);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    await axios
+      .post('http://localhost:8000/api/keyword/', {
+        name: this.state.info.keyword1,
+      })
+      .then((res) => {
+        keyword1 = res.data.id;
+        console.log('Keyword1 is ' + keyword1);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    await axios
+      .post('http://localhost:8000/api/keyword/', {
+        name: this.state.info.keyword2,
+      })
+      .then((res) => {
+        keyword2 = res.data.id;
+        console.log('Keyword2 is ' + keyword2);
       })
       .catch((err) => {
         console.log(err);
       });
 
     axios
-      .post('http://localhost:8000/api/wantitem/', {
-        url: this.state.info.url,
-        parentItem: parentItem,
+      .post('http://localhost:8000/api/parent/', {
+        name: this.state.info.name,
+        owner: this.state.info.owner,
+        bland: bland,
+        keyword: [keyword1]
       })
       .then((res) => {
-        const wantItem = res.data;
-        console.log('wantItem is ' + wantItem);
+        parentItem = res.data;
+        console.log('Parent is ' + parentItem);
       })
       .catch((err) => {
         console.log(err);
       });
+
+    // axios
+    //   .post('http://localhost:8000/api/wantitem/', {
+    //     url: this.state.info.url,
+    //     parentItem: parentItem,
+    //   })
+    //   .then((res) => {
+    //     const wantItem = res.data;
+    //     console.log('wantItem is ' + wantItem);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
 
     this.setState({
       info: {
