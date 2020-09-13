@@ -88,7 +88,7 @@ class User(AbstractUser):
 class Review(models.Model):
     score = models.DecimalField(max_digits=2, decimal_places=1)
     comment = models.CharField(max_length=100, blank=True, null=True)
-    reviewer = models.ForeignKey(
+    owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE, related_name="done_review")
     reviewedUser = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE, related_name="get_review")

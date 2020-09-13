@@ -42,7 +42,7 @@ class UserSerializer(serializers.ModelSerializer):
 class ReviewSerializer(serializers.ModelSerializer):
     # JSON内で、Stringとして外部キーをIDではなくStringで表示させるために、
     # ForeignKeyを持つ全てのfieldに以下のように記述
-    reviewer = serializers.StringRelatedField()
+    owner = serializers.StringRelatedField()
     reviewedUser = serializers.StringRelatedField()
 
     class Meta:
@@ -154,6 +154,7 @@ class BlandSerializer(serializers.ModelSerializer):
         if len(value) == 0:
             raise serializers.ValidationError("ブランド名は必ず1文字入力してください")
         return value
+
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
