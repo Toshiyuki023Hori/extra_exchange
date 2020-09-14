@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractBaseUser, AbstractUser, BaseUserM
 
 # Djangoの認証をユーザーネームからメールアドレスへ変えるために記述
 class CustomUserManager(UserManager):
-    
+
     use_in_migrations = True
 
     def _create_user(self, email, password, **extra_fields):
@@ -166,7 +166,7 @@ class Give_Item(models.Model):
     detail = models.TextField(max_length=800, blank=True, null=True)
     # Give_Itemが削除された時、Categoryも同時に削除されてはいけないためnull = True
     category = models.ForeignKey(
-        "Category", related_name="give_item", on_delete=models.SET_NULL, null=True)
+        "Category", on_delete=models.SET_NULL, null=True, related_name="give_item")
     parent_item = models.ForeignKey(
         "Parent_Item", null=True, on_delete=models.CASCADE, related_name="give_item")
     created_at = models.DateTimeField(auto_now_add=True)
@@ -202,7 +202,8 @@ class Comment(models.Model):
     comment = models.CharField(max_length=400)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="comment")
-    item = models.ForeignKey(Give_Item, on_delete=models.CASCADE, null=True)
+    item = models.ForeignKey(
+        Give_Item, on_delete=models.CASCADE, null=True, related_name="comment")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -217,7 +218,8 @@ class Comment(models.Model):
 
 class Item_Image(models.Model):
     image = models.ImageField()
-    item = models.ForeignKey(Give_Item, on_delete=models.CASCADE)
+    item = models.ForeignKey(
+        Give_Item, on_delete=models.CASCADE, related_name="item_image")
 
     def __str__(self):
         return self.item.parent_item.name
@@ -230,14 +232,13 @@ class Item_Image(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
-    # 階層構造を表現するために隣接リストを採用
-    parent = models.ForeignKey("Category", null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
 
     class Meta:
         db_table = "categories"
+
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
@@ -252,7 +253,6 @@ class Bland(models.Model):
         db_table = "blands"
 
 # ======      =======      ======      ======     ======     ======      =======      =======
-
 
 class Keyword(models.Model):
     name = models.CharField(max_length=100)
@@ -292,7 +292,7 @@ class Parent_Item(models.Model):
     # Blandは一つしか選べないため、OneToMany関係
     # Categoryと同じく、Parent_Itemが削除された時、ブランドも同時に削除されるのを防ぐためにnull = True
     bland = models.ForeignKey(
-        Bland, related_name="parent_item", on_delete=models.SET_NULL, null=True)
+        Bland, on_delete=models.SET_NULL, null=True, related_name="parent_item")
     request_deal = models.ForeignKey(
         "Request_Deal", null=True, on_delete=models.CASCADE, related_name="parent_item")
     created_at = models.DateTimeField(auto_now_add=True)
