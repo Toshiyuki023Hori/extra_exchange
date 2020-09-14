@@ -205,6 +205,8 @@ class Parent_ItemSerializer(serializers.ModelSerializer):
     bland = serializers.StringRelatedField()
     request_deal = serializers.StringRelatedField()
 
+    want_item = Want_ItemSerializer(many = True)
+
     class Meta:
         model = Parent_Item
         fields = "__all__"
