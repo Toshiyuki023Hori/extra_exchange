@@ -81,7 +81,7 @@ class Add_Want_Item_Form extends Component {
   }
 
   blandValidation(value) {
-    if (value ===1 ) return 'ブランド名は最低1文字入力してください';
+    if (value === 1) return 'ブランド名は最低1文字入力してください';
     return '';
   }
 
@@ -90,6 +90,9 @@ class Add_Want_Item_Form extends Component {
     let keyword1;
     let keyword2;
     let parentItem;
+
+    const parentForm = {};
+    const wantForm = {};
 
     await axios
       .post('http://localhost:8000/api/bland/', {
@@ -122,6 +125,12 @@ class Add_Want_Item_Form extends Component {
       .then((res) => {
         keyword2 = res.data;
         console.log('Keyword2 is ' + keyword2);
+        parentForm = {
+          ...parentForm, 
+          name = this.state.info.name, 
+          owner = this.state.info.owner,
+          bland = bland
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -132,7 +141,7 @@ class Add_Want_Item_Form extends Component {
         name: this.state.info.name,
         owner: this.state.info.owner,
         bland: bland,
-        keyword: [keyword1, keyword2]
+        keyword: [keyword1, keyword2],
       })
       .then((res) => {
         parentItem = res.data;
