@@ -179,6 +179,23 @@ class Want_ItemSerializer(serializers.ModelSerializer):
         model = Want_Item
         fields = "__all__"
 
+    def create(self, validated_data):
+        parent_item = validated_data.pop("parent_item")
+
+        want_item = Want_Item(**validated_data)
+        want_item.save()
+
+        want_item(parent_item=parent_item)
+        want_item.save()
+
+        return want_item
+
+    def update(self, instance, validated_data):
+        instance.url = validated_data.get("url", instance.url)
+        instance.save()
+
+        return instance
+
 # ======      =======      ======      ======     ======     ======      =======      =======
 
 
@@ -196,6 +213,58 @@ class Parent_ItemSerializer(serializers.ModelSerializer):
         if len(value) <= 4:
             raise serializers.ValidationError("商品名は必ず5文字以上入力してください")
         return value
+
+    def create(self, validated_data):
+        # 多関係のクエリセット作成のために値を保持
+        keywords = validated_data.pop("keyword")
+        owner = validated_data.pop("owner")
+        bland = validated_data.pop("bland")
+        request_deals = validated_data.pop("request_deal")
+
+        parent_item = Parent_Item(**validated_data)
+        parent_item.save()
+
+        # ManyToOne relation
+        parent_item(owner=owner)
+        parent_item(bland=bland)
+        parent_item.save()
+
+        # OneToMany or ManyToMany relation
+        for request_deal in request_deals:
+            parent_item(request_deal=request_deal)
+
+        for keyword in keywords:
+            parent_item(
+                keyword=keyword)
+
+        parent_item.save()
+        return parent_item
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get("name", instance.name)
+        instance.save()
+
+        keywords = validated_data.get("keyword")
+
+        for keyword in keywords:
+            keyword_id = keyword.get("id", None)
+            if keyword_id:
+                keyword_object = Keyword.objects.get(
+                    id=keyword_id, parent_item=instance)
+                keyword_object.name = keyword.get("name", keyword_object.name)
+                keyword_object.save()
+            else:
+                Keyword.objects.create(account=instance, **keyword)
+
+        bland = validated_data.get("bland")
+        bland_id = bland.get("id", None)
+        bland_object = Bland.objects.get(
+            id=bland_id, parent_item=instance
+        )
+        bland_object.name = keyword.get("name", bland_object.name)
+        bland_object.save()
+
+        return instance
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
@@ -264,5 +333,3 @@ class Request_DealSerializer(serializers.ModelSerializer):
     class Meta:
         model = Request_Deal
         fields = "__all__"
-
-

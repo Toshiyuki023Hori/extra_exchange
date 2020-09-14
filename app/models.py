@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractBaseUser, AbstractUser, BaseUserM
 
 # Djangoの認証をユーザーネームからメールアドレスへ変えるために記述
 class CustomUserManager(UserManager):
-
+    
     use_in_migrations = True
 
     def _create_user(self, email, password, **extra_fields):

@@ -110,7 +110,7 @@ class Add_Want_Item_Form extends Component {
         name: this.state.info.keyword1,
       })
       .then((res) => {
-        keyword1 = res.data.id;
+        keyword1 = res.data.name;
         console.log('Keyword1 is ' + keyword1);
       })
       .catch((err) => {
@@ -122,7 +122,7 @@ class Add_Want_Item_Form extends Component {
         name: this.state.info.keyword2,
       })
       .then((res) => {
-        keyword2 = res.data.id;
+        keyword2 = res.data.name;
         console.log('Keyword2 is ' + keyword2);
       })
       .catch((err) => {
@@ -132,9 +132,9 @@ class Add_Want_Item_Form extends Component {
     axios
       .post('http://localhost:8000/api/parent/', {
         name: this.state.info.name,
-        owner: this.state.info.owner,
-        bland: bland,
-        keyword: [keyword1]
+        owner: this.state.info.owner.name,
+        bland: bland.name,
+        keyword: [keyword1, keyword2]
       })
       .then((res) => {
         parentItem = res.data;
