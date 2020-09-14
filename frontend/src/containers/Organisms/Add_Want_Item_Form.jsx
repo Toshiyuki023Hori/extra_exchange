@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import { Redirect, na } from 'react-router-dom';
 import { connect } from 'react-redux';
-import * as actions from '../../reducks/auth/actions';
 import CircularProgress from '@material-ui/core';
 
 class Add_Want_Item_Form extends Component {
@@ -110,7 +108,7 @@ class Add_Want_Item_Form extends Component {
         name: this.state.info.keyword1,
       })
       .then((res) => {
-        keyword1 = res.data.id;
+        keyword1 = res.data;
         console.log('Keyword1 is ' + keyword1);
       })
       .catch((err) => {
@@ -122,7 +120,7 @@ class Add_Want_Item_Form extends Component {
         name: this.state.info.keyword2,
       })
       .then((res) => {
-        keyword2 = res.data.id;
+        keyword2 = res.data;
         console.log('Keyword2 is ' + keyword2);
       })
       .catch((err) => {
@@ -134,7 +132,7 @@ class Add_Want_Item_Form extends Component {
         name: this.state.info.name,
         owner: this.state.info.owner,
         bland: bland,
-        keyword: [keyword1]
+        keyword: [keyword1, keyword2]
       })
       .then((res) => {
         parentItem = res.data;
@@ -144,18 +142,18 @@ class Add_Want_Item_Form extends Component {
         console.log(err);
       });
 
-    // axios
-    //   .post('http://localhost:8000/api/wantitem/', {
-    //     url: this.state.info.url,
-    //     parentItem: parentItem,
-    //   })
-    //   .then((res) => {
-    //     const wantItem = res.data;
-    //     console.log('wantItem is ' + wantItem);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
+    axios
+      .post('http://localhost:8000/api/wantitem/', {
+        url: this.state.info.url,
+        parent_item: parentItem,
+      })
+      .then((res) => {
+        const wantItem = res.data;
+        console.log('wantItem is ' + wantItem);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
     this.setState({
       info: {

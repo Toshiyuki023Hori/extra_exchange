@@ -9,7 +9,243 @@ from allauth.utils import (email_address_exists,
 from allauth.account.adapter import get_adapter
 
 
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Review
+        fields = "__all__"
+
+    def validate_score(self, value):
+        if value < 0.5:
+            raise serializers.ValidationError("最低0.5以上の評価をつけてください")
+
+        if value > 5.0:
+            raise serializers.ValidationError("スコアの最大は5までです。")
+
+        return value
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Notification
+        fields = "__all__"
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+
+class FollowSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Follow
+        fields = "__all__"
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+
+class PickUp_PlacesSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PickUp_Places
+        fields = "__all__"
+
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+class FavoriteSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Favorite
+        fields = "__all__"
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+
+class CommentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Comment
+        fields = "__all__"
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+
+class Item_ImageSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Item_Image
+        fields = "__all__"
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+
+class CategorySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Category
+        fields = "__all__"
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+
+class BlandSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Bland
+        fields = "__all__"
+
+    def validate_name(self, value):
+        if len(value) == 0:
+            raise serializers.ValidationError("ブランド名は必ず1文字入力してください")
+        return value
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+
+class KeywordSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Keyword
+        fields = ["id", "name"]
+
+    def validate_name(self, value):
+        if len(value) <= 1:
+            raise serializers.ValidationError("キーワードは必ず2文字以上で設定してください")
+        return value
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+
+class Meeting_TimeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Meeting_Time
+        fields = "__all__"
+
+    def validate_what_time(self, value):
+        if value < timezone.now():
+            raise serializers.ValidationError("過去の日付を選択することはできません。")
+        return value
+
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+
+class Private_MessageSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Private_Message
+        fields = "__all__"
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+
+class Want_ItemSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Want_Item
+        fields = "__all__"
+
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+
+class Give_ItemSerializer(serializers.ModelSerializer):
+    category = CategorySerializer()
+    favorite = FavoriteSerializer(many=True)
+    comment = CommentSerializer(many=True)
+    item_image = Item_ImageSerializer(many=True)
+
+    class Meta:
+        model = Give_Item
+        fields = "__all__"
+
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+
+class Parent_ItemSerializer(serializers.ModelSerializer):
+    keyword = KeywordSerializer(many=True)
+    want_item = Want_ItemSerializer(many=True)
+    give_item = Give_ItemSerializer(many=True)
+
+    class Meta:
+        model = Parent_Item
+        fields = "__all__"
+
+    def validate_name(self, value):
+        if len(value) <= 4:
+            raise serializers.ValidationError("商品名は必ず5文字以上入力してください")
+        return value
+
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+
+class RequestSerializer(serializers.ModelSerializer):
+    meeting_time = Meeting_TimeSerializer(many=True)
+
+    class Meta:
+        model = Request
+        fields = "__all__"
+
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+
+class DealSerializer(serializers.ModelSerializer):
+    message = Private_MessageSerializer(many=True)
+
+    class Meta:
+        model = Deal
+        fields = "__all__"
+
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+
+class HistorySerializer(serializers.ModelSerializer):
+    done_deal = DealSerializer(many=True)
+
+    class Meta:
+        model = History
+        fields = "__all__"
+
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
+
+class Request_DealSerializer(serializers.ModelSerializer):
+    parent_item = Parent_ItemSerializer(many=True)
+    request = RequestSerializer(many=True)
+    deal = DealSerializer(many=True)
+
+    class Meta:
+        model = Request_Deal
+        fields = "__all__"
+
+
+# ======      =======      ======      ======     ======     ======      =======      =======
+
 class UserSerializer(serializers.ModelSerializer):
+    done_review = ReviewSerializer(many=True)
+    get_review = ReviewSerializer(many=True)
+    notification = NotificationSerializer(many=True)
+    following = FollowSerializer(many=True)
+    followed = FollowSerializer(many=True)
+    pick_up = PickUp_PlacesSerializer(many=True)
+    favorite = FavoriteSerializer(many=True)
+    comment = CommentSerializer(many=True)
+    private_message = Private_MessageSerializer(many=True)
+    done_deal = HistorySerializer(many=True)
+    host_request_deal = Request_DealSerializer(many=True)
+    join_request_deal = Request_DealSerializer(many=True)
+
     class Meta:
         model = User
         fields = "__all__"
@@ -35,234 +271,3 @@ class UserSerializer(serializers.ModelSerializer):
     #     if data.get('password') != data.get('confirm_pass'):
     #         raise serializers.ValidationError("パスワードが一致しません")
     #     return data
-
-# ======      =======      ======      ======     ======     ======      =======      =======
-
-
-class ReviewSerializer(serializers.ModelSerializer):
-    # JSON内で、Stringとして外部キーをIDではなくStringで表示させるために、
-    # ForeignKeyを持つ全てのfieldに以下のように記述
-    owner = serializers.StringRelatedField()
-    reviewedUser = serializers.StringRelatedField()
-
-    class Meta:
-        model = Review
-        fields = "__all__"
-
-    def validate_score(self, value):
-        if value < 0.5:
-            raise serializers.ValidationError("最低0.5以上の評価をつけてください")
-
-        if value > 5.0:
-            raise serializers.ValidationError("スコアの最大は5までです。")
-
-        return value
-
-# ======      =======      ======      ======     ======     ======      =======      =======
-
-
-class NotificationSerializer(serializers.ModelSerializer):
-    owner = serializers.StringRelatedField()
-
-    class Meta:
-        model = Notification
-        fields = "__all__"
-
-# ======      =======      ======      ======     ======     ======      =======      =======
-
-
-class FollowSerializer(serializers.ModelSerializer):
-    owner = serializers.StringRelatedField()
-    follow = serializers.StringRelatedField()
-
-    class Meta:
-        model = Follow
-        fields = "__all__"
-
-# ======      =======      ======      ======     ======     ======      =======      =======
-
-
-class PickUp_PlacesSerializer(serializers.ModelSerializer):
-    choosingUser = serializers.StringRelatedField(many=True)
-
-    class Meta:
-        model = PickUp_Places
-        fields = "__all__"
-
-# ======      =======      ======      ======     ======     ======      =======      =======
-
-
-class Give_ItemSerializer(serializers.ModelSerializer):
-    category = serializers.StringRelatedField()
-    parent_item = serializers.StringRelatedField()
-
-    class Meta:
-        model = Give_Item
-        fields = "__all__"
-
-
-# ======      =======      ======      ======     ======     ======      =======      =======
-
-class FavoriteSerializer(serializers.ModelSerializer):
-    owner = serializers.StringRelatedField()
-    item = serializers.StringRelatedField()
-
-    class Meta:
-        model = Favorite
-        fields = "__all__"
-
-# ======      =======      ======      ======     ======     ======      =======      =======
-
-
-class CommentSerializer(serializers.ModelSerializer):
-    owner = serializers.StringRelatedField()
-    item = serializers.StringRelatedField()
-
-    class Meta:
-        model = Comment
-        fields = "__all__"
-
-# ======      =======      ======      ======     ======     ======      =======      =======
-
-
-class Item_ImageSerializer(serializers.ModelSerializer):
-    item = serializers.StringRelatedField()
-
-    class Meta:
-        model = Item_Image
-        fields = "__all__"
-
-# ======      =======      ======      ======     ======     ======      =======      =======
-
-
-class CategorySerializer(serializers.ModelSerializer):
-    parent = serializers.StringRelatedField()
-
-    class Meta:
-        model = Category
-        fields = "__all__"
-
-# ======      =======      ======      ======     ======     ======      =======      =======
-
-
-class BlandSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Bland
-        fields = "__all__"
-
-    def validate_name(self, value):
-        if len(value) == 0:
-            raise serializers.ValidationError("ブランド名は必ず1文字入力してください")
-        return value
-
-
-# ======      =======      ======      ======     ======     ======      =======      =======
-
-
-class KeywordSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Keyword
-        fields = ["id", "name"]
-
-    def validate_name(self, value):
-        if len(value) <= 1:
-            raise serializers.ValidationError("キーワードは必ず2文字以上で設定してください")
-        return value
-
-# ======      =======      ======      ======     ======     ======      =======      =======
-
-
-class Want_ItemSerializer(serializers.ModelSerializer):
-    parent_item = serializers.StringRelatedField()
-
-    class Meta:
-        model = Want_Item
-        fields = "__all__"
-
-# ======      =======      ======      ======     ======     ======      =======      =======
-
-
-class Parent_ItemSerializer(serializers.ModelSerializer):
-    owner = serializers.StringRelatedField()
-    keyword = serializers.StringRelatedField(many=True)
-    bland = serializers.StringRelatedField()
-    request_deal = serializers.StringRelatedField()
-
-    class Meta:
-        model = Parent_Item
-        fields = "__all__"
-
-    def validate_name(self, value):
-        if len(value) <= 4:
-            raise serializers.ValidationError("商品名は必ず5文字以上入力してください")
-        return value
-
-# ======      =======      ======      ======     ======     ======      =======      =======
-
-
-class RequestSerializer(serializers.ModelSerializer):
-    request_deal = serializers.StringRelatedField()
-
-    class Meta:
-        model = Request
-        fields = "__all__"
-
-# ======      =======      ======      ======     ======     ======      =======      =======
-
-
-class Meeting_TimeSerializer(serializers.ModelSerializer):
-    request = serializers.StringRelatedField()
-
-    class Meta:
-        model = Meeting_Time
-        fields = "__all__"
-
-    def validate_what_time(self, value):
-        if value < timezone.now():
-            raise serializers.ValidationError("過去の日付を選択することはできません。")
-        return value
-
-# ======      =======      ======      ======     ======     ======      =======      =======
-
-
-class DealSerializer(serializers.ModelSerializer):
-    history = serializers.StringRelatedField()
-    request_deal = serializers.StringRelatedField()
-
-    class Meta:
-        model = Deal
-        fields = "__all__"
-
-# ======      =======      ======      ======     ======     ======      =======      =======
-
-
-class Private_MessageSerializer(serializers.ModelSerializer):
-    owner = serializers.StringRelatedField()
-    deal = serializers.StringRelatedField()
-
-    class Meta:
-        model = Private_Message
-        fields = "__all__"
-
-# ======      =======      ======      ======     ======     ======      =======      =======
-
-
-class HistorySerializer(serializers.ModelSerializer):
-    owner = serializers.StringRelatedField()
-
-    class Meta:
-        model = History
-        fields = "__all__"
-
-# ======      =======      ======      ======     ======     ======      =======      =======
-
-
-class Request_DealSerializer(serializers.ModelSerializer):
-    host_user = serializers.StringRelatedField()
-    join_user = serializers.StringRelatedField()
-
-    class Meta:
-        model = Request_Deal
-        fields = "__all__"
-
-
