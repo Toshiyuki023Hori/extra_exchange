@@ -147,9 +147,9 @@ render() {
           btn_func={this.handleSubmit}
           btn_disable={
             !this.state.info.username ||
-            this.state.info.email ||
-            this.state.info.password ||
-            this.state.info.confirmPass ||
+            !this.state.info.email ||
+            !this.state.info.password ||
+            !this.state.info.confirmPass ||
             this.state.message.username ||
             this.state.message.email ||
             this.state.message.password ||

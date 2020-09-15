@@ -287,8 +287,8 @@ class Parent_Item(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, related_name="item")
 # Bland, Keywordは一つしか選べないため、OneToMany関係
-    keyword = models.ForeignKey(
-        Keyword, on_delete=models.SET_NULL, null=True, related_name="parent_item")
+    keyword = models.ManyToManyField(
+        Keyword, related_name="parent_item")
     # Categoryと同じく、Parent_Itemが削除された時、ブランドも同時に削除されるのを防ぐためにnull = True
     bland = models.ForeignKey(
         Bland, on_delete=models.SET_NULL, null=True, related_name="parent_item")
