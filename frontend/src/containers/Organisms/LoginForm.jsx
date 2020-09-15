@@ -105,7 +105,7 @@ class LoginForm extends React.Component {
           btn_func={this.handleSubmit}
           btn_disable={
             !this.state.info.username ||
-            this.state.info.password ||
+            !this.state.info.password ||
             this.state.message.username ||
             this.state.message.password
           }
