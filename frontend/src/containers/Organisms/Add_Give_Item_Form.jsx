@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import * as actions from '../../reducks/auth/actions';
-import CircularProgress from "@material-ui/core/CircularProgress"
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 class Add_Give_Item_Form extends Component {
   constructor(props) {
@@ -18,9 +18,7 @@ class Add_Give_Item_Form extends Component {
         keyword3: '',
         bland: '',
         state: '未使用、新品',
-        bigCategory:"" ,
-        middleCategory:"",
-        smallCategory:"",
+        category: '',
         image: '',
         detail: '',
         url: '',
@@ -34,14 +32,13 @@ class Add_Give_Item_Form extends Component {
         keyword3: '',
         bland: '',
         state: '',
-        bigCategory:"" ,
-        middleCategory:"",
-        smallCategory:"",
+        category: '',
         image: '',
         detail: '',
         url: '',
       },
       allCategory: null,
+      allBland: null,
     };
     this.handleChange = this.handleChange.bind(this);
   }
@@ -50,18 +47,25 @@ class Add_Give_Item_Form extends Component {
     axios
       .get('http://localhost:8000/api/category')
       .then((res) => {
-      this.setState(prevState => {return { ...prevState, allCategory: res.data }})
+        this.setState((prevState) => {
+          return { ...prevState, allCategory: res.data };
+        });
       })
       .catch((err) => {
         console.log(err);
       });
 
     axios
-      .get('http://localhost:8000/api/user/' + localStorage.getItem("uid"))
+      .get('http://localhost:8000/api/user/' + localStorage.getItem('uid'))
       .then((res) => {
-          console.log(res)
+        console.log(res);
       })
       .catch((err) => console.log(err));
+
+    axios.get('http://localhost:8000/api/bland/').then(async (res) => {
+      await this.setState({ ...this.state, allBland: res.data });
+      console.log('Assignment ' + this.state.allBland);
+    });
   }
 
   handleChange(e) {
@@ -104,22 +108,124 @@ class Add_Give_Item_Form extends Component {
     return '';
   }
 
-  blandValidation(value) {
-    if (!value) return 'ブランド名は最低1文字入力してください';
-    return '';
-  }
+  handleSubmit = async () => {
+    let bland_id;
+    let keyword_ids = [];
+    let parentItem_id;
+
+    if (this.state.info.bland !== '') {
+      await axios
+        .post('http://localhost:8000/api/bland/', {
+          name: this.state.info.bland,
+        })
+        .then((res) => {
+          bland_id = res.data.id;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+
+    if (this.state.info.keyword1 !== '') {
+      await axios
+        .post('http://localhost:8000/api/keyword/', {
+          name: this.state.info.keyword1,
+        })
+        .then((res) => {
+          keyword_ids = [...keyword_ids, res.data.id];
+          console.log('Keyword1 is ' + keyword_ids);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+
+    if (this.state.info.keyword2 !== '') {
+      await axios
+        .post('http://localhost:8000/api/keyword/', {
+          name: this.state.info.keyword2,
+        })
+        .then((res) => {
+          keyword_ids = [...keyword_ids, res.data.id];
+          console.log('Keyword2 is ' + keyword_ids);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+
+    if (this.state.info.keyword3 !== '') {
+      await axios
+        .post('http://localhost:8000/api/keyword/', {
+          name: this.state.info.keyword3,
+        })
+        .then((res) => {
+          keyword_ids = [...keyword_ids, res.data.id];
+          console.log('Keyword3 is ' + keyword_ids);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+
+    await axios
+      .post('http://localhost:8000/api/parent/', {
+        name: this.state.info.name,
+        owner: this.state.info.owner.id,
+        bland: bland_id,
+        keyword: keyword_ids,
+      })
+      .then((res) => {
+        parentItem_id = res.data.id;
+        console.log('Parent is ' + parentItem_id);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    axios
+      .post('http://localhost:8000/api/giveitem/', {
+        state: this.state.info.state,
+        category: this.state.info.category,
+        detail: this.state.info.detail,
+        parentItem: parentItem_id,
+      })
+      .then((res) => {
+        const giveItem = res.data;
+        console.log('giveItem is ' + giveItem);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    this.setState({
+      info: {
+        name: '',
+        keyword1: '',
+        keyword2: '',
+        keyword3: '',
+        detail: '',
+      },
+    });
+  };
 
   render() {
-    const { info, message, allCategory } = this.state;
+    const { info, message, allCategory, allBland } = this.state;
     // setStateが完了するまではnullにする。
-    if(this.state.allCategory === null){return null}
-    else {
+    if (this.state.allCategory === null || this.state.allBland === null) {
+      return <CircularProgress />;
+    } else {
       return (
         <div>
           <label>商品名</label>
-          <input name="name" type="text" value={this.state.info.name} onChange={this.handleChange} />
+          <input
+            name="name"
+            type="text"
+            value={this.state.info.name}
+            onChange={this.handleChange}
+          />
           <p>{this.state.message.name}</p>
-  
+
           <label>状態</label>
           <select name="state">
             <option value="新品、未使用">新品、未使用</option>
@@ -129,7 +235,7 @@ class Add_Give_Item_Form extends Component {
             <option value="傷や汚れあり">傷や汚れあり</option>
             <option value="全体的に状態が悪い">全体的に状態が悪い</option>
           </select>
-  
+
           <p>{this.state.message.keyword1}</p>
           <p>{this.state.message.keyword2}</p>
           <p>{this.state.message.keyword3}</p>
@@ -140,7 +246,7 @@ class Add_Give_Item_Form extends Component {
             value={this.state.info.keyword1}
             onChange={this.handleChange}
           />
-  
+
           <label>キーワード2</label>
           <input
             name="keyword2"
@@ -148,7 +254,7 @@ class Add_Give_Item_Form extends Component {
             value={this.state.info.keyword2}
             onChange={this.handleChange}
           />
-  
+
           <label>キーワード3</label>
           <input
             name="keyword3"
@@ -156,40 +262,26 @@ class Add_Give_Item_Form extends Component {
             value={this.state.info.keyword3}
             onChange={this.handleChange}
           />
-  
+
           <label>ブランド</label>
-          <input
-            name="bland"
-            type="text"
-            value={this.state.info.bland}
-            onChange={this.handleChange}
-          />
-          <p>{this.state.message.bland}</p>
-  
+          <select name="bland" onChange={this.handleChange}>
+            {this.state.allBland.map((bland, idx) => {
+              return (
+                <option key={idx} value={bland.name}>
+                  {bland.name}
+                </option>
+              );
+            })}
+          </select>
+
           <label>カテゴリ</label>
-          <select name="bigCategory" onChange={this.handleChange}>
-            <option value="">大カテゴリ</option>
-            {
-              this.state.allCategory.filter((category) => category.parent === null).map((filteredCategory) => {
-                return (
-                  <option value={filteredCategory}>{filteredCategory.name}</option>
-                )
-              })
-            }
+          <select name="category" onChange={this.handleChange}>
+            <option value="">---</option>
+            {this.state.allCategory.map((category) => {
+              return <option value={category}>{category.name}</option>;
+            })}
           </select>
-          
-          <select name="middleCategory" onChange={this.handleChange}>
-            <option value="">中カテゴリ</option>
-            {
-              this.state.info.bigCategory === null 
-              ? null 
-              : this.state.allCategory.filter((category) => category.parent.name === this.state.info.bigCategory.name).map((filteredCategory) => {
-              return (<option value="">{filteredCategory.name}</option>)
-              })
-            }
-          </select>
-  
-  
+
           <label>説明</label>
           <textarea
             name="detail"
@@ -199,7 +291,7 @@ class Add_Give_Item_Form extends Component {
             onChange={this.handleChange}
           ></textarea>
         </div>
-      )
+      );
     }
   }
 }
