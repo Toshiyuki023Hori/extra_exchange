@@ -254,6 +254,7 @@ class Bland(models.Model):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
+
 class Keyword(models.Model):
     name = models.CharField(max_length=100)
 
@@ -273,9 +274,6 @@ class Want_Item(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return self.parent_item.name
-
     class Meta:
         db_table = "want_items"
 
@@ -288,8 +286,9 @@ class Parent_Item(models.Model):
     name = models.CharField(max_length=100)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, related_name="item")
-    keyword = models.ManyToManyField(Keyword, related_name="parent_item")
-    # Blandは一つしか選べないため、OneToMany関係
+# Bland, Keywordは一つしか選べないため、OneToMany関係
+    keyword = models.ForeignKey(
+        Keyword, on_delete=models.SET_NULL, null=True, related_name="parent_item")
     # Categoryと同じく、Parent_Itemが削除された時、ブランドも同時に削除されるのを防ぐためにnull = True
     bland = models.ForeignKey(
         Bland, on_delete=models.SET_NULL, null=True, related_name="parent_item")

@@ -12,8 +12,7 @@ class Add_Want_Item_Form extends Component {
       info: {
         name: '',
         owner: '',
-        keyword1: '',
-        keyword2: '',
+        keyword: '',
         bland: '',
         url: '',
       },
@@ -21,8 +20,7 @@ class Add_Want_Item_Form extends Component {
       // 　urlは必須項目ではないのでValidationには含めない
       message: {
         name: '',
-        keyword1: '',
-        keyword2: '',
+        keyword: '',
         bland: '',
       },
     };
@@ -56,11 +54,7 @@ class Add_Want_Item_Form extends Component {
     switch (name) {
       case 'name':
         return this.nameValidation(value);
-      case 'keyword1':
-        return this.keywordValidation(value);
-      case 'keyword2':
-        return this.keywordValidation(value);
-      case 'keyword3':
+      case 'keyword':
         return this.keywordValidation(value);
       case 'bland':
         return this.blandValidation(value);
@@ -74,21 +68,18 @@ class Add_Want_Item_Form extends Component {
   }
 
   keywordValidation(value) {
-    if (!this.state.info.keyword1 && !this.state.info.keyword2)
-      return 'キーワードは最低1つ設定してください。';
     if (value.length < 2 && !value == '') return '1文字のキーワードは設定できません';
     return '';
   }
 
   blandValidation(value) {
-    if (value ===1 ) return 'ブランド名は最低1文字入力してください';
+    if (value === 1) return 'ブランド名は最低1文字入力してください';
     return '';
   }
 
   handleSubmit = async () => {
     let bland;
-    let keyword1;
-    let keyword2;
+    let keyword;
     let parentItem;
 
     await axios
@@ -105,37 +96,25 @@ class Add_Want_Item_Form extends Component {
 
     await axios
       .post('http://localhost:8000/api/keyword/', {
-        name: this.state.info.keyword1,
+        name: this.state.info.keyword,
       })
       .then((res) => {
-        keyword1 = res.data;
-        console.log('Keyword1 is ' + keyword1);
+        keyword = res.data.id;
+        console.log('Keyword is ' + keyword);
       })
       .catch((err) => {
         console.log(err);
       });
 
     await axios
-      .post('http://localhost:8000/api/keyword/', {
-        name: this.state.info.keyword2,
-      })
-      .then((res) => {
-        keyword2 = res.data;
-        console.log('Keyword2 is ' + keyword2);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    axios
       .post('http://localhost:8000/api/parent/', {
         name: this.state.info.name,
-        owner: this.state.info.owner,
+        owner: this.state.info.owner.id,
+        keyword: keyword,
         bland: bland,
-        keyword: [keyword1, keyword2]
       })
       .then((res) => {
-        parentItem = res.data;
+        parentItem = res.data.id;
         console.log('Parent is ' + parentItem);
       })
       .catch((err) => {
@@ -145,7 +124,7 @@ class Add_Want_Item_Form extends Component {
     axios
       .post('http://localhost:8000/api/wantitem/', {
         url: this.state.info.url,
-        parent_item: parentItem,
+        parentItem: parentItem,
       })
       .then((res) => {
         const wantItem = res.data;
@@ -158,8 +137,7 @@ class Add_Want_Item_Form extends Component {
     this.setState({
       info: {
         name: '',
-        keyword1: '',
-        keyword2: '',
+        keyword: '',
         bland: '',
         url: '',
       },
@@ -182,21 +160,12 @@ class Add_Want_Item_Form extends Component {
           />
           <p>{this.state.message.name}</p>
 
-          <p>{this.state.message.keyword1}</p>
-          <p>{this.state.message.keyword2}</p>
-          <label>キーワード1</label>
+          <p>{this.state.message.keyword}</p>
+          <label>キーワード</label>
           <input
-            name="keyword1"
+            name="keyword"
             type="text"
-            value={this.state.info.keyword1}
-            onChange={this.handleChange}
-          />
-
-          <label>キーワード2</label>
-          <input
-            name="keyword2"
-            type="text"
-            value={this.state.info.keyword2}
+            value={this.state.info.keyword}
             onChange={this.handleChange}
           />
 
