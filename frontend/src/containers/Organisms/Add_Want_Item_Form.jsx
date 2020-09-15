@@ -4,19 +4,19 @@ import axios from 'axios';
 import { connect } from 'react-redux';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-class Want_Item_Form extends Component {
+class Add_Want_Item_Form extends Component {
   constructor(props) {
     super(props);
     this.state = {
       //   #インプット情報用
       info: {
-        name: this.props.name,
-        owner: this.props.owner,
-        keyword1: this.props.keyword1,
-        keyword2: this.props.keyword2,
-        keyword3: this.props.keyword3,
-        bland: this.props.bland,
-        url: this.props.rul,
+        name: '',
+        owner: '',
+        keyword1: '',
+        keyword2: '',
+        keyword3: '',
+        bland: '',
+        url: '',
       },
       //   Validation用
       // 　urlは必須項目ではないのでValidationには含めない
@@ -26,12 +26,26 @@ class Want_Item_Form extends Component {
         keyword2: '',
         keyword3: '',
         bland: '',
-        url: '',
       },
-      allBland: this.props.allBland,
+      allBland: '',
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  componentDidMount() {
+    axios
+      .get('http://localhost:8000/api/user/' + localStorage.getItem('uid'))
+      .then((res) => {
+        this.setState({ ...this.state, info: { ...this.state.info, owner: res.data } });
+        console.log(this.state.info.owner);
+      })
+      .catch((err) => console.log(err));
+
+    axios.get('http://localhost:8000/api/bland/').then(async(res) => {
+      await this.setState({ ...this.state, allBland: res.data });
+      console.log("Assignment " +this.state.allBland)
+    });
   }
 
   handleChange(e) {
@@ -56,8 +70,6 @@ class Want_Item_Form extends Component {
         return this.keywordValidation(value);
       case 'keyword3':
         return this.keywordValidation(value);
-      case 'url':
-        return this.urlValidation(value);
     }
   }
 
@@ -74,23 +86,16 @@ class Want_Item_Form extends Component {
     return '';
   }
 
-  urlValidation(value) {
-    const regex = new RegExp(
-      "^(http|https|ftp)://([a-zA-Z0-9.-]+(:[a-zA-Z0-9.&amp;%$-]+)*@)*((25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]).(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0).(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0).(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])|([a-zA-Z0-9-]+.)*[a-zA-Z0-9-]+.(com|edu|gov|int|mil|net|org|biz|arpa|info|name|pro|aero|coop|museum|[a-zA-Z]{2}))(:[0-9]+)*(/($|[a-zA-Z0-9.,?'\\+&amp;%$#=~_-]+))*$"
-    );
-    if (!regex.test(value)) return '正しいURLの形式で入力をしてください。';
-    return '';
-  }
-
   handleSubmit = async () => {
     let bland_id;
     let keyword_ids = [];
     let parentItem_id;
 
     if (this.state.info.bland !== '') {
-      await axios[this.props.method](this.props.blandUrl, {
-        name: this.state.info.bland,
-      })
+      await axios
+        .post('http://localhost:8000/api/bland/', {
+          name: this.state.info.bland,
+        })
         .then((res) => {
           bland_id = res.data.id;
         })
@@ -100,9 +105,10 @@ class Want_Item_Form extends Component {
     }
 
     if (this.state.info.keyword1 !== '') {
-      await axios[this.props.method](this.props.keywordUrl, {
-        name: this.state.info.keyword1,
-      })
+      await axios
+        .post('http://localhost:8000/api/keyword/', {
+          name: this.state.info.keyword1,
+        })
         .then((res) => {
           keyword_ids = [...keyword_ids, res.data.id];
           console.log('Keyword1 is ' + keyword_ids);
@@ -113,9 +119,10 @@ class Want_Item_Form extends Component {
     }
 
     if (this.state.info.keyword2 !== '') {
-      await axios[this.props.method]('this.props.keywordUrl', {
-        name: this.state.info.keyword2,
-      })
+      await axios
+        .post('http://localhost:8000/api/keyword/', {
+          name: this.state.info.keyword2,
+        })
         .then((res) => {
           keyword_ids = [...keyword_ids, res.data.id];
           console.log('Keyword2 is ' + keyword_ids);
@@ -126,9 +133,10 @@ class Want_Item_Form extends Component {
     }
 
     if (this.state.info.keyword3 !== '') {
-      await axios[this.props.method]('this.props.keywordUrl', {
-        name: this.state.info.keyword3,
-      })
+      await axios
+        .post('http://localhost:8000/api/keyword/', {
+          name: this.state.info.keyword3,
+        })
         .then((res) => {
           keyword_ids = [...keyword_ids, res.data.id];
           console.log('Keyword3 is ' + keyword_ids);
@@ -138,12 +146,13 @@ class Want_Item_Form extends Component {
         });
     }
 
-    await axios[this.props.method](this.props.parentUrl, {
-      name: this.state.info.name,
-      owner: this.state.info.owner.id,
-      bland: bland_id,
-      keyword: keyword_ids,
-    })
+    await axios
+      .post('http://localhost:8000/api/parent/', {
+        name: this.state.info.name,
+        owner: this.state.info.owner.id,
+        bland: bland_id,
+        keyword: keyword_ids,
+      })
       .then((res) => {
         parentItem_id = res.data.id;
         console.log('Parent is ' + parentItem_id);
@@ -152,10 +161,11 @@ class Want_Item_Form extends Component {
         console.log(err);
       });
 
-    axios[this.props.method](this.props.wantItemUrl, {
-      url: this.state.info.url,
-      parentItem: parentItem_id,
-    })
+    axios
+      .post('http://localhost:8000/api/wantitem/', {
+        url: this.state.info.url,
+        parentItem: parentItem_id,
+      })
       .then((res) => {
         const wantItem = res.data;
         console.log('wantItem is ' + wantItem);
@@ -179,7 +189,7 @@ class Want_Item_Form extends Component {
   render() {
     const { info, message } = this.state;
     if (this.state.info.owner === '' || this.state.allBland === '') {
-      return <CircularProgress />;
+      return null;
     } else {
       return (
         <div>
@@ -221,7 +231,6 @@ class Want_Item_Form extends Component {
 
           <label>ブランド</label>
           <select name="bland" onChange={this.handleChange}>
-            <option value="">ブランドなし</option>
             {this.state.allBland.map((bland, idx) => {
               return (
                 <option key={idx} value={bland.name}>
@@ -233,8 +242,6 @@ class Want_Item_Form extends Component {
 
           <label>商品参考URL</label>
           <input name="url" type="text" value={this.state.info.url} onChange={this.handleChange} />
-          <p>{this.state.message.url}</p>
-
           <input
             type="button"
             value="登録"
@@ -245,8 +252,7 @@ class Want_Item_Form extends Component {
               this.state.message.name ||
               this.state.message.keyword1 ||
               this.state.message.keyword2 ||
-              this.state.message.keyword3 ||
-              this.state.message.url
+              this.state.message.keyword3
             }
           />
         </div>
@@ -257,9 +263,10 @@ class Want_Item_Form extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    uid: state.uid,
     loading: state.loading,
     error: state.error,
   };
 };
 
-export default connect(mapStateToProps)(Want_Item_Form);
+export default connect(mapStateToProps)(Add_Want_Item_Form);

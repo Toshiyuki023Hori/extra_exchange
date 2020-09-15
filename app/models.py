@@ -40,8 +40,8 @@ class User(AbstractUser):
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(max_length=100, unique=True)
     profile = models.TextField(max_length=800, blank=True, null=True)
-    icon = models.ImageField(blank=True, null=True)
-    background = models.ImageField(blank=True, null=True)
+    icon = models.ImageField(upload_to="images/", blank=True, null=True)
+    background = models.ImageField(upload_to="images/", blank=True, null=True)
     # AbstractUserはfirst_name,last_nameを保持しているため無効化
     first_name = None
     last_name = None
@@ -217,7 +217,7 @@ class Comment(models.Model):
 
 
 class Item_Image(models.Model):
-    image = models.ImageField()
+    image = models.ImageField(upload_to="images/")
     item = models.ForeignKey(
         Give_Item, on_delete=models.CASCADE, related_name="item_image")
 

@@ -16,6 +16,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls import url
+from django.conf import settings #画像参照のため追加
+from django.contrib.staticfiles.urls import static #画像参照のため追加
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns #画像参照のため追加
 
 urlpatterns = [
     path("api/", include("app.urls")),
@@ -23,3 +26,6 @@ urlpatterns = [
     url('rest-auth/', include('rest_auth.urls')),
     url('rest-auth/registration/', include('rest_auth.registration.urls'))
 ]
+
+urlpatterns += staticfiles_urlpatterns()
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
