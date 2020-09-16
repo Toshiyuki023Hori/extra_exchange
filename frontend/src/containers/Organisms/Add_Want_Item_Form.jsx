@@ -37,18 +37,18 @@ class Add_Want_Item_Form extends Component {
     axios
       .get('http://localhost:8000/api/user/' + localStorage.getItem('uid'))
       .then((res) => {
-        this.setState({ ...this.state, info: { ...this.state.info, owner: res.data } });
+        this.setState({ info: { ...this.state.info, owner: res.data } });
         console.log(this.state.info.owner);
       })
       .catch((err) => console.log(err));
 
-    axios.get('http://localhost:8000/api/bland/').then(async(res) => {
+    axios.get('http://localhost:8000/api/bland/').then(async (res) => {
       await this.setState({ ...this.state, allBland: res.data });
-      console.log("Assignment " +this.state.allBland)
+      console.log('Assignment ' + this.state.allBland);
     });
   }
 
-  handleChange(e) {
+  handleChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
     const { info, message } = this.state;
@@ -58,7 +58,7 @@ class Add_Want_Item_Form extends Component {
     this.setState({
       message: { ...message, [name]: this.validator(name, value) },
     });
-  }
+  };
 
   validator(name, value) {
     switch (name) {

@@ -16,9 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls import url
-from django.conf import settings #画像参照のため追加
-from django.contrib.staticfiles.urls import static #画像参照のため追加
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns #画像参照のため追加
+# 以下画像アップロード機能用
+from django.conf import settings
+from django.contrib.staticfiles.urls import static
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
     path("api/", include("app.urls")),
