@@ -71,7 +71,7 @@ class Add_Give_Item_Form extends Component {
   }
 
   // ===========           ===========           ===========           ===========           ===========
-  // ===========           ===========           onClick時のアクション           ===========           ===========
+  // ===========           ===========           state変更に関するメソッド           ===========           ===========
   // ===========           ===========           ===========           ===========           ===========
 
   handleChange = (e) => {
@@ -96,6 +96,8 @@ class Add_Give_Item_Form extends Component {
         return new Promise((resolve, reject) => {
           const reader = new FileReader();
           reader.addEventListener('load', (event) => {
+            // この時、送信されてthis.state.info.imagesの中にある
+            // 各imageがevent.target.resultとなる
             resolve(event.target.result);
           });
           reader.addEventListener('error', reject);

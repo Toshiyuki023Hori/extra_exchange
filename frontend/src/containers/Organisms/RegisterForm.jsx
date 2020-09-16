@@ -28,6 +28,10 @@ class RegisterForm extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
+  // ===========           ===========           ===========           ===========           ===========
+  // ===========           ===========           state変更に関するメソッド           ===========           ===========
+  // ===========           ===========           ===========           ===========           ===========
+
   handleChange(e) {
     const name = e.target.name;
     const value = e.target.value;
@@ -39,6 +43,10 @@ class RegisterForm extends React.Component {
       message: { ...message, [name]: this.validator(name, value) },
     });
   }
+
+  // ===========           ===========           ===========           ===========           ===========
+  // ===========           ===========           Validation           ===========           ===========
+  // ===========           ===========           ===========           ===========           ===========
 
   validator(name, value) {
     switch (name) {
@@ -81,6 +89,10 @@ class RegisterForm extends React.Component {
     return '';
   }
 
+  // ===========           ===========           ===========           ===========           ===========
+  // ===========           ===========           Form送信に関するメソッド           ===========           ===========
+  // ===========           ===========           ===========           ===========           ===========
+
   handleSubmit = () => {
     this.props.onAuth(this.state.info.username, this.state.info.email, this.state.info.password);
 
@@ -95,7 +107,7 @@ class RegisterForm extends React.Component {
     });
   };
 
-render() {
+  render() {
     let errorMessage = null;
     if (this.props.error) {
       errorMessage = <p>{this.props.error.message}</p>;
@@ -105,57 +117,67 @@ render() {
     return (
       <>
         {errorMessage}
-        <label>ユーザーネーム</label>
-        <input
-          name="username"
-          type="text"
-          value={this.state.info.username}
-          onChange={this.handleChange}
-        />
-        <p>{this.state.message.username}</p>
+        <div>
+          <div className="nameForm textForm">
+            <label>ユーザーネーム</label>
+            <input
+              name="username"
+              type="text"
+              value={this.state.info.username}
+              onChange={this.handleChange}
+            />
+            <p>{this.state.message.username}</p>
+          </div>
 
-        <label>メール</label>
-        <input
-          name="email"
-          type="email"
-          value={this.state.info.email}
-          onChange={this.handleChange}
-        />
-        <p>{this.state.message.email}</p>
+          <div className="emailForm textForm">
+            <label>メール</label>
+            <input
+              name="email"
+              type="email"
+              value={this.state.info.email}
+              onChange={this.handleChange}
+            />
+            <p>{this.state.message.email}</p>
+          </div>
 
-        <label>パスワード</label>
-        <input
-          name="password"
-          type="password"
-          value={this.state.info.password}
-          onChange={this.handleChange}
-        />
-        <p>{this.state.message.password}</p>
+          <div className="passwordForm textForm">
+            <label>パスワード</label>
+            <input
+              name="password"
+              type="password"
+              value={this.state.info.password}
+              onChange={this.handleChange}
+            />
+            <p>{this.state.message.password}</p>
+          </div>
 
-        <label>パスワード確認</label>
-        <input
-          name="confirmPass"
-          type="password"
-          value={this.state.info.confirmPass}
-          onChange={this.handleChange}
-        />
-        <p>{this.state.message.confirmPass}</p>
+          <div className="passwordForm textForm">
+            <label>パスワード確認</label>
+            <input
+              name="confirmPass"
+              type="password"
+              value={this.state.info.confirmPass}
+              onChange={this.handleChange}
+            />
+            <p>{this.state.message.confirmPass}</p>
+          </div>
 
-        <MiddleButton
-          btn_name="登録"
-          btn_type="submit"
-          btn_func={this.handleSubmit}
-          btn_disable={
-            !this.state.info.username ||
-            !this.state.info.email ||
-            !this.state.info.password ||
-            !this.state.info.confirmPass ||
-            this.state.message.username ||
-            this.state.message.email ||
-            this.state.message.password ||
-            this.state.message.confirmPass
-          }
-        />
+          <MiddleButton
+            btn_name="登録"
+            btn_type="submit"
+            btn_func={this.handleSubmit}
+            btn_disable={
+              !this.state.info.username ||
+              !this.state.info.email ||
+              !this.state.info.password ||
+              !this.state.info.confirmPass ||
+              this.state.message.username ||
+              this.state.message.email ||
+              this.state.message.password ||
+              this.state.message.confirmPass
+            }
+          />
+        </div>
       </>
     );
   }
