@@ -270,6 +270,7 @@ class Keyword(models.Model):
 class Want_Item(models.Model):
     url = models.URLField(max_length=250, null=True, blank=True)
     parent_item = models.ForeignKey(
+        # Give_Itemを表現する時のために、null=True
         "Parent_Item", null=True, on_delete=models.CASCADE, related_name="want_item")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

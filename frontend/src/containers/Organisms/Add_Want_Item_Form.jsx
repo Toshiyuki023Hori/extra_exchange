@@ -102,6 +102,7 @@ class Add_Want_Item_Form extends Component {
 
   handleSubmit = async () => {
     let keywordsList = [];
+    let newKeyword = [];
     let bland_id = this.state.info.bland;
     let keyword_ids = [];
     let parentItem_id;
@@ -125,16 +126,38 @@ class Add_Want_Item_Form extends Component {
     await Promise.all(
       keywordsList.map(async (keyword) => {
         await axios
-          .post(localhostUrl + 'keyword/', {
-            name: keyword,
-          })
+          .get(localhostUrl + 'keyword/?name=' + keyword)
           .then((res) => {
-            keyword_ids = [...keyword_ids, res.data.id];
-            console.log('bland_id is ' + bland_id);
+            console.log(res);
+            // すでにDB内に存在していたらarrayに代入されて返ってくる
+            // 新規のKeywordなら、DBに存在していないためempty array が返ってくる
+            if (res.data.length !== 0) {
+              keyword_ids = [...keyword_ids, res.data[0].id];
+            } else {
+              newKeyword = [...newKeyword, keyword];
+            }
+            console.log('keyword_id is ' + keyword_ids);
+            console.log('New words are' + newKeyword);
           })
           .catch((err) => console.log(err));
       })
     );
+
+    if (newKeyword.length !== 0) {
+      await Promise.all(
+        newKeyword.map(async (keyword) => {
+          await axios
+            .post(localhostUrl + 'keyword/', {
+              name: keyword,
+            })
+            .then((res) => {
+              keyword_ids = [...keyword_ids, res.data.id];
+              console.log(keyword_ids);
+            })
+            .catch((err) => console.log(err));
+        })
+      );
+    }
 
     await axios
       .post(localhostUrl + 'parent/', {
