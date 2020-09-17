@@ -49,9 +49,11 @@ class Add_Give_Item_Form extends Component {
   // ===========           ===========           ===========           ===========           ===========
 
   componentDidMount() {
+    const localhostUrl = 'http://localhost:8000/api/';
+
     // Parent_ItemとGive_Itemは外部キーとしてUserを持っているため、レンダー時にログインユーザーを取得
     axios
-      .get('http://localhost:8000/api/user/' + localStorage.getItem('uid'))
+      .get(localhostUrl + 'user/' + localStorage.getItem('uid'))
       .then((res) => {
         this.setState({ info: { ...this.state.info, owner: res.data } });
         console.log(this.state.info.owner);
@@ -59,12 +61,12 @@ class Add_Give_Item_Form extends Component {
       .catch((err) => console.log(err));
 
     // ドロップダウン式フォームのためにレンダー時にDB内のカテゴリとブランドを全て表示
-    axios.get('http://localhost:8000/api/bland/').then(async (res) => {
+    axios.get(localhostUrl + 'bland/').then(async (res) => {
       await this.setState({ ...this.state, allBland: res.data });
       console.log('Assignment ' + this.state.allBland);
     });
 
-    axios.get('http://localhost:8000/api/category/').then((res) => {
+    axios.get(localhostUrl + 'category/').then((res) => {
       this.setState({ ...this.state, allCategory: res.data });
       console.log('Assignment ' + this.state.Category);
     });
@@ -174,68 +176,73 @@ class Add_Give_Item_Form extends Component {
     return '';
   }
 
+  // ===========           ===========           ===========           ===========           ===========
+  // ===========           ===========           Form送信に関するメソッド           ===========           ===========
+  // ===========           ===========           ===========           ===========           ===========
+
   handleSubmit = async () => {
+    let keywordsList = [];
     let bland_id;
+    let category_id;
     let keyword_ids = [];
     let parentItem_id;
+    let giveItem_id;
+    const localhostUrl = 'http://localhost:8000/api/';
 
-    if (this.state.info.bland !== '') {
-      await axios
-        .post('http://localhost:8000/api/bland/', {
-          name: this.state.info.bland,
-        })
-        .then((res) => {
-          bland_id = res.data.id;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+    const hasValueInKeyword = (keyword) => {
+      if (keyword !== '') {
+        keywordsList = [...keywordsList, keyword];
+      } else {
+      }
+    };
 
-    if (this.state.info.keyword1 !== '') {
-      await axios
-        .post('http://localhost:8000/api/keyword/', {
-          name: this.state.info.keyword1,
-        })
-        .then((res) => {
-          keyword_ids = [...keyword_ids, res.data.id];
-          console.log('Keyword1 is ' + keyword_ids);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+    hasValueInKeyword(this.state.info.keyword1);
+    hasValueInKeyword(this.state.info.keyword2);
+    hasValueInKeyword(this.state.info.keyword3);
 
-    if (this.state.info.keyword2 !== '') {
-      await axios
-        .post('http://localhost:8000/api/keyword/', {
-          name: this.state.info.keyword2,
-        })
-        .then((res) => {
-          keyword_ids = [...keyword_ids, res.data.id];
-          console.log('Keyword2 is ' + keyword_ids);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+    // Parent_Item = name, owner , keyword(Keyword), bland(Bland)
+    // Give_Item = state, detail, category(Category), parent_item(Parent_Item)
+    // Item_Image = image, Item(Give_Item)
+    // Category = name
+    // Bland = name
+    // Keyword = name
 
-    if (this.state.info.keyword3 !== '') {
-      await axios
-        .post('http://localhost:8000/api/keyword/', {
-          name: this.state.info.keyword3,
-        })
-        .then((res) => {
-          keyword_ids = [...keyword_ids, res.data.id];
-          console.log('Keyword3 is ' + keyword_ids);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+    // モデル作成順序
+    // Bland, Category, Keyword => Parent_Item => Give_Item => Item_Image
 
     await axios
-      .post('http://localhost:8000/api/parent/', {
+      .all([
+        axios.post(localhostUrl + 'bland/', {
+          name: this.state.info.bland,
+        }),
+        axios.post(localhostUrl + 'category/', {
+          name: this.state.info.category,
+        }),
+      ])
+      .then(
+        axios.spread((blandData, categoryData) => {
+          category_id = categoryData.data.id;
+          bland_id = blandData.data.id;
+          console.log('Succeeded, bland is ' + bland_id + 'and ' + category_id);
+        })
+      )
+      .catch((err) => console.log(err));
+
+    await Promise.all(
+      keywordsList.map(async (keyword) => {
+        await axios
+          .post(localhostUrl + 'keyword/', {
+            name: keyword,
+          })
+          .then((res) => {
+            keyword_ids = [...keyword_ids, res.data.id];
+          })
+          .catch((err) => console.log(err));
+      })
+    );
+
+    await axios
+      .post(localhostUrl + 'parent/', {
         name: this.state.info.name,
         owner: this.state.info.owner.id,
         bland: bland_id,
@@ -249,20 +256,30 @@ class Add_Give_Item_Form extends Component {
         console.log(err);
       });
 
-    axios
-      .post('http://localhost:8000/api/giveitem/', {
+    await axios
+      .post(localhostUrl + 'giveitem/', {
         state: this.state.info.state,
-        category: this.state.info.category,
+        category: category_id,
         detail: this.state.info.detail,
         parentItem: parentItem_id,
       })
       .then((res) => {
-        const giveItem = res.data;
-        console.log('giveItem is ' + giveItem);
+        giveItem_id = res.data.id;
+        console.log('giveItem is ' + giveItem_id);
       })
       .catch((err) => {
         console.log(err);
       });
+
+    this.state.info.images.forEach((image) => {
+      axios
+        .post(localhostUrl + 'image/', {
+          image: image,
+          item: giveItem_id,
+        })
+        .then((res) => console.log(res.data))
+        .catch((err) => console.log(err));
+    });
 
     this.setState({
       info: {
