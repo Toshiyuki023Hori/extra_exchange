@@ -25,7 +25,6 @@ class Add_Want_Item_Form extends Component {
         keyword1: '',
         keyword2: '',
         keyword3: '',
-        bland: '',
       },
       allBland: '',
     };
@@ -103,7 +102,7 @@ class Add_Want_Item_Form extends Component {
 
   handleSubmit = async () => {
     let keywordsList = [];
-    let bland_id;
+    let bland_id = this.state.info.bland;
     let keyword_ids = [];
     let parentItem_id;
     const localhostUrl = 'http://localhost:8000/api/';
@@ -131,7 +130,7 @@ class Add_Want_Item_Form extends Component {
           })
           .then((res) => {
             keyword_ids = [...keyword_ids, res.data.id];
-            console.log("bland_id is " + bland_id)
+            console.log('bland_id is ' + bland_id);
           })
           .catch((err) => console.log(err));
       })
@@ -183,7 +182,7 @@ class Add_Want_Item_Form extends Component {
   render() {
     const { info, message } = this.state;
     if (this.state.info.owner === '' || this.state.allBland === '') {
-      return null;
+      return <CircularProgress />;
     } else {
       return (
         <div>
@@ -230,9 +229,10 @@ class Add_Want_Item_Form extends Component {
           <div>
             <label>ブランド</label>
             <select name="bland" onChange={this.handleChange}>
+              <option value="">ブランド無し</option>
               {this.state.allBland.map((bland, idx) => {
                 return (
-                  <option key={idx} value={bland}>
+                  <option key={idx} value={bland.id}>
                     {bland.name}
                   </option>
                 );

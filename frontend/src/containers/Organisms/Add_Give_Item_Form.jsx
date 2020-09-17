@@ -192,8 +192,8 @@ class Add_Give_Item_Form extends Component {
     // Bland, Category, Keyword => Parent_Item => Give_Item => Item_Image
 
     let keywordsList = [];
-    const bland_id = this.state.info.bland.id;
-    const category_id = this.state.info.category.id;
+    const bland_id = this.state.info.bland;
+    const category_id = this.state.info.category;
     let keyword_ids = [];
     let parentItem_id;
     let giveItem_id;
@@ -341,7 +341,7 @@ class Add_Give_Item_Form extends Component {
             <select name="bland" onChange={this.handleChange}>
               {this.state.allBland.map((bland, idx) => {
                 return (
-                  <option key={idx} value={bland}>
+                  <option key={idx} value={bland.id}>
                     {bland.name}
                   </option>
                 );
@@ -354,7 +354,7 @@ class Add_Give_Item_Form extends Component {
             <select name="category" onChange={this.handleChange}>
               <option value="">---</option>
               {this.state.allCategory.map((category) => {
-                return <option value={category}>{category.name}</option>;
+                return <option value={category.id}>{category.name}</option>;
               })}
             </select>
             <p>{this.state.message.category}</p>
