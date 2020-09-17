@@ -18,7 +18,7 @@ class Add_Give_Item_Form extends Component {
         keyword2: '',
         keyword3: '',
         bland: '',
-        state: '未使用、新品',
+        state: '新品',
         category: '',
         images: [],
         detail: '',
@@ -49,9 +49,11 @@ class Add_Give_Item_Form extends Component {
   // ===========           ===========           ===========           ===========           ===========
 
   componentDidMount() {
+    const localhostUrl = 'http://localhost:8000/api/';
+
     // Parent_ItemとGive_Itemは外部キーとしてUserを持っているため、レンダー時にログインユーザーを取得
     axios
-      .get('http://localhost:8000/api/user/' + localStorage.getItem('uid'))
+      .get(localhostUrl + 'user/' + localStorage.getItem('uid'))
       .then((res) => {
         this.setState({ info: { ...this.state.info, owner: res.data } });
         console.log(this.state.info.owner);
@@ -59,19 +61,19 @@ class Add_Give_Item_Form extends Component {
       .catch((err) => console.log(err));
 
     // ドロップダウン式フォームのためにレンダー時にDB内のカテゴリとブランドを全て表示
-    axios.get('http://localhost:8000/api/bland/').then(async (res) => {
+    axios.get(localhostUrl + 'bland/').then(async (res) => {
       await this.setState({ ...this.state, allBland: res.data });
       console.log('Assignment ' + this.state.allBland);
     });
 
-    axios.get('http://localhost:8000/api/category/').then((res) => {
+    axios.get(localhostUrl + 'category/').then((res) => {
       this.setState({ ...this.state, allCategory: res.data });
       console.log('Assignment ' + this.state.Category);
     });
   }
 
   // ===========           ===========           ===========           ===========           ===========
-  // ===========           ===========           onClick時のアクション           ===========           ===========
+  // ===========           ===========           state変更に関するメソッド           ===========           ===========
   // ===========           ===========           ===========           ===========           ===========
 
   handleChange = (e) => {
@@ -96,6 +98,8 @@ class Add_Give_Item_Form extends Component {
         return new Promise((resolve, reject) => {
           const reader = new FileReader();
           reader.addEventListener('load', (event) => {
+            // この時、送信されてthis.state.info.imagesの中にある
+            // 各imageがevent.target.resultとなる
             resolve(event.target.result);
           });
           reader.addEventListener('error', reject);
@@ -172,68 +176,55 @@ class Add_Give_Item_Form extends Component {
     return '';
   }
 
+  // ===========           ===========           ===========           ===========           ===========
+  // ===========           ===========           Form送信に関するメソッド           ===========           ===========
+  // ===========           ===========           ===========           ===========           ===========
+
   handleSubmit = async () => {
-    let bland_id;
+    // Parent_Item = name, owner , keyword(Keyword), bland(Bland)
+    // Give_Item = state, detail, category(Category), parent_item(Parent_Item)
+    // Item_Image = image, Item(Give_Item)
+    // Category = name
+    // Bland = name
+    // Keyword = name
+
+    // モデル作成順序
+    // Bland, Category, Keyword => Parent_Item => Give_Item => Item_Image
+
+    let keywordsList = [];
+    const bland_id = this.state.info.bland;
+    const category_id = this.state.info.category;
     let keyword_ids = [];
     let parentItem_id;
+    let giveItem_id;
+    const localhostUrl = 'http://localhost:8000/api/';
 
-    if (this.state.info.bland !== '') {
-      await axios
-        .post('http://localhost:8000/api/bland/', {
-          name: this.state.info.bland,
-        })
-        .then((res) => {
-          bland_id = res.data.id;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+    const hasValueInKeyword = (keyword) => {
+      if (keyword !== '') {
+        keywordsList = [...keywordsList, keyword];
+      } else {
+      }
+    };
 
-    if (this.state.info.keyword1 !== '') {
-      await axios
-        .post('http://localhost:8000/api/keyword/', {
-          name: this.state.info.keyword1,
-        })
-        .then((res) => {
-          keyword_ids = [...keyword_ids, res.data.id];
-          console.log('Keyword1 is ' + keyword_ids);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+    hasValueInKeyword(this.state.info.keyword1);
+    hasValueInKeyword(this.state.info.keyword2);
+    hasValueInKeyword(this.state.info.keyword3);
 
-    if (this.state.info.keyword2 !== '') {
-      await axios
-        .post('http://localhost:8000/api/keyword/', {
-          name: this.state.info.keyword2,
-        })
-        .then((res) => {
-          keyword_ids = [...keyword_ids, res.data.id];
-          console.log('Keyword2 is ' + keyword_ids);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-
-    if (this.state.info.keyword3 !== '') {
-      await axios
-        .post('http://localhost:8000/api/keyword/', {
-          name: this.state.info.keyword3,
-        })
-        .then((res) => {
-          keyword_ids = [...keyword_ids, res.data.id];
-          console.log('Keyword3 is ' + keyword_ids);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+    await Promise.all(
+      keywordsList.map(async (keyword) => {
+        await axios
+          .post(localhostUrl + 'keyword/', {
+            name: keyword,
+          })
+          .then((res) => {
+            keyword_ids = [...keyword_ids, res.data.id];
+          })
+          .catch((err) => console.log(err));
+      })
+    );
 
     await axios
-      .post('http://localhost:8000/api/parent/', {
+      .post(localhostUrl + 'parent/', {
         name: this.state.info.name,
         owner: this.state.info.owner.id,
         bland: bland_id,
@@ -247,20 +238,30 @@ class Add_Give_Item_Form extends Component {
         console.log(err);
       });
 
-    axios
-      .post('http://localhost:8000/api/giveitem/', {
+    await axios
+      .post(localhostUrl + 'giveitem/', {
         state: this.state.info.state,
-        category: this.state.info.category,
+        category: category_id,
         detail: this.state.info.detail,
         parentItem: parentItem_id,
       })
       .then((res) => {
-        const giveItem = res.data;
-        console.log('giveItem is ' + giveItem);
+        giveItem_id = res.data.id;
+        console.log('giveItem is ' + giveItem_id);
       })
       .catch((err) => {
         console.log(err);
       });
+
+    this.state.info.images.forEach((image) => {
+      axios
+        .post(localhostUrl + 'image/', {
+          image: image,
+          item: giveItem_id,
+        })
+        .then((res) => console.log(res.data))
+        .catch((err) => console.log(err));
+    });
 
     this.setState({
       info: {
@@ -295,12 +296,12 @@ class Add_Give_Item_Form extends Component {
           <div className="stateForm dropdownForm">
             <label>状態</label>
             <select name="state">
-              <option value="新品、未使用">新品、未使用</option>
-              <option value="未使用に近い">未使用に近い</option>
-              <option value="目立った傷や汚れなし">目立った傷や汚れなし</option>
+              <option value="新品">新品、未使用</option>
+              <option value="未使用">未使用に近い</option>
+              <option value="傷や汚れ無し">目立った傷や汚れなし</option>
               <option value="やや傷や汚れあり">やや傷や汚れあり</option>
               <option value="傷や汚れあり">傷や汚れあり</option>
-              <option value="全体的に状態が悪い">全体的に状態が悪い</option>
+              <option value="状態が悪い">全体的に状態が悪い</option>
             </select>
           </div>
 
@@ -340,7 +341,7 @@ class Add_Give_Item_Form extends Component {
             <select name="bland" onChange={this.handleChange}>
               {this.state.allBland.map((bland, idx) => {
                 return (
-                  <option key={idx} value={bland.name}>
+                  <option key={idx} value={bland.id}>
                     {bland.name}
                   </option>
                 );
@@ -353,7 +354,7 @@ class Add_Give_Item_Form extends Component {
             <select name="category" onChange={this.handleChange}>
               <option value="">---</option>
               {this.state.allCategory.map((category) => {
-                return <option value={category}>{category.name}</option>;
+                return <option value={category.id}>{category.name}</option>;
               })}
             </select>
             <p>{this.state.message.category}</p>

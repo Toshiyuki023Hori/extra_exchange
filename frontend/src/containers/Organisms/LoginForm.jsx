@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import MiddleButton from '../../presentational/shared/MiddleButton';
 import { connect } from 'react-redux';
-import * as actions from "../../reducks/auth/actions"
+import * as actions from '../../reducks/auth/actions';
 
 class LoginForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-        //   #インプット情報用
+      //   #インプット情報用
       info: {
         username: '',
         password: '',
@@ -23,6 +23,10 @@ class LoginForm extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
+  // ===========           ===========           ===========           ===========           ===========
+  // ===========           ===========           state変更に関するメソッド           ===========           ===========
+  // ===========           ===========           ===========           ===========           ===========
+
   handleChange(e) {
     const name = e.target.name;
     const value = e.target.value;
@@ -34,6 +38,10 @@ class LoginForm extends React.Component {
       message: { ...message, [name]: this.validator(name, value) },
     });
   }
+
+  // ===========           ===========           ===========           ===========           ===========
+  // ===========           ===========           Validation           ===========           ===========
+  // ===========           ===========           ===========           ===========           ===========
 
   validator(name, value) {
     switch (name) {
@@ -59,15 +67,19 @@ class LoginForm extends React.Component {
     return '';
   }
 
+  // ===========           ===========           ===========           ===========           ===========
+  // ===========           ===========           Form送信に関するメソッド           ===========           ===========
+  // ===========           ===========           ===========           ===========           ===========
+
   handleSubmit = () => {
-    this.props.onAuth(this.state.info.username, this.state.info.password)
+    this.props.onAuth(this.state.info.username, this.state.info.password);
 
     // インプットを空白に戻すためのコード
     this.setState({
-        info:{
-            username: '',
-            password: '',
-        }
+      info: {
+        username: '',
+        password: '',
+      },
     });
   };
 
@@ -80,42 +92,45 @@ class LoginForm extends React.Component {
     const { info, message } = this.state;
     return (
       <>
-        {errorMessage}
-        <label>ユーザーネーム</label>
-        <input
-          name="username"
-          type="text"
-          value={this.state.info.username}
-          onChange={this.handleChange}
-        />
-        <p>{this.state.message.username}</p>
+        <div>
+          {errorMessage}
 
-        <label>パスワード</label>
-        <input
-          name="password"
-          type="password"
-          value={this.state.info.password}
-          onChange={this.handleChange}
-        />
-        <p>{this.state.message.password}</p>
+          <div>
+            <label>ユーザーネーム</label>
+            <input
+              name="username"
+              type="text"
+              value={this.state.info.username}
+              onChange={this.handleChange}
+            />
+            <p>{this.state.message.username}</p>
+          </div>
 
-        <MiddleButton
-          btn_name="ログイン"
-          btn_type="submit"
-          btn_func={this.handleSubmit}
-          btn_disable={
-            !this.state.info.username ||
-            !this.state.info.password ||
-            this.state.message.username ||
-            this.state.message.password
-          }
-        />
+          <div>
+            <label>パスワード</label>
+            <input
+              name="password"
+              type="password"
+              value={this.state.info.password}
+              onChange={this.handleChange}
+            />
+            <p>{this.state.message.password}</p>
+          </div>
 
-        <MiddleButton
-        btn_name="サインアウト"
-        btn_type="submit"
-        btn_func={this.props.logout}
-        />
+          <MiddleButton
+            btn_name="ログイン"
+            btn_type="submit"
+            btn_func={this.handleSubmit}
+            btn_disable={
+              !this.state.info.username ||
+              !this.state.info.password ||
+              this.state.message.username ||
+              this.state.message.password
+            }
+          />
+
+          <MiddleButton btn_name="サインアウト" btn_type="submit" btn_func={this.props.logout} />
+        </div>
       </>
     );
   }
@@ -133,11 +148,11 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    onAuth:(username,password) => dispatch(actions.authLogin(username, password)),
-    logout:() => dispatch(actions.logout)
-  }
-}
+    onAuth: (username, password) => dispatch(actions.authLogin(username, password)),
+    logout: () => dispatch(actions.logout),
+  };
+};
 
-  export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);
+export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);
