@@ -1,6 +1,7 @@
 from app.models import *
 from rest_framework import viewsets, permissions
 from .serializers import *
+from django_filters import rest_framework as filters
 
 
 # ======      =======      ======      以下、Modelsに関わるViewSet     ======     ======      =======      =======
@@ -122,6 +123,9 @@ class KeywordViewSet(viewsets.ModelViewSet):
         permissions.AllowAny
     ]
     serializer_class = KeywordSerializer
+
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_fields = "__all__"
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
