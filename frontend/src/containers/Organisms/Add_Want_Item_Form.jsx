@@ -38,9 +38,10 @@ class Add_Want_Item_Form extends Component {
   // ===========           ===========           ===========           ===========           ===========
 
   componentDidMount() {
+    const localhostUrl = 'http://localhost:8000/api/';
     // ParentItemのownerが外部キーなので、レンダー時にログインユーザーをセット
     axios
-      .get('http://localhost:8000/api/user/' + localStorage.getItem('uid'))
+      .get(localhostUrl + 'user/' + localStorage.getItem('uid'))
       .then((res) => {
         this.setState({ info: { ...this.state.info, owner: res.data } });
         console.log(this.state.info.owner);
@@ -48,7 +49,7 @@ class Add_Want_Item_Form extends Component {
       .catch((err) => console.log(err));
 
     // ドロップダウンにDB内のブランドを表示させるために、レンダー時に全カテゴリをセット
-    axios.get('http://localhost:8000/api/bland/').then(async (res) => {
+    axios.get(localhostUrl + 'bland/').then(async (res) => {
       await this.setState({ ...this.state, allBland: res.data });
       console.log('Assignment ' + this.state.allBland);
     });
@@ -101,71 +102,43 @@ class Add_Want_Item_Form extends Component {
   // ===========           ===========           ===========           ===========           ===========
 
   handleSubmit = async () => {
+    let keywordsList = [];
     let bland_id;
     let keyword_ids = [];
     let parentItem_id;
+    const localhostUrl = 'http://localhost:8000/api/';
+    const hasValueInKeyword = (keyword) => {
+      if (keyword !== '') {
+        keywordsList = [...keywordsList, keyword];
+      } else {
+      }
+    };
+
+    hasValueInKeyword(this.state.info.keyword1);
+    hasValueInKeyword(this.state.info.keyword2);
+    hasValueInKeyword(this.state.info.keyword3);
 
     //
     //Parent_Itemは外部キーbland, keywordを持っているため、
     //先に上記2つのモデルを作成する必要がある。
     //
-    if (this.state.info.bland !== '') {
-      await axios
-        .post('http://localhost:8000/api/bland/', {
-          name: this.state.info.bland,
-        })
-        .then((res) => {
-          bland_id = res.data.id;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
 
-    if (this.state.info.keyword1 !== '') {
-      await axios
-        .post('http://localhost:8000/api/keyword/', {
-          name: this.state.info.keyword1,
-        })
-        .then((res) => {
-          keyword_ids = [...keyword_ids, res.data.id];
-          console.log('Keyword1 is ' + keyword_ids);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-
-    if (this.state.info.keyword2 !== '') {
-      await axios
-        .post('http://localhost:8000/api/keyword/', {
-          name: this.state.info.keyword2,
-        })
-        .then((res) => {
-          keyword_ids = [...keyword_ids, res.data.id];
-          console.log('Keyword2 is ' + keyword_ids);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-
-    if (this.state.info.keyword3 !== '') {
-      await axios
-        .post('http://localhost:8000/api/keyword/', {
-          name: this.state.info.keyword3,
-        })
-        .then((res) => {
-          keyword_ids = [...keyword_ids, res.data.id];
-          console.log('Keyword3 is ' + keyword_ids);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+    await Promise.all(
+      keywordsList.map(async (keyword) => {
+        await axios
+          .post(localhostUrl + 'keyword/', {
+            name: keyword,
+          })
+          .then((res) => {
+            keyword_ids = [...keyword_ids, res.data.id];
+            console.log("bland_id is " + bland_id)
+          })
+          .catch((err) => console.log(err));
+      })
+    );
 
     await axios
-      .post('http://localhost:8000/api/parent/', {
+      .post(localhostUrl + 'parent/', {
         name: this.state.info.name,
         owner: this.state.info.owner.id,
         bland: bland_id,
@@ -184,7 +157,7 @@ class Add_Want_Item_Form extends Component {
     // Parent_Item作成後に、作成される。
     //
     axios
-      .post('http://localhost:8000/api/wantitem/', {
+      .post(localhostUrl + 'wantitem/', {
         url: this.state.info.url,
         parentItem: parentItem_id,
       })
@@ -202,7 +175,6 @@ class Add_Want_Item_Form extends Component {
         keyword1: '',
         keyword2: '',
         keyword3: '',
-        bland: '',
         url: '',
       },
     });
@@ -260,7 +232,7 @@ class Add_Want_Item_Form extends Component {
             <select name="bland" onChange={this.handleChange}>
               {this.state.allBland.map((bland, idx) => {
                 return (
-                  <option key={idx} value={bland.name}>
+                  <option key={idx} value={bland}>
                     {bland.name}
                   </option>
                 );

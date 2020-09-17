@@ -3,7 +3,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, AbstractUser, BaseUserManager, PermissionsMixin, UserManager
 
 
-
 # Djangoの認証をユーザーネームからメールアドレスへ変えるために記述
 class CustomUserManager(UserManager):
 
@@ -141,7 +140,7 @@ class Follow(models.Model):
 
 
 class PickUp_Places(models.Model):
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, unique=True)
     choosingUser = models.ManyToManyField(
         settings.AUTH_USER_MODEL, related_name="pick_up")
 
@@ -232,7 +231,7 @@ class Item_Image(models.Model):
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
         return self.name
@@ -245,7 +244,7 @@ class Category(models.Model):
 
 
 class Bland(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.name
@@ -257,7 +256,7 @@ class Bland(models.Model):
 
 
 class Keyword(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.name
@@ -324,9 +323,9 @@ class Request(models.Model):
 
 
 class Meeting_Time(models.Model):
-    what_time = models.DateTimeField()
-    request = models.ForeignKey(
-        Request, on_delete=models.CASCADE, related_name="meeting_time")
+    what_time = models.DateTimeField(unique=True)
+    request = models.ManyToManyField(
+        Request, related_name="meeting_time")
 
     def __str__(self):
         return self.what_time.strftime("%m/%d/%Y, %H:%M:%S")

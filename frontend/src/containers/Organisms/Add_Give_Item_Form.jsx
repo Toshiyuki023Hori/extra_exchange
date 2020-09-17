@@ -18,7 +18,7 @@ class Add_Give_Item_Form extends Component {
         keyword2: '',
         keyword3: '',
         bland: '',
-        state: '未使用、新品',
+        state: '新品',
         category: '',
         images: [],
         detail: '',
@@ -181,9 +181,19 @@ class Add_Give_Item_Form extends Component {
   // ===========           ===========           ===========           ===========           ===========
 
   handleSubmit = async () => {
+    // Parent_Item = name, owner , keyword(Keyword), bland(Bland)
+    // Give_Item = state, detail, category(Category), parent_item(Parent_Item)
+    // Item_Image = image, Item(Give_Item)
+    // Category = name
+    // Bland = name
+    // Keyword = name
+
+    // モデル作成順序
+    // Bland, Category, Keyword => Parent_Item => Give_Item => Item_Image
+
     let keywordsList = [];
-    let bland_id;
-    let category_id;
+    const bland_id = this.state.info.bland.id;
+    const category_id = this.state.info.category.id;
     let keyword_ids = [];
     let parentItem_id;
     let giveItem_id;
@@ -199,34 +209,6 @@ class Add_Give_Item_Form extends Component {
     hasValueInKeyword(this.state.info.keyword1);
     hasValueInKeyword(this.state.info.keyword2);
     hasValueInKeyword(this.state.info.keyword3);
-
-    // Parent_Item = name, owner , keyword(Keyword), bland(Bland)
-    // Give_Item = state, detail, category(Category), parent_item(Parent_Item)
-    // Item_Image = image, Item(Give_Item)
-    // Category = name
-    // Bland = name
-    // Keyword = name
-
-    // モデル作成順序
-    // Bland, Category, Keyword => Parent_Item => Give_Item => Item_Image
-
-    await axios
-      .all([
-        axios.post(localhostUrl + 'bland/', {
-          name: this.state.info.bland,
-        }),
-        axios.post(localhostUrl + 'category/', {
-          name: this.state.info.category,
-        }),
-      ])
-      .then(
-        axios.spread((blandData, categoryData) => {
-          category_id = categoryData.data.id;
-          bland_id = blandData.data.id;
-          console.log('Succeeded, bland is ' + bland_id + 'and ' + category_id);
-        })
-      )
-      .catch((err) => console.log(err));
 
     await Promise.all(
       keywordsList.map(async (keyword) => {
@@ -314,12 +296,12 @@ class Add_Give_Item_Form extends Component {
           <div className="stateForm dropdownForm">
             <label>状態</label>
             <select name="state">
-              <option value="新品、未使用">新品、未使用</option>
-              <option value="未使用に近い">未使用に近い</option>
-              <option value="目立った傷や汚れなし">目立った傷や汚れなし</option>
+              <option value="新品">新品、未使用</option>
+              <option value="未使用">未使用に近い</option>
+              <option value="傷や汚れ無し">目立った傷や汚れなし</option>
               <option value="やや傷や汚れあり">やや傷や汚れあり</option>
               <option value="傷や汚れあり">傷や汚れあり</option>
-              <option value="全体的に状態が悪い">全体的に状態が悪い</option>
+              <option value="状態が悪い">全体的に状態が悪い</option>
             </select>
           </div>
 
@@ -359,7 +341,7 @@ class Add_Give_Item_Form extends Component {
             <select name="bland" onChange={this.handleChange}>
               {this.state.allBland.map((bland, idx) => {
                 return (
-                  <option key={idx} value={bland.name}>
+                  <option key={idx} value={bland}>
                     {bland.name}
                   </option>
                 );
