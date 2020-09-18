@@ -40,7 +40,6 @@ class Add_Want_Item_Form extends Component {
     // ドロップダウンにDB内のブランドを表示させるために、レンダー時に全カテゴリをセット
     axios.get(this.props.axiosUrl + 'bland/').then(async (res) => {
       await this.setState({ ...this.state, allBland: res.data });
-      console.log('Assignment ' + this.state.allBland);
       console.log(this.state.info.owner)
     });
   }
@@ -83,7 +82,6 @@ class Add_Want_Item_Form extends Component {
   keywordValidation(value) {
     if (!this.state.info.keyword1 && !this.state.info.keyword2 && !this.state.info.keyword3)
       return 'キーワードは最低1つ設定してください。';
-    if (value.length < 2 && !value == '') return '1文字のキーワードは設定できません';
     return '';
   }
 

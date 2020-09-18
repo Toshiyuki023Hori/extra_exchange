@@ -7,42 +7,42 @@ import MiddleButton from '../../presentational/shared/MiddleButton';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 class Add_Give_Item_Form extends Component {
-constructor(props) {
-  super(props);
-  this.state = {
-    //   #インプット情報用
-    info: {
-      name: '',
-      owner: '',
-      keyword1: '',
-      keyword2: '',
-      keyword3: '',
-      bland: '',
-      state: '新品',
-      category: '',
-      images: [],
-      detail: '',
-    },
-    //   Validation用
-    message: {
-      name: '',
-      keyword1: '',
-      keyword2: '',
-      keyword3: '',
-      state: '',
-      category: '',
-      images: '',
-      detail: '',
-    },
-    allCategory: null,
-    allBland: null,
-    imgUrls: [],
-  };
-  this.handleChange = this.handleChange.bind(this);
-  this.handleSubmit = this.handleSubmit.bind(this);
-  this.cancelUploadedImage = this.cancelUploadedImage.bind(this);
-  this.handleImageSelect = this.handleImageSelect.bind(this);
-}
+  constructor(props) {
+    super(props);
+    this.state = {
+      //   #インプット情報用
+      info: {
+        name: '',
+        owner: '',
+        keyword1: '',
+        keyword2: '',
+        keyword3: '',
+        bland: '',
+        state: '新品',
+        category: '',
+        images: [],
+        detail: '',
+      },
+      //   Validation用
+      message: {
+        name: '',
+        keyword1: '',
+        keyword2: '',
+        keyword3: '',
+        state: '',
+        category: '',
+        images: '',
+        detail: '',
+      },
+      allCategory: null,
+      allBland: null,
+      imgUrls: [],
+    };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.cancelUploadedImage = this.cancelUploadedImage.bind(this);
+    this.handleImageSelect = this.handleImageSelect.bind(this);
+  }
 
   // ===========           ===========           ===========           ===========           ===========
   // ===========           ===========           LifeCycleメソッド           ===========           ===========
@@ -118,8 +118,8 @@ constructor(props) {
       info: { ...this.state.info, images: [...this.state.info.images, ...e.target.files] },
     });
     this.setState({
-      message: {...this.state.message, images: this.validator("images", this.state.info.images )}
-    })
+      message: { ...this.state.message, images: this.validator('images', this.state.info.images) },
+    });
     // 画像データのURLをthis.state.imgUrlsへ送る。
     this.readImageUrl();
   };
@@ -160,7 +160,6 @@ constructor(props) {
   keywordValidation(value) {
     if (!this.state.info.keyword1 && !this.state.info.keyword2 && !this.state.info.keyword3)
       return 'キーワードは最低1つ設定してください。';
-    if (value.length < 2 && !value == '') return '1文字のキーワードは設定できません';
     return '';
   }
 
@@ -172,7 +171,7 @@ constructor(props) {
   }
 
   imageValidation(value) {
-    console.log("value is " + value)
+    console.log('value is ' + value);
     if (value.length > 5) {
       return '設定できる画像は5枚までです。';
     }
@@ -184,7 +183,7 @@ constructor(props) {
   // ===========           ===========           ===========           ===========           ===========
 
   handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     // Parent_Item = name, owner , keyword(Keyword), bland(Bland)
     // Give_Item = state, detail, category(Category), parent_item(Parent_Item)
     // Item_Image = image, Item(Give_Item)
@@ -284,7 +283,7 @@ constructor(props) {
         console.log(err);
       });
 
-    this.state.info.images.map(async(image) => {
+    this.state.info.images.map(async (image) => {
       let data = new FormData();
       await data.append('image', image);
       await data.append('item', giveItem_id);
