@@ -2,6 +2,7 @@ from app.models import *
 from rest_framework import viewsets, permissions
 from .serializers import *
 from django_filters import rest_framework as filters
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 # ======      =======      ======      以下、Modelsに関わるViewSet     ======     ======      =======      =======
@@ -93,6 +94,7 @@ class Item_ImageViewSet(viewsets.ModelViewSet):
         permissions.AllowAny
     ]
     serializer_class = Item_ImageSerializer
+
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 

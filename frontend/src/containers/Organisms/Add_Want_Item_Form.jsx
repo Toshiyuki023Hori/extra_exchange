@@ -102,7 +102,7 @@ class Add_Want_Item_Form extends Component {
 
   handleSubmit = async () => {
     let keywordsList = [];
-    let newKeyword = [];
+    let newKeywords = [];
     let bland_id = this.state.info.bland;
     let keyword_ids = [];
     let parentItem_id;
@@ -134,25 +134,24 @@ class Add_Want_Item_Form extends Component {
             if (res.data.length !== 0) {
               keyword_ids = [...keyword_ids, res.data[0].id];
             } else {
-              newKeyword = [...newKeyword, keyword];
+              newKeywords = [...newKeywords, keyword];
             }
             console.log('keyword_id is ' + keyword_ids);
-            console.log('New words are' + newKeyword);
+            console.log('New words are' + newKeywords);
           })
           .catch((err) => console.log(err));
       })
     );
 
-    if (newKeyword.length !== 0) {
+    if (newKeywords.length !== 0) {
       await Promise.all(
-        newKeyword.map(async (keyword) => {
+        newKeywords.map(async (keyword) => {
           await axios
             .post(localhostUrl + 'keyword/', {
               name: keyword,
             })
             .then((res) => {
               keyword_ids = [...keyword_ids, res.data.id];
-              console.log(keyword_ids);
             })
             .catch((err) => console.log(err));
         })
@@ -168,7 +167,6 @@ class Add_Want_Item_Form extends Component {
       })
       .then((res) => {
         parentItem_id = res.data.id;
-        console.log('Parent is ' + parentItem_id);
       })
       .catch((err) => {
         console.log(err);
@@ -185,7 +183,6 @@ class Add_Want_Item_Form extends Component {
       })
       .then((res) => {
         const wantItem = res.data;
-        console.log('wantItem is ' + wantItem);
       })
       .catch((err) => {
         console.log(err);

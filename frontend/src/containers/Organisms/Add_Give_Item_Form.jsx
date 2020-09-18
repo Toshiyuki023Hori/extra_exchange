@@ -7,42 +7,42 @@ import MiddleButton from '../../presentational/shared/MiddleButton';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 class Add_Give_Item_Form extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      //   #インプット情報用
-      info: {
-        name: '',
-        owner: '',
-        keyword1: '',
-        keyword2: '',
-        keyword3: '',
-        bland: '',
-        state: '新品',
-        category: '',
-        images: [],
-        detail: '',
-      },
-      //   Validation用
-      message: {
-        name: '',
-        keyword1: '',
-        keyword2: '',
-        keyword3: '',
-        state: '',
-        category: '',
-        images: '',
-        detail: '',
-      },
-      allCategory: null,
-      allBland: null,
-      imgUrls: [],
-    };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.cancelUploadedImage = this.cancelUploadedImage.bind(this);
-    this.handleImageSelect = this.handleImageSelect.bind(this);
-  }
+constructor(props) {
+  super(props);
+  this.state = {
+    //   #インプット情報用
+    info: {
+      name: '',
+      owner: '',
+      keyword1: '',
+      keyword2: '',
+      keyword3: '',
+      bland: '',
+      state: '新品',
+      category: '',
+      images: [],
+      detail: '',
+    },
+    //   Validation用
+    message: {
+      name: '',
+      keyword1: '',
+      keyword2: '',
+      keyword3: '',
+      state: '',
+      category: '',
+      images: '',
+      detail: '',
+    },
+    allCategory: null,
+    allBland: null,
+    imgUrls: [],
+  };
+  this.handleChange = this.handleChange.bind(this);
+  this.handleSubmit = this.handleSubmit.bind(this);
+  this.cancelUploadedImage = this.cancelUploadedImage.bind(this);
+  this.handleImageSelect = this.handleImageSelect.bind(this);
+}
 
   // ===========           ===========           ===========           ===========           ===========
   // ===========           ===========           LifeCycleメソッド           ===========           ===========
@@ -117,7 +117,9 @@ class Add_Give_Item_Form extends Component {
     await this.setState({
       info: { ...this.state.info, images: [...this.state.info.images, ...e.target.files] },
     });
-    console.log(this.state.info.images);
+    this.setState({
+      message: {...this.state.message, images: this.validator("images", this.state.info.images )}
+    })
     // 画像データのURLをthis.state.imgUrlsへ送る。
     this.readImageUrl();
   };
@@ -169,8 +171,9 @@ class Add_Give_Item_Form extends Component {
     return '';
   }
 
-  imageValidation() {
-    if (this.state.info.images > 5) {
+  imageValidation(value) {
+    console.log("value is " + value)
+    if (value.length > 5) {
       return '設定できる画像は5枚までです。';
     }
     return '';
@@ -180,7 +183,8 @@ class Add_Give_Item_Form extends Component {
   // ===========           ===========           Form送信に関するメソッド           ===========           ===========
   // ===========           ===========           ===========           ===========           ===========
 
-  handleSubmit = async () => {
+  handleSubmit = async (e) => {
+    e.preventDefault()
     // Parent_Item = name, owner , keyword(Keyword), bland(Bland)
     // Give_Item = state, detail, category(Category), parent_item(Parent_Item)
     // Item_Image = image, Item(Give_Item)
@@ -191,13 +195,17 @@ class Add_Give_Item_Form extends Component {
     // モデル作成順序
     // Bland, Category, Keyword => Parent_Item => Give_Item => Item_Image
 
-    let keywordsList = [];
     const bland_id = this.state.info.bland;
     const category_id = this.state.info.category;
-    let keyword_ids = [];
     let parentItem_id;
     let giveItem_id;
+    let keyword_ids = [];
+    let keywordsList = [];
+    let newKeywords = [];
     const localhostUrl = 'http://localhost:8000/api/';
+    const config = {
+      headers: { 'content-type': 'multipart/form-data' },
+    };
 
     const hasValueInKeyword = (keyword) => {
       if (keyword !== '') {
@@ -213,15 +221,38 @@ class Add_Give_Item_Form extends Component {
     await Promise.all(
       keywordsList.map(async (keyword) => {
         await axios
-          .post(localhostUrl + 'keyword/', {
-            name: keyword,
-          })
+          .get(localhostUrl + 'keyword/?name=' + keyword)
           .then((res) => {
-            keyword_ids = [...keyword_ids, res.data.id];
+            console.log(res);
+            // すでにDB内に存在していたらarrayに代入されて返ってくる
+            // 新規のKeywordなら、DBに存在していないためempty array が返ってくる
+            if (res.data.length !== 0) {
+              keyword_ids = [...keyword_ids, res.data[0].id];
+            } else {
+              newKeywords = [...newKeywords, keyword];
+            }
+            console.log('keyword_id is ' + keyword_ids);
+            console.log('New words are' + newKeywords);
           })
           .catch((err) => console.log(err));
       })
     );
+
+    if (newKeywords.length !== 0) {
+      await Promise.all(
+        newKeywords.map(async (keyword) => {
+          await axios
+            .post(localhostUrl + 'keyword/', {
+              name: keyword,
+            })
+            .then((res) => {
+              keyword_ids = [...keyword_ids, res.data.id];
+              console.log(keyword_ids);
+            })
+            .catch((err) => console.log(err));
+        })
+      );
+    }
 
     await axios
       .post(localhostUrl + 'parent/', {
@@ -253,13 +284,15 @@ class Add_Give_Item_Form extends Component {
         console.log(err);
       });
 
-    this.state.info.images.forEach((image) => {
+    this.state.info.images.map(async(image) => {
+      let data = new FormData();
+      await data.append('image', image);
+      await data.append('item', giveItem_id);
+      console.log(data);
+
       axios
-        .post(localhostUrl + 'image/', {
-          image: image,
-          item: giveItem_id,
-        })
-        .then((res) => console.log(res.data))
+        .post(localhostUrl + 'image/', data)
+        .then((res) => console.log('You made it ! \n \n' + res.data))
         .catch((err) => console.log(err));
     });
 
@@ -269,8 +302,10 @@ class Add_Give_Item_Form extends Component {
         keyword1: '',
         keyword2: '',
         keyword3: '',
+        image: '',
         detail: '',
       },
+      imgUrls: '',
     });
   };
 
@@ -282,127 +317,133 @@ class Add_Give_Item_Form extends Component {
     } else {
       return (
         <div>
-          <div className="nameForm textForm">
-            <label>商品名</label>
-            <input
-              name="name"
-              type="text"
-              value={this.state.info.name}
-              onChange={this.handleChange}
-            />
-            <p>{this.state.message.name}</p>
-          </div>
+          <form onSubmit={this.handleSubmit}>
+            <div className="nameForm textForm">
+              <label>商品名</label>
+              <input
+                name="name"
+                type="text"
+                value={this.state.info.name}
+                onChange={this.handleChange}
+              />
+              <p>{this.state.message.name}</p>
+            </div>
 
-          <div className="stateForm dropdownForm">
-            <label>状態</label>
-            <select name="state">
-              <option value="新品">新品、未使用</option>
-              <option value="未使用">未使用に近い</option>
-              <option value="傷や汚れ無し">目立った傷や汚れなし</option>
-              <option value="やや傷や汚れあり">やや傷や汚れあり</option>
-              <option value="傷や汚れあり">傷や汚れあり</option>
-              <option value="状態が悪い">全体的に状態が悪い</option>
-            </select>
-          </div>
+            <div className="stateForm dropdownForm">
+              <label>状態</label>
+              <select name="state">
+                <option value="新品">新品、未使用</option>
+                <option value="未使用">未使用に近い</option>
+                <option value="傷や汚れ無し">目立った傷や汚れなし</option>
+                <option value="やや傷や汚れあり">やや傷や汚れあり</option>
+                <option value="傷や汚れあり">傷や汚れあり</option>
+                <option value="状態が悪い">全体的に状態が悪い</option>
+              </select>
+            </div>
 
-          <div className="keywordForm textForm">
-            {/* keywordのみValidationを一つに見せるため、上部に全てのメッセージを集約 */}
-            <p>{this.state.message.keyword1}</p>
-            <p>{this.state.message.keyword2}</p>
-            <p>{this.state.message.keyword3}</p>
+            <div className="keywordForm textForm">
+              {/* keywordのみValidationを一つに見せるため、上部に全てのメッセージを集約 */}
+              <p>{this.state.message.keyword1}</p>
+              <p>{this.state.message.keyword2}</p>
+              <p>{this.state.message.keyword3}</p>
 
-            <label>キーワード1</label>
-            <input
-              name="keyword1"
-              type="text"
-              value={this.state.info.keyword1}
-              onChange={this.handleChange}
-            />
+              <label>キーワード1</label>
+              <input
+                name="keyword1"
+                type="text"
+                value={this.state.info.keyword1}
+                onChange={this.handleChange}
+              />
 
-            <label>キーワード2</label>
-            <input
-              name="keyword2"
-              type="text"
-              value={this.state.info.keyword2}
-              onChange={this.handleChange}
-            />
+              <label>キーワード2</label>
+              <input
+                name="keyword2"
+                type="text"
+                value={this.state.info.keyword2}
+                onChange={this.handleChange}
+              />
 
-            <label>キーワード3</label>
-            <input
-              name="keyword3"
-              type="text"
-              value={this.state.info.keyword3}
-              onChange={this.handleChange}
-            />
-          </div>
+              <label>キーワード3</label>
+              <input
+                name="keyword3"
+                type="text"
+                value={this.state.info.keyword3}
+                onChange={this.handleChange}
+              />
+            </div>
 
-          <div className="blandForm dropdownForm">
-            <label>ブランド</label>
-            <select name="bland" onChange={this.handleChange}>
-              {this.state.allBland.map((bland, idx) => {
-                return (
-                  <option key={idx} value={bland.id}>
-                    {bland.name}
-                  </option>
-                );
-              })}
-            </select>
-          </div>
-
-          <div className="categoryForm dropdownForm">
-            <label>カテゴリ</label>
-            <select name="category" onChange={this.handleChange}>
-              <option value="">---</option>
-              {this.state.allCategory.map((category) => {
-                return <option value={category.id}>{category.name}</option>;
-              })}
-            </select>
-            <p>{this.state.message.category}</p>
-          </div>
-
-          <div className="imageForm">
-            <label>商品画像</label>
-            {/* Validation適用前から表示させたいためVaildationとは別に記述 */}
-            {this.state.imgUrls.length === 0 ? <p>画像は最低一枚投稿してください。</p> : null}
-            <input type="file" multiple onChange={this.handleImageSelect} />
-            {this.state.imgUrls.length === 0
-              ? null
-              : this.state.imgUrls.map((img, idx) => {
-                  return <img key={idx} src={img} alc="アップロード写真" height="150px"></img>;
+            <div className="blandForm dropdownForm">
+              <label>ブランド</label>
+              <select name="bland" onChange={this.handleChange}>
+                {this.state.allBland.map((bland, idx) => {
+                  return (
+                    <option key={idx} value={bland.id}>
+                      {bland.name}
+                    </option>
+                  );
                 })}
-            {this.state.imgUrls.length === 0 ? null : (
-              <button onClick={this.cancelUploadedImage}>画像取り消し</button>
-            )}
-          </div>
+              </select>
+            </div>
 
-          <div className="detailForm textarea">
-            <label>説明</label>
-            <textarea
-              name="detail"
-              cols="30"
-              rows="10"
-              value={this.state.info.detail}
-              onChange={this.handleChange}
-            ></textarea>
-          </div>
+            <div className="categoryForm dropdownForm">
+              <label>カテゴリ</label>
+              <select name="category" onChange={this.handleChange}>
+                <option value="">---</option>
+                {this.state.allCategory.map((category, idx) => {
+                  return (
+                    <option key={idx} value={category.id}>
+                      {category.name}
+                    </option>
+                  );
+                })}
+              </select>
+              <p>{this.state.message.category}</p>
+            </div>
 
-          <MiddleButton
-            btn_name="登録"
-            btn_type="submit"
-            btn_func={this.handleSubmit}
-            btn_disable={
-              !this.state.info.name ||
-              !this.state.info.keyword1 ||
-              this.state.info.images.length === 0 ||
-              !this.state.info.category ||
-              this.state.message.name ||
-              this.state.message.keyword1 ||
-              this.state.message.keyword2 ||
-              this.state.message.keyword3 ||
-              this.state.message.images ||
-              this.state.message.category
-            }
-          />
+            <div className="imageForm">
+              <p>{this.state.message.images}</p>
+              <label>商品画像</label>
+              {/* Validation適用前から表示させたいためVaildationとは別に記述 */}
+              {this.state.imgUrls.length === 0 ? <p>画像は最低一枚投稿してください。</p> : null}
+              <input type="file" multiple onChange={this.handleImageSelect} />
+              {this.state.imgUrls.length === 0
+                ? null
+                : this.state.imgUrls.map((img, idx) => {
+                    return <img key={idx} src={img} alc="アップロード写真" height="150px"></img>;
+                  })}
+              {this.state.imgUrls.length === 0 ? null : (
+                <button onClick={this.cancelUploadedImage}>画像取り消し</button>
+              )}
+            </div>
+
+            <div className="detailForm textarea">
+              <label>説明</label>
+              <textarea
+                name="detail"
+                cols="30"
+                rows="10"
+                value={this.state.info.detail}
+                onChange={this.handleChange}
+              ></textarea>
+            </div>
+
+            <MiddleButton
+              btn_name="登録"
+              btn_type="submit"
+              btn_disable={
+                !this.state.info.name ||
+                !this.state.info.keyword1 ||
+                this.state.info.images.length === 0 ||
+                !this.state.info.category ||
+                this.state.message.name ||
+                this.state.message.keyword1 ||
+                this.state.message.keyword2 ||
+                this.state.message.keyword3 ||
+                this.state.message.images ||
+                this.state.message.category
+              }
+            />
+          </form>
         </div>
       );
     }
