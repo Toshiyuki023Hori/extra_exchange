@@ -167,7 +167,7 @@ class Give_Item(models.Model):
     # Give_Itemが削除された時、Categoryも同時に削除されてはいけないためnull = True
     category = models.ForeignKey(
         "Category", on_delete=models.SET_NULL, null=True, related_name="give_item")
-    parent_item = models.ForeignKey(
+    parent_item = models.OneToOneField(
         "Parent_Item", null=True, on_delete=models.CASCADE, related_name="give_item")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -269,7 +269,7 @@ class Keyword(models.Model):
 
 class Want_Item(models.Model):
     url = models.URLField(max_length=250, null=True, blank=True)
-    parent_item = models.ForeignKey(
+    parent_item = models.OneToOneField(
         # Give_Itemを表現する時のために、null=True
         "Parent_Item", null=True, on_delete=models.CASCADE, related_name="want_item")
     created_at = models.DateTimeField(auto_now_add=True)
