@@ -149,8 +149,8 @@ class KeywordSerializer(serializers.ModelSerializer):
         fields = ["id", "name"]
 
     def validate_name(self, value):
-        if len(value) <= 1:
-            raise serializers.ValidationError("キーワードは必ず2文字以上で設定してください")
+        if len(value) < 1:
+            raise serializers.ValidationError("キーワードは必ず1文字以上で設定してください")
         return value
 
 # ======      =======      ======      ======     ======     ======      =======      =======

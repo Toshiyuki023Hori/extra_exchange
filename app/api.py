@@ -45,6 +45,9 @@ class FollowViewSet(viewsets.ModelViewSet):
     ]
     serializer_class = FollowSerializer
 
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_fields = "__all__"
+
 # ======      =======      ======      ======     ======     ======      =======      =======
 
 
@@ -64,6 +67,9 @@ class Give_ItemViewSet(viewsets.ModelViewSet):
         permissions.AllowAny
     ]
     serializer_class = Give_ItemSerializer
+
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_fields = "__all__"
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
@@ -106,6 +112,9 @@ class CategoryViewSet(viewsets.ModelViewSet):
     ]
     serializer_class = CategorySerializer
 
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_fields = "__all__"
+
 # ======      =======      ======      ======     ======     ======      =======      =======
 
 
@@ -115,6 +124,9 @@ class BlandViewSet(viewsets.ModelViewSet):
         permissions.AllowAny
     ]
     serializer_class = BlandSerializer
+
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_fields = "__all__"
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
@@ -139,6 +151,9 @@ class Want_ItemViewSet(viewsets.ModelViewSet):
     ]
     serializer_class = Want_ItemSerializer
 
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_fields = "__all__"
+
 # ======      =======      ======      ======     ======     ======      =======      =======
 
 
@@ -148,6 +163,9 @@ class Parent_ItemViewSet(viewsets.ModelViewSet):
         permissions.AllowAny
     ]
     serializer_class = Parent_ItemSerializer
+
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_fields = "__all__"
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
@@ -198,6 +216,9 @@ class HistoryViewSet(viewsets.ModelViewSet):
         permissions.AllowAny
     ]
     serializer_class = HistorySerializer
+
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_fields = "__all__"
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 

@@ -11,7 +11,7 @@ class Add_Want_Item_Form extends Component {
       //   #インプット情報用
       info: {
         name: '',
-        owner: this.props.owner.id,
+        owner: '',
         keyword1: '',
         keyword2: '',
         keyword3: '',
@@ -37,10 +37,20 @@ class Add_Want_Item_Form extends Component {
   // ===========           ===========           ===========           ===========           ===========
 
   componentDidMount() {
+    const axiosUrl = 'http://localhost:8000/api/';
+    // ParentItemのownerが外部キーなので、レンダー時にログインユーザーをセット
+    axios
+      .get(axiosUrl + 'user/' + localStorage.getItem('uid'))
+      .then((res) => {
+        this.setState({ info: { ...this.state.info, owner: res.data } });
+        console.log(this.state.info.owner);
+      })
+      .catch((err) => console.log(err));
+
     // ドロップダウンにDB内のブランドを表示させるために、レンダー時に全カテゴリをセット
-    axios.get(this.props.axiosUrl + 'bland/').then(async (res) => {
+    axios.get(axiosUrl + 'bland/').then(async (res) => {
       await this.setState({ ...this.state, allBland: res.data });
-      console.log(this.state.info.owner)
+      console.log('Assignment ' + this.state.allBland);
     });
   }
 
@@ -82,6 +92,7 @@ class Add_Want_Item_Form extends Component {
   keywordValidation(value) {
     if (!this.state.info.keyword1 && !this.state.info.keyword2 && !this.state.info.keyword3)
       return 'キーワードは最低1つ設定してください。';
+    if (value.length < 2 && !value == '') return '1文字のキーワードは設定できません';
     return '';
   }
 
@@ -95,6 +106,7 @@ class Add_Want_Item_Form extends Component {
     let bland_id = this.state.info.bland;
     let keyword_ids = [];
     let parentItem_id;
+    const axiosUrl = 'http://localhost:8000/api/';
     const hasValueInKeyword = (keyword) => {
       if (keyword !== '') {
         keywordsList = [...keywordsList, keyword];
@@ -114,7 +126,7 @@ class Add_Want_Item_Form extends Component {
     await Promise.all(
       keywordsList.map(async (keyword) => {
         await axios
-          .get(this.props.axiosUrl + 'keyword/?name=' + keyword)
+          .get(axiosUrl + 'keyword/?name=' + keyword)
           .then((res) => {
             console.log(res);
             // すでにDB内に存在していたらarrayに代入されて返ってくる
@@ -135,7 +147,7 @@ class Add_Want_Item_Form extends Component {
       await Promise.all(
         newKeywords.map(async (keyword) => {
           await axios
-            .post(this.props.axiosUrl + 'keyword/', {
+            .post(axiosUrl + 'keyword/', {
               name: keyword,
             })
             .then((res) => {
@@ -147,9 +159,9 @@ class Add_Want_Item_Form extends Component {
     }
 
     await axios
-      .post(this.props.axiosUrl + 'parent/', {
+      .post(axiosUrl + 'parent/', {
         name: this.state.info.name,
-        owner: this.state.info.owner,
+        owner: this.state.info.owner.id,
         bland: bland_id,
         keyword: keyword_ids,
       })
@@ -165,7 +177,7 @@ class Add_Want_Item_Form extends Component {
     // Parent_Item作成後に、作成される。
     //
     axios
-      .post(this.props.axiosUrl + 'wantitem/', {
+      .post(axiosUrl + 'wantitem/', {
         url: this.state.info.url,
         parentItem: parentItem_id,
       })
