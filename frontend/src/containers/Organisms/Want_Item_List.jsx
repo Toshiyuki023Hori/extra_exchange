@@ -10,56 +10,74 @@ class Want_Item_List extends Component {
       loginUser: this.props.owner.id,
       parentItems: '',
       wantItems: [],
+      inKeyUrlName: '',
     };
   }
 
   async componentDidMount() {
     let parentItems_ids;
+    let wantParentItems = {};
 
     await axios
       .get(this.props.axiosUrl + 'parent/?owner=' + this.state.owner)
       .then((res) => {
-        console.log(res);
         this.setState({ parentItems: res.data });
-        parentItems_ids = this.state.parentItems.map((item) => item.id);
-        console.log(parentItems_ids);
+        for (let i = 0; i < this.state.parentItems.length; i++) {
+          parentItems_ids = {
+            ...parentItems_ids,
+            [this.state.parentItems[i].id]: { name: this.state.parentItems[i].name },
+          };
+        }
       })
       .catch((err) => console.log(err));
 
     await Promise.all(
-      parentItems_ids.map(async (item_id) => {
-        await axios
-          .get(this.props.axiosUrl + 'wantitem/?parent_item=' + item_id)
-          .then((res) => {
-            if(res.data.length !== 0){
-                this.setState({ wantItems: [...this.state.wantItems, res.data[0]] });
-            }
-          })
-          .catch((err) => console.log(err));
+      Object.keys(parentItems_ids).map(async (key) => {
+        await axios.get(this.props.axiosUrl + 'wantitem/?parent_item=' + key).then((res) => {
+          if (res.data.length !== 0) {
+            this.setState({ wantItems: [...this.state.wantItems, res.data[0]] });
+          }
+        });
       })
     );
 
-    console.log(this.state.wantItems)
+    for (const want_item of this.state.wantItems) {
+      console.log('Parent is ' + want_item.parentItem);
+      for (const key in parentItems_ids) {
+        console.log('Key is ' + key);
+        if (want_item.parentItem == key) {
+          parentItems_ids = {
+            ...parentItems_ids,
+            [key]: { ...parentItems_ids[key], url: want_item.url },
+          };
+        }
+      }
+    }
+
+    this.setState(this.setState({ inKeyUrlName: parentItems_ids }));
   }
 
   render() {
-    if (this.state.wantItems === [] || this.state.parentItems === '') {
+    if (
+      this.state.wantItems === [] ||
+      this.state.parentItems === '' ||
+      this.state.inKeyUrlName === ''
+    ) {
       return <CircularProgress />;
     } else {
       return (
         <div>
           <h2>{this.props.h2Title}</h2>
           <ol>
-              {
-                  this.state.wantItems.length === 0 
-                  ? null
-                  : this.state.wantItems.map((want_item) => {
-                      return (
-                        <li>{want_item.parentItem}</li>
-                      )
-                  })
-              }
+            {this.state.wantItems.length === 0
+              ? null
+              : Object.keys(this.state.wantItems).map((key) => {
+                  return <li>{key}</li>;
+                })}
           </ol>
+          <button type="submit" onClick={this.consoLog}>
+            Console
+          </button>
         </div>
       );
     }
