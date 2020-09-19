@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Add_Want_Item_Form from '../Organisms/Add_Want_Item_Form';
 import Want_Item_List from '../Organisms/Want_Item_List';
+import Header from '../Organisms/Header';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 class Add_Want_Item extends Component {
@@ -29,7 +30,12 @@ class Add_Want_Item extends Component {
     } else {
       return (
         <div>
-          <Add_Want_Item_Form owner={this.state.loginUser} loginUser={this.state.loginUser} axiosUrl="http://localhost:8000/api/" />
+          <Header loginUser={this.state.loginUser} />
+          <Add_Want_Item_Form
+            owner={this.state.loginUser}
+            loginUser={this.state.loginUser}
+            axiosUrl="http://localhost:8000/api/"
+          />
           <Want_Item_List
             owner={this.state.loginUser}
             loginUser={this.state.loginUser}
