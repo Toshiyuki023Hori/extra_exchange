@@ -8,21 +8,27 @@ class Want_Item_List extends Component {
     this.state = {
       owner: this.props.owner.id,
       loginUser: this.props.owner.id,
+      // res.dataはオブジェクトをarrayで返してくるため ''
       parentItems: '',
+      // 後にarrayメソッドを使うため empty array.
       wantItems: [],
-      inKeyUrlName: '',
+      inIdUrlName: '',
     };
   }
 
   async componentDidMount() {
     let parentItems_ids;
-    let wantParentItems = {};
+    let sendToInIdUrl = {};
 
+    //
+    //
+    // Want_ItemはParent_Itemのchild的立ち位置のため、ParentItemを全て取得
     await axios
       .get(this.props.axiosUrl + 'parent/?owner=' + this.state.owner)
       .then((res) => {
         this.setState({ parentItems: res.data });
         for (let i = 0; i < this.state.parentItems.length; i++) {
+          // Want_Item取得に、Parent_Itemのidが必要になるので、idだけをarrayに代入
           parentItems_ids = {
             ...parentItems_ids,
             [this.state.parentItems[i].id]: { name: this.state.parentItems[i].name },
@@ -30,38 +36,52 @@ class Want_Item_List extends Component {
         }
       })
       .catch((err) => console.log(err));
-
+    //
+    //
+    //  ユーザーが持つParent_Itemの中のWant_Itemを取得する
     await Promise.all(
       Object.keys(parentItems_ids).map(async (key) => {
         await axios.get(this.props.axiosUrl + 'wantitem/?parent_item=' + key).then((res) => {
+          //  Want_DataのparentItemと、Parent_Itemが一致した場合、
+          //  length == 1 のArrayが返ってくるため、それの条件分岐
           if (res.data.length !== 0) {
             this.setState({ wantItems: [...this.state.wantItems, res.data[0]] });
+            //  <li>タグのディスプレイ時に欲しい情報は、id, name, url
+            //  これらをまとめるために、idをkeyとしたオブジェクトを新規作成
+            for (let parentItem of this.state.parentItems) {
+              if (parentItem.id == res.data[0].parentItem) {
+                sendToInIdUrl = { ...sendToInIdUrl, [parentItem.id]: { name: parentItem.name } };
+              }
+            }
           }
         });
       })
     );
 
+    //
+    //
+    //取得したWant_Itemからurlを抽出して、オブジェクトに代入する。
     for (const want_item of this.state.wantItems) {
       console.log('Parent is ' + want_item.parentItem);
-      for (const key in parentItems_ids) {
-        console.log('Key is ' + key);
+      for (const key in sendToInIdUrl) {
         if (want_item.parentItem == key) {
-          parentItems_ids = {
-            ...parentItems_ids,
-            [key]: { ...parentItems_ids[key], url: want_item.url },
+          sendToInIdUrl = {
+            ...sendToInIdUrl,
+            [key]: { ...sendToInIdUrl[key], url: want_item.url },
           };
+          console.log('Key is ' + key);
         }
       }
     }
 
-    this.setState(this.setState({ inKeyUrlName: parentItems_ids }));
+    this.setState(this.setState({ inIdUrlName: sendToInIdUrl }));
   }
 
   render() {
     if (
       this.state.wantItems === [] ||
       this.state.parentItems === '' ||
-      this.state.inKeyUrlName === ''
+      this.state.inIdUrlName === ''
     ) {
       return <CircularProgress />;
     } else {
@@ -71,13 +91,20 @@ class Want_Item_List extends Component {
           <ol>
             {this.state.wantItems.length === 0
               ? null
-              : Object.keys(this.state.wantItems).map((key) => {
-                  return <li>{key}</li>;
+              : Object.keys(this.state.inIdUrlName).map((key) => {
+                  return (
+                    <li>
+                      {this.state.inIdUrlName[key]['url'] == '' ? (
+                        this.state.inIdUrlName[key]['name']
+                      ) : (
+                        <a href={this.state.inIdUrlName[key]['url']}>
+                          {this.state.inIdUrlName[key]['name']}
+                        </a>
+                      )}
+                    </li>
+                  );
                 })}
           </ol>
-          <button type="submit" onClick={this.consoLog}>
-            Console
-          </button>
         </div>
       );
     }
