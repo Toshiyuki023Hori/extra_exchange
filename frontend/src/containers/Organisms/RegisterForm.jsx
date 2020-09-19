@@ -165,7 +165,7 @@ class RegisterForm extends React.Component {
           <MiddleButton
             btn_name="登録"
             btn_type="submit"
-            btn_func={this.handleSubmit}
+            btn_click={this.handleSubmit}
             btn_disable={
               !this.state.info.username ||
               !this.state.info.email ||

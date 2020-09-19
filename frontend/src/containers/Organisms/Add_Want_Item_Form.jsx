@@ -40,7 +40,7 @@ class Add_Want_Item_Form extends Component {
     // ドロップダウンにDB内のブランドを表示させるために、レンダー時に全カテゴリをセット
     axios.get(this.props.axiosUrl + 'bland/').then(async (res) => {
       await this.setState({ ...this.state, allBland: res.data });
-      console.log(this.state.info.owner)
+      console.log(this.state.info.owner);
     });
   }
 

@@ -29,7 +29,7 @@ class Add_Want_Item extends Component {
     } else {
       return (
         <div>
-          <Add_Want_Item_Form owner={this.state.loginUser} axiosUrl="http://localhost:8000/api/" />
+          <Add_Want_Item_Form owner={this.state.loginUser} loginUser={this.state.loginUser} axiosUrl="http://localhost:8000/api/" />
           <Want_Item_List
             owner={this.state.loginUser}
             loginUser={this.state.loginUser}
