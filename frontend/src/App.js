@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, withRouter } from 'react-router-dom';
+import { Router, Route, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as actions from './reducks/auth/actions';
+import history from './history';
 import { Link } from 'react-router-dom';
-import {store} from "./index"
+import { store } from './index';
 
 import Register from './containers/Pages/Register';
 import Login from './containers/Pages/Login';
@@ -14,11 +15,11 @@ class App extends Component {
   componentDidMount() {
     // tokenがローカルに存在してるかの確認、expirationdateの期限確認
     this.props.onTryAutoSignup();
-}
+  }
 
   render() {
     return (
-      <Router>
+      <Router history={history}>
         {/* Route内のRoutePassはpropsを渡す役割を果たす */}
         <Route
           exact
