@@ -1,9 +1,10 @@
-import React from 'react';
-
+import React, { useEffect } from 'react';
+import { withRouter } from 'react-router-dom';
 import LoginForm from '../Organisms/LoginForm';
 import { connect, useSelector } from 'react-redux';
+import * as actions from '../../reducks/auth/actions';
 
-function Login({ isAuthenticated }) {
+function Login({ isAuthenticated,uid,onTryAutoSignup }) {
   return (
     <>
       {isAuthenticated ? <h1>You succeeded in Loging in</h1> : <h1>Don't give up!!</h1>}
@@ -16,9 +17,16 @@ function Login({ isAuthenticated }) {
 
 const mapStateToProps = (state) => {
   return {
+    uid: state.uid,
     loading: state.loading,
     error: state.error,
   };
 };
 
-export default connect(mapStateToProps)(Login);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onTryAutoSignup: () => dispatch(actions.authCheckState()),
+  };
+};
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Login));

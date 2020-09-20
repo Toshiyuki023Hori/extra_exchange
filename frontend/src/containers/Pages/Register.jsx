@@ -1,10 +1,10 @@
 import React from 'react';
-
+import { withRouter } from 'react-router-dom';
 import RegisterForm from '../Organisms/RegisterForm';
 import { connect, useSelector } from 'react-redux';
 
 function Register(props) {
-    const token = useSelector(state => state.token)
+  const token = useSelector((state) => state.token);
   return (
     <>
       {console.log(token)}
@@ -17,10 +17,10 @@ function Register(props) {
 }
 
 const mapStateToProps = (state) => {
-    return {
-      loading: state.loading,
-      error: state.error,
-    };
+  return {
+    loading: state.loading,
+    error: state.error,
   };
+};
 
-export default connect(mapStateToProps)(Register);
+export default withRouter(connect(mapStateToProps)(Register));

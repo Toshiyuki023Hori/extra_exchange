@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import axios from 'axios';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Add_Give_Item_Form from '../Organisms/Add_Give_Item_Form';
@@ -41,4 +42,4 @@ class Add_Give_Item extends Component {
   }
 }
 
-export default Add_Give_Item;
+export default withRouter(Add_Give_Item);
