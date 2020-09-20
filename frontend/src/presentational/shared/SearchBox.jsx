@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import styled from "styled-components"
 
 class SearchBox extends Component {
   constructor(props) {
@@ -35,5 +36,11 @@ class SearchBox extends Component {
     );
   }
 }
+
+const Wrapper = styled.div`
+  display:flex;
+  justify-content:center;
+`;
+
 
 export default SearchBox;

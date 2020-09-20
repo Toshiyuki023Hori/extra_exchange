@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import SearchBox from '../../presentational/shared/SearchBox';
 import history from '../../history';
 import styled from 'styled-components';
 import axios from 'axios';
+// 以下各ディレクトリからimport
+import * as actions from '../../reducks/auth/actions';
+import SearchBox from '../../presentational/shared/SearchBox';
 import Logo from '../../assets/Logo.png';
 import SmallButton from '../../presentational/shared/SmallButton';
-import * as actions from '../../reducks/auth/actions';
 
 class Header extends Component {
   constructor(props) {
@@ -42,27 +43,31 @@ class Header extends Component {
     return (
       <>
         <Wrapper>
-          <img src={Logo} alt="" width="50px" />
+          <Image src={Logo} alt="" />
           <SearchBox />
           {this.props.isAuthenticated ? (
             <>
               {/* 　ログイン済ユーザー */}
-              <a href="#" onClick={this.handleLogout}>
-                ログアウト
-              </a>
-              <p>こんにちは、{this.state.loginUser.username}さん</p>　
               <div>
-                <SmallButton btn_name="ポスト" btn_click={this.jumpToPostGive} />
-                <SmallButton btn_name="通知" btn_click="" />
+                <a href="#" onClick={this.handleLogout}>
+                  ログアウト
+                </a>
+                <p>こんにちは、{this.state.loginUser.username}さん</p>　
+                <div>
+                  <SmallButton btn_name="ポスト" btn_click={this.jumpToPostGive} />
+                  <SmallButton btn_name="通知" btn_click="" />
+                </div>
               </div>
             </>
           ) : (
             <>
               {/* ゲストユーザー */}
-              <p>こんにちは、ゲストさん</p>
               <div>
-                <SmallButton btn_name="ログイン" btn_click={this.jumpToLogin} />
-                <SmallButton btn_name="登録" btn_click={this.jumpToRegister} />
+                <p>こんにちは、ゲストさん</p>
+                <div>
+                  <SmallButton btn_name="ログイン" btn_click={this.jumpToLogin} />
+                  <SmallButton btn_name="登録" btn_click={this.jumpToRegister} />
+                </div>
               </div>
             </>
           )}
@@ -86,8 +91,15 @@ const mapDispatchToProps = (dispatch) => {
 
 const Wrapper = styled.div`
   background-color: #8dd6ff;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding : 10px;
 `;
 
-const Image = styled.img``;
+const Image = styled.img`
+  width:250px;
+  margin-bottom : -2px;
+`;
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

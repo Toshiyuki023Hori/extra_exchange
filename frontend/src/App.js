@@ -5,6 +5,7 @@ import * as actions from './reducks/auth/actions';
 import history from './history';
 import { Link } from 'react-router-dom';
 import { store } from './index';
+import './App.css';
 
 import Register from './containers/Pages/Register';
 import Login from './containers/Pages/Login';
