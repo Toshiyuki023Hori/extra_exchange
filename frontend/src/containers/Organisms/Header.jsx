@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import SearchBox from '../../presentational/shared/SearchBox';
 import history from '../../history';
 import axios from 'axios';
@@ -44,7 +45,7 @@ class Header extends Component {
             <a href="#" onClick={this.handleLogout}>
               ログアウト
             </a>
-            <p>こんにちは、{this.state.loginUser.name}さん</p>　
+            <p>こんにちは、{this.state.loginUser.username}さん</p>　
             <SmallButton btn_name="ポスト" btn_click={this.jumpToPostGive} />
             <SmallButton btn_name="通知" btn_click="" />
           </>
@@ -60,4 +61,10 @@ class Header extends Component {
   }
 }
 
-export default Header;
+const mapStateToProps = (state) => {
+  return {
+    isAuthenticated: state.token !== null,
+  };
+};
+
+export default connect(mapStateToProps)(Header);
