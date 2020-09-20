@@ -86,7 +86,7 @@ class LoginForm extends React.Component {
   render() {
     let errorMessage = null;
     if (this.props.error) {
-      errorMessage = <p>{this.props.error.message}</p>;
+      errorMessage = <p>ユーザーネームか、パスワードが間違っています</p>;
     }
 
     const { info, message } = this.state;
@@ -135,10 +135,6 @@ class LoginForm extends React.Component {
   }
 }
 
-LoginForm.propTypes = {
-  url: PropTypes.string,
-  method: PropTypes.string,
-};
 
 const mapStateToProps = (state) => {
   return {

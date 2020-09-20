@@ -13,7 +13,7 @@ class Add_Give_Item_Form extends Component {
       //   #インプット情報用
       info: {
         name: '',
-        owner: '',
+        owner: this.props.owner.id,
         keyword1: '',
         keyword2: '',
         keyword3: '',
@@ -49,24 +49,13 @@ class Add_Give_Item_Form extends Component {
   // ===========           ===========           ===========           ===========           ===========
 
   componentDidMount() {
-    const localhostUrl = 'http://localhost:8000/api/';
-
-    // Parent_ItemとGive_Itemは外部キーとしてUserを持っているため、レンダー時にログインユーザーを取得
-    axios
-      .get(localhostUrl + 'user/' + localStorage.getItem('uid'))
-      .then((res) => {
-        this.setState({ info: { ...this.state.info, owner: res.data } });
-        console.log(this.state.info.owner);
-      })
-      .catch((err) => console.log(err));
-
     // ドロップダウン式フォームのためにレンダー時にDB内のカテゴリとブランドを全て表示
-    axios.get(localhostUrl + 'bland/').then(async (res) => {
+    axios.get(this.props.axiosUrl + 'bland/').then(async (res) => {
       await this.setState({ ...this.state, allBland: res.data });
       console.log('Assignment ' + this.state.allBland);
     });
 
-    axios.get(localhostUrl + 'category/').then((res) => {
+    axios.get(this.props.axiosUrl + 'category/').then((res) => {
       this.setState({ ...this.state, allCategory: res.data });
       console.log('Assignment ' + this.state.Category);
     });
@@ -201,7 +190,6 @@ class Add_Give_Item_Form extends Component {
     let keyword_ids = [];
     let keywordsList = [];
     let newKeywords = [];
-    const localhostUrl = 'http://localhost:8000/api/';
     const config = {
       headers: { 'content-type': 'multipart/form-data' },
     };
@@ -220,7 +208,7 @@ class Add_Give_Item_Form extends Component {
     await Promise.all(
       keywordsList.map(async (keyword) => {
         await axios
-          .get(localhostUrl + 'keyword/?name=' + keyword)
+          .get(this.props.axiosUrl + 'keyword/?name=' + keyword)
           .then((res) => {
             console.log(res);
             // すでにDB内に存在していたらarrayに代入されて返ってくる
@@ -241,7 +229,7 @@ class Add_Give_Item_Form extends Component {
       await Promise.all(
         newKeywords.map(async (keyword) => {
           await axios
-            .post(localhostUrl + 'keyword/', {
+            .post(this.props.axiosUrl + 'keyword/', {
               name: keyword,
             })
             .then((res) => {
@@ -254,7 +242,7 @@ class Add_Give_Item_Form extends Component {
     }
 
     await axios
-      .post(localhostUrl + 'parent/', {
+      .post(this.props.axiosUrl + 'parent/', {
         name: this.state.info.name,
         owner: this.state.info.owner.id,
         bland: bland_id,
@@ -269,7 +257,7 @@ class Add_Give_Item_Form extends Component {
       });
 
     await axios
-      .post(localhostUrl + 'giveitem/', {
+      .post(this.props.axiosUrl + 'giveitem/', {
         state: this.state.info.state,
         category: category_id,
         detail: this.state.info.detail,
@@ -290,7 +278,7 @@ class Add_Give_Item_Form extends Component {
       console.log(data);
 
       axios
-        .post(localhostUrl + 'image/', data)
+        .post(this.props.axiosUrl + 'image/', data)
         .then((res) => console.log('You made it ! \n \n' + res.data))
         .catch((err) => console.log(err));
     });
@@ -374,6 +362,7 @@ class Add_Give_Item_Form extends Component {
             <div className="blandForm dropdownForm">
               <label>ブランド</label>
               <select name="bland" onChange={this.handleChange}>
+                <option value="">----</option>
                 {this.state.allBland.map((bland, idx) => {
                   return (
                     <option key={idx} value={bland.id}>

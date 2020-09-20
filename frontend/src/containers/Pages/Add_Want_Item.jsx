@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import axios from 'axios';
 import Add_Want_Item_Form from '../Organisms/Add_Want_Item_Form';
 import Want_Item_List from '../Organisms/Want_Item_List';
@@ -48,4 +49,4 @@ class Add_Want_Item extends Component {
   }
 }
 
-export default Add_Want_Item;
+export default withRouter(Add_Want_Item);
