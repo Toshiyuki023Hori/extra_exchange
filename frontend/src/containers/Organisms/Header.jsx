@@ -93,13 +93,13 @@ const Wrapper = styled.div`
   background-color: #8dd6ff;
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  padding : 10px;
+  grid-template-columns: 1.5fr 3fr 1.5fr;
+  padding : 10px 5px 5px 5px;
 `;
 
 const Image = styled.img`
-  width:250px;
-  margin-bottom : -2px;
+  width:230px;
+  margin-top : 5px;
 `;
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);
