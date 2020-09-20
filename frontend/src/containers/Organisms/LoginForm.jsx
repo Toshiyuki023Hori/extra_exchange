@@ -119,8 +119,7 @@ class LoginForm extends React.Component {
 
           <MiddleButton
             btn_name="ログイン"
-            btn_type="submit"
-            btn_func={this.handleSubmit}
+            btn_click={this.handleSubmit}
             btn_disable={
               !this.state.info.username ||
               !this.state.info.password ||
@@ -129,7 +128,7 @@ class LoginForm extends React.Component {
             }
           />
 
-          <MiddleButton btn_name="サインアウト" btn_type="submit" btn_func={this.props.logout} />
+          <MiddleButton btn_name="サインアウト" btn_click={this.props.logout} />
         </div>
       </>
     );

@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import SmallButton from '../../presentational/shared/SmallButton';
 
 class Want_Item_List extends Component {
   constructor(props) {
     super(props);
     this.state = {
       owner: this.props.owner.id,
-      loginUser: this.props.owner.id,
+      loginUser: this.props.loginUser.id,
       // res.dataはオブジェクトをarrayで返してくるため ''
       parentItems: '',
       // 後にarrayメソッドを使うため empty array.
@@ -62,14 +63,12 @@ class Want_Item_List extends Component {
     //
     //取得したWant_Itemからurlを抽出して、オブジェクトに代入する。
     for (const want_item of this.state.wantItems) {
-      console.log('Parent is ' + want_item.parentItem);
       for (const key in sendToInIdUrl) {
         if (want_item.parentItem == key) {
           sendToInIdUrl = {
             ...sendToInIdUrl,
             [key]: { ...sendToInIdUrl[key], url: want_item.url },
           };
-          console.log('Key is ' + key);
         }
       }
     }
@@ -93,15 +92,33 @@ class Want_Item_List extends Component {
               ? null
               : Object.keys(this.state.inIdUrlName).map((key) => {
                   return (
-                    <li>
-                      {this.state.inIdUrlName[key]['url'] == '' ? (
-                        this.state.inIdUrlName[key]['name']
-                      ) : (
-                        <a href={this.state.inIdUrlName[key]['url']}>
-                          {this.state.inIdUrlName[key]['name']}
-                        </a>
-                      )}
-                    </li>
+                    <>
+                      <li>
+                        {/* URLを持っていたら、リンク先まで飛べるように条件分岐 */}
+                        {this.state.inIdUrlName[key]['url'] == '' ? (
+                          this.state.inIdUrlName[key]['name']
+                        ) : (
+                          <a href={this.state.inIdUrlName[key]['url']}>
+                            {this.state.inIdUrlName[key]['name']}
+                          </a>
+                        )}
+                      </li>
+                      {/* ログインユーザーがownerの場合、UpdataとDeleteを許可する */}
+                      {this.state.owner == this.state.loginUser ? (
+                        <>
+                          <SmallButton
+                            btn_type="submit"
+                            btn_click={this.handleDelete}
+                            btn_name="削除"
+                          />
+                          <SmallButton
+                            btn_type="submit"
+                            btn_click={this.handleEdit}
+                            btn_name="編集"
+                          />
+                        </>
+                      ) : null}
+                    </>
                   );
                 })}
           </ol>

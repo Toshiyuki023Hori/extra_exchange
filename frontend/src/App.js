@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { Router, Route, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as actions from './reducks/auth/actions';
+import history from './history';
 import { Link } from 'react-router-dom';
+import { store } from './index';
 
 import Register from './containers/Pages/Register';
 import Login from './containers/Pages/Login';
 import Add_Want_Item from './containers/Pages/Add_Want_Item';
-import Add_Give_Item from "./containers/Pages/Add_Give_Item"
+import Add_Give_Item from './containers/Pages/Add_Give_Item';
 
 class App extends Component {
   componentDidMount() {
@@ -17,7 +19,7 @@ class App extends Component {
 
   render() {
     return (
-      <Router>
+      <Router history={history}>
         {/* Route内のRoutePassはpropsを渡す役割を果たす */}
         <Route
           exact
@@ -29,8 +31,16 @@ class App extends Component {
           path="/login"
           render={(routeProps) => <Login {...routeProps} {...this.props} />}
         />
-        <Route exact path="/user/want/add" component={Add_Want_Item} />
-        <Route exact path="/user/give/add" component={Add_Give_Item} />
+        <Route
+          exact
+          path="/want/add"
+          render={(routeProps) => <Add_Want_Item {...routeProps} {...this.props} />}
+        />
+        <Route
+          exact
+          path="/give/add"
+          render={(routeProps) => <Add_Give_Item {...routeProps} {...this.props} />}
+        />
       </Router>
     );
   }

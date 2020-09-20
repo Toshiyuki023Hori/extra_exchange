@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function MiddleButton(props) {
+function SmallButton(props) {
   return (
     <button
       type={props.btn_type}
@@ -14,4 +14,4 @@ function MiddleButton(props) {
   );
 }
 
-export default MiddleButton;
+export default SmallButton;
