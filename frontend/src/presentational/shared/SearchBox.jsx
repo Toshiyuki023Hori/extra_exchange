@@ -22,7 +22,7 @@ class SearchBox extends Component {
   render() {
     return (
       <div>
-        <Text>あなたの探し物は?</Text>
+        <Subtitle>あなたの探し物は?</Subtitle>
         <SearchArea>
           <InputBox
             type="text"
@@ -38,16 +38,20 @@ class SearchBox extends Component {
   }
 }
 
+//          ===========          ===========          ===========          ===========          ===========
+//      Styled Component      =========          ===========          ===========          ===========
+//          ===========          ===========          ===========          ===========          ===========
+
 const Wrapper = styled.div`
   display: flex;
   justify-content: center;
 `;
 
-const Text = styled.p`
-  font-size:18px;
+const Subtitle = styled.p`
+  font-size: 18px;
   text-align: center;
-  color:#6E787F;
-  margin-bottom:3px;
+  color: #6e787f;
+  margin-bottom: 3px;
 `;
 
 const SearchArea = styled.div`
@@ -72,5 +76,9 @@ const SubmitButton = styled.button`
   text-align: center;
   border-radius: 0px 7px 7px 0px;
 `;
+
+//          ===========          ===========          ===========          ===========          ===========
+//      Styled Component      =========          ===========          ===========          ===========
+//          ===========          ===========          ===========          ===========          ===========
 
 export default SearchBox;
