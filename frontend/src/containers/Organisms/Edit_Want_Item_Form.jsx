@@ -4,14 +4,14 @@ import axios from 'axios';
 import { connect } from 'react-redux';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-class Add_Want_Item_Form extends Component {
+class Edit_Want_Item_Form extends Component {
   constructor(props) {
     super(props);
     this.state = {
       //   #インプット情報用
       info: {
         name: '',
-        owner: '',
+        owner: this.props.owner.id,
         keyword1: '',
         keyword2: '',
         keyword3: '',
@@ -27,6 +27,8 @@ class Add_Want_Item_Form extends Component {
         keyword3: '',
       },
       allBland: '',
+      parentItem: '',
+      wantItem: '',
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -36,22 +38,52 @@ class Add_Want_Item_Form extends Component {
   // ===========           ===========           state変更に関するメソッド           ===========           ===========
   // ===========           ===========           ===========           ===========           ===========
 
-  componentDidMount() {
-    const axiosUrl = 'http://localhost:8000/api/';
-    // ParentItemのownerが外部キーなので、レンダー時にログインユーザーをセット
+  async componentDidMount() {
+    const parent_id = parseInt(this.props.parent_id);
+    // ドロップダウンにDB内のブランドを表示させるために、レンダー時に全カテゴリをセット
     axios
-      .get(axiosUrl + 'user/' + localStorage.getItem('uid'))
+      .get(this.props.axiosUrl + 'bland/')
       .then((res) => {
-        this.setState({ info: { ...this.state.info, owner: res.data } });
-        console.log(this.state.info.owner);
+        this.setState({ ...this.state, allBland: res.data });
       })
       .catch((err) => console.log(err));
 
-    // ドロップダウンにDB内のブランドを表示させるために、レンダー時に全カテゴリをセット
-    axios.get(axiosUrl + 'bland/').then(async (res) => {
-      await this.setState({ ...this.state, allBland: res.data });
-      console.log('Assignment ' + this.state.allBland);
-    });
+    await axios
+      .all([
+        axios.get(this.props.axiosUrl + 'parent/' + parent_id),
+        axios.get(this.props.axiosUrl + 'wantitem/?parent_item=' + parent_id),
+      ])
+      .then(
+        axios.spread((resParent, resWant) => {
+          this.setState({ ...this.state, parentItem: resParent.data });
+          this.setState({ ...this.state, wantItem: resWant.data[0] });
+        })
+      );
+
+    if (this.state.parentItem.bland != null) {
+      axios.get(this.props.axiosUrl + 'bland/' + this.state.parentItem.bland).then((res) => {
+        console.log(res.data);
+        this.setState({ info: { ...this.state.info, bland: res.data.name } });
+      });
+    }
+
+    if (this.state.parentItem.keyword[0]){
+      axios.get(this.props.axiosUrl + "keyword/" + this.state.parentItem.keyword[0]).then((res) => {
+        this.setState({info : {...this.state.info, keyword1:res.data.name}})
+      })
+    }
+
+    if (this.state.parentItem.keyword[1]){
+      axios.get(this.props.axiosUrl + "keyword/" + this.state.parentItem.keyword[1]).then((res) => {
+        this.setState({info : {...this.state.info, keyword2:res.data.name}})
+      })
+    }
+
+    if (this.state.parentItem.keyword[2]){
+      axios.get(this.props.axiosUrl + "keyword/" + this.state.parentItem.keyword[2]).then((res) => {
+        this.setState({info : {...this.state.info, keyword3:res.data.name}})
+      })
+    }
   }
 
   handleChange = (e) => {
@@ -92,7 +124,6 @@ class Add_Want_Item_Form extends Component {
   keywordValidation(value) {
     if (!this.state.info.keyword1 && !this.state.info.keyword2 && !this.state.info.keyword3)
       return 'キーワードは最低1つ設定してください。';
-    if (value.length < 2 && !value == '') return '1文字のキーワードは設定できません';
     return '';
   }
 
@@ -106,7 +137,6 @@ class Add_Want_Item_Form extends Component {
     let bland_id = this.state.info.bland;
     let keyword_ids = [];
     let parentItem_id;
-    const axiosUrl = 'http://localhost:8000/api/';
     const hasValueInKeyword = (keyword) => {
       if (keyword !== '') {
         keywordsList = [...keywordsList, keyword];
@@ -126,7 +156,7 @@ class Add_Want_Item_Form extends Component {
     await Promise.all(
       keywordsList.map(async (keyword) => {
         await axios
-          .get(axiosUrl + 'keyword/?name=' + keyword)
+          .get(this.props.axiosUrl + 'keyword/?name=' + keyword)
           .then((res) => {
             console.log(res);
             // すでにDB内に存在していたらarrayに代入されて返ってくる
@@ -147,7 +177,7 @@ class Add_Want_Item_Form extends Component {
       await Promise.all(
         newKeywords.map(async (keyword) => {
           await axios
-            .post(axiosUrl + 'keyword/', {
+            .post(this.props.axiosUrl + 'keyword/', {
               name: keyword,
             })
             .then((res) => {
@@ -159,9 +189,9 @@ class Add_Want_Item_Form extends Component {
     }
 
     await axios
-      .post(axiosUrl + 'parent/', {
+      .post(this.props.axiosUrl + 'parent/', {
         name: this.state.info.name,
-        owner: this.state.info.owner.id,
+        owner: this.state.info.owner,
         bland: bland_id,
         keyword: keyword_ids,
       })
@@ -177,7 +207,7 @@ class Add_Want_Item_Form extends Component {
     // Parent_Item作成後に、作成される。
     //
     axios
-      .post(axiosUrl + 'wantitem/', {
+      .post(this.props.axiosUrl + 'wantitem/', {
         url: this.state.info.url,
         parentItem: parentItem_id,
       })
@@ -201,7 +231,12 @@ class Add_Want_Item_Form extends Component {
 
   render() {
     const { info, message } = this.state;
-    if (this.state.info.owner === '' || this.state.allBland === '') {
+    if (
+      this.state.info.owner === '' ||
+      this.state.allBland === '' ||
+      this.state.parentItem === '' ||
+      this.state.wantItem === ''
+    ) {
       return <CircularProgress />;
     } else {
       return (
@@ -248,6 +283,7 @@ class Add_Want_Item_Form extends Component {
 
           <div>
             <label>ブランド</label>
+            <span>{this.state.info.bland === '' ? ' ' + 'なし' : " " + this.state.info.bland}</span>
             <select name="bland" onChange={this.handleChange}>
               <option value="">ブランド無し</option>
               {this.state.allBland.map((bland, idx) => {
@@ -297,4 +333,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(Add_Want_Item_Form);
+export default connect(mapStateToProps)(Edit_Want_Item_Form);
