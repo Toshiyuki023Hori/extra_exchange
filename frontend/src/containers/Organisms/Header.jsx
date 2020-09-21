@@ -57,8 +57,21 @@ class Header extends Component {
                   <LogoutButton onClick={this.handleLogout}>ログアウト</LogoutButton>
                 </MessageToUserDiv>
                 <AuthButtonDiv>
-                  <SmallButton btn_border="#466A80" btn_back="#466A80" btn_text_color="#D9F1FF" btn_name="ポスト" btn_click={this.jumpToPostGive} />
-                  <SmallButton btn_border="#466A80" btn_back="#8DD6FF" btn_text_color="#466A80" login btn_name="通知" btn_click="" />
+                  <SmallButton
+                    btn_border="#466A80"
+                    btn_back="#466A80"
+                    btn_text_color="#D9F1FF"
+                    btn_name="ポスト"
+                    btn_click={this.jumpToPostGive}
+                  />
+                  <SmallButton
+                    btn_border="#466A80"
+                    btn_back="#8DD6FF"
+                    btn_text_color="#466A80"
+                    login
+                    btn_name="通知"
+                    btn_click=""
+                  />
                 </AuthButtonDiv>
               </div>
             </>
@@ -96,7 +109,7 @@ const Wrapper = styled.div`
   background-color: #8dd6ff;
   width: 100%;
   display: grid;
-grid-template-columns: 1fr 2.3fr 1fr;
+  grid-template-columns: 1fr 2.3fr 1fr;
   padding: 10px 5px 5px 5px;
 `;
 
@@ -107,20 +120,20 @@ const Image = styled.img`
 
 const MessageToUserDiv = styled.div`
   font-size: 13px;
-  text-align:right;
-  height:20%;
+  text-align: right;
+  height: 20%;
 `;
 
 const LogoutButton = styled.button`
   color: #6e787f;
-  width:30%;
+  width: 30%;
 `;
 
 const AuthButtonDiv = styled.div`
-  display:flex;
-  justify-content:space-around;
-  align-items:flex-end;
-  height:80%;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  height: 80%;
 `;
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

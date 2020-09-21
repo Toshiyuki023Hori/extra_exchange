@@ -40,7 +40,7 @@ class App extends Component {
             render={(routeProps) => <Add_Want_Item {...routeProps} {...this.props} />}
           />
           <Route
-            path="/want/:parent_id/add"
+            path="/want/:parent_id/edit"
             render={(routeProps) => <Edit_Want_Item {...routeProps} {...this.props} />}
           />
         </Switch>

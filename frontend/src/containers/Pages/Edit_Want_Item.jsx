@@ -31,7 +31,7 @@ class Edit_Want_Item extends Component {
       return (
         <>
           <Header loginUser={this.state.loginUser} />
-          <Edit_Want_Item_Form parent_id={this.props.match.params.parent_id} owner={this.state.loginUser} axiosUrl="http://localhost:8000/api/" />
+          <Edit_Want_Item_Form parent_id={this.props.match.params.parent_id} owner={this.state.loginUser} loginUser={this.state.loginUser} axiosUrl="http://localhost:8000/api/" />
         </>
       );
     }

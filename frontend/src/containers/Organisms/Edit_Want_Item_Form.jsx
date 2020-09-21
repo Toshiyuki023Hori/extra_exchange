@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { connect } from 'react-redux';
+import history from '../../history';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 class Edit_Want_Item_Form extends Component {
@@ -54,11 +55,17 @@ class Edit_Want_Item_Form extends Component {
         axios.get(this.props.axiosUrl + 'wantitem/?parent_item=' + parent_id),
       ])
       .then(
-        axios.spread((resParent, resWant) => {
-          this.setState({ ...this.state, parentItem: resParent.data });
-          this.setState({ ...this.state, wantItem: resWant.data[0] });
+        axios.spread(async (resParent, resWant) => {
+          await this.setState({ ...this.state, parentItem: resParent.data });
+          await this.setState({ ...this.state, wantItem: resWant.data[0] });
+          this.setState({ info: { ...this.state.info, name: this.state.parentItem.name } });
+          this.setState({ info: { ...this.state.info, url: this.state.wantItem.url } });
         })
       );
+
+    if (this.state.parentItem.owner != this.props.loginUser.id) {
+      history.push('/login');
+    }
 
     if (this.state.parentItem.bland != null) {
       axios.get(this.props.axiosUrl + 'bland/' + this.state.parentItem.bland).then((res) => {
@@ -67,22 +74,22 @@ class Edit_Want_Item_Form extends Component {
       });
     }
 
-    if (this.state.parentItem.keyword[0]){
-      axios.get(this.props.axiosUrl + "keyword/" + this.state.parentItem.keyword[0]).then((res) => {
-        this.setState({info : {...this.state.info, keyword1:res.data.name}})
-      })
+    if (this.state.parentItem.keyword[0]) {
+      axios.get(this.props.axiosUrl + 'keyword/' + this.state.parentItem.keyword[0]).then((res) => {
+        this.setState({ info: { ...this.state.info, keyword1: res.data.name } });
+      });
     }
 
-    if (this.state.parentItem.keyword[1]){
-      axios.get(this.props.axiosUrl + "keyword/" + this.state.parentItem.keyword[1]).then((res) => {
-        this.setState({info : {...this.state.info, keyword2:res.data.name}})
-      })
+    if (this.state.parentItem.keyword[1]) {
+      axios.get(this.props.axiosUrl + 'keyword/' + this.state.parentItem.keyword[1]).then((res) => {
+        this.setState({ info: { ...this.state.info, keyword2: res.data.name } });
+      });
     }
 
-    if (this.state.parentItem.keyword[2]){
-      axios.get(this.props.axiosUrl + "keyword/" + this.state.parentItem.keyword[2]).then((res) => {
-        this.setState({info : {...this.state.info, keyword3:res.data.name}})
-      })
+    if (this.state.parentItem.keyword[2]) {
+      axios.get(this.props.axiosUrl + 'keyword/' + this.state.parentItem.keyword[2]).then((res) => {
+        this.setState({ info: { ...this.state.info, keyword3: res.data.name } });
+      });
     }
   }
 
@@ -283,7 +290,7 @@ class Edit_Want_Item_Form extends Component {
 
           <div>
             <label>ブランド</label>
-            <span>{this.state.info.bland === '' ? ' ' + 'なし' : " " + this.state.info.bland}</span>
+            <span>{this.state.info.bland === '' ? ' ' + 'なし' : ' ' + this.state.info.bland}</span>
             <select name="bland" onChange={this.handleChange}>
               <option value="">ブランド無し</option>
               {this.state.allBland.map((bland, idx) => {
