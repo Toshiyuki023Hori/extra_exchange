@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import SmallButton from '../../presentational/shared/SmallButton';
+import zIndex from '@material-ui/core/styles/zIndex';
 
 class Want_Item_List extends Component {
   constructor(props) {
@@ -90,10 +91,10 @@ class Want_Item_List extends Component {
           <ol>
             {this.state.wantItems.length === 0
               ? null
-              : Object.keys(this.state.inIdUrlName).map((key) => {
+              : Object.keys(this.state.inIdUrlName).map((key, idx) => {
                   return (
                     <>
-                      <li>
+                      <li key={idx}>
                         {/* URLを持っていたら、リンク先まで飛べるように条件分岐 */}
                         {this.state.inIdUrlName[key]['url'] == '' ? (
                           this.state.inIdUrlName[key]['name']

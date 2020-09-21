@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import styled from 'styled-components';
 
 class SearchBox extends Component {
   constructor(props) {
@@ -21,19 +22,63 @@ class SearchBox extends Component {
   render() {
     return (
       <div>
-        <p>あなたの探し物は?</p>
-        <input
-          type="text"
-          name="itemName"
-          onChange={this.handleChange}
-          value={this.state.itemName}
-        />
-        <button type="submit" >
-          検索
-        </button>
+        <Subtitle>あなたの探し物は?</Subtitle>
+        <SearchArea>
+          <InputBox
+            type="text"
+            name="itemName"
+            onChange={this.handleChange}
+            value={this.state.itemName}
+            placeholder="商品名で検索"
+          />
+          <SubmitButton type="submit">検索</SubmitButton>
+        </SearchArea>
       </div>
     );
   }
 }
+
+//          ===========          ===========          ===========          ===========          ===========
+//      Styled Component      =========          ===========          ===========          ===========
+//          ===========          ===========          ===========          ===========          ===========
+
+const Wrapper = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+const Subtitle = styled.p`
+  font-size: 18px;
+  text-align: center;
+  color: #6e787f;
+  margin-bottom: 3px;
+`;
+
+const SearchArea = styled.div`
+  text-align: center;
+`;
+
+const InputBox = styled.input`
+  font-size: 17px;
+  background: #d9f1ff;
+  width: 80%;
+  height: 55px;
+  border-radius: 7px 0px 0px 7px;
+  text-align: center;
+`;
+
+const SubmitButton = styled.button`
+  font-size: 17px;
+  background: #7caac9;
+  color: white;
+  width: 15%;
+  height: 55px;
+  text-align: center;
+  border-radius: 0px 7px 7px 0px;
+`;
+
+//          ===========          ===========          ===========          ===========          ===========
+//      Styled Component      =========          ===========          ===========          ===========
+//          ===========          ===========          ===========          ===========          ===========
 
 export default SearchBox;

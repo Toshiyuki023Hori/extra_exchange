@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
-import { Router, Route, withRouter } from 'react-router-dom';
+import { Router, Route, withRouter, Switch } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as actions from './reducks/auth/actions';
 import history from './history';
 import { Link } from 'react-router-dom';
 import { store } from './index';
+import './App.css';
 
 import Register from './containers/Pages/Register';
 import Login from './containers/Pages/Login';
 import Add_Want_Item from './containers/Pages/Add_Want_Item';
+import Edit_Want_Item from './containers/Pages/Edit_Want_Item';
 import Add_Give_Item from './containers/Pages/Add_Give_Item';
 
 class App extends Component {
@@ -31,11 +33,17 @@ class App extends Component {
           path="/login"
           render={(routeProps) => <Login {...routeProps} {...this.props} />}
         />
-        <Route
-          exact
-          path="/want/add"
-          render={(routeProps) => <Add_Want_Item {...routeProps} {...this.props} />}
-        />
+        <Switch>
+          <Route
+            exact
+            path="/want/add"
+            render={(routeProps) => <Add_Want_Item {...routeProps} {...this.props} />}
+          />
+          <Route
+            path="/want/:parent_id/edit"
+            render={(routeProps) => <Edit_Want_Item {...routeProps} {...this.props} />}
+          />
+        </Switch>
         <Route
           exact
           path="/give/add"

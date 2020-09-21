@@ -132,14 +132,11 @@ export const authCheckState = () => {
       const expirationDate = new Date(localStorage.getItem('expirationDate'));
       if (expirationDate <= new Date()) {
         dispatch(logout());
-      } else {
-        //
-        //uidを取得してからauthSuccessを実行させたいです。
+    } else {
         const uid = localStorage.getItem('uid');
         if (uid) {
           dispatch(authSuccess(token, uid));
         }
-        console.log('uid is ' + uid + ' and token is ' + token);
         dispatch(checkAuthTimeout((expirationDate.getTime() - new Date().getTime()) / 1000));
       }
     }
