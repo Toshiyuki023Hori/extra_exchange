@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import history from '../../history';
+import SmallButton from '../../presentational/shared/SmallButton';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 class Edit_Want_Item_Form extends Component {
@@ -39,6 +40,10 @@ class Edit_Want_Item_Form extends Component {
   // ===========           ===========           state変更に関するメソッド           ===========           ===========
   // ===========           ===========           ===========           ===========           ===========
 
+  //            ===========           ===========           ===========
+  //                       componentDidMount 始まり
+  //            ===========           ===========           ===========
+
   async componentDidMount() {
     const parent_id = parseInt(this.props.parent_id);
     // ドロップダウンにDB内のブランドを表示させるために、レンダー時に全カテゴリをセット
@@ -63,6 +68,7 @@ class Edit_Want_Item_Form extends Component {
         })
       );
 
+    // Parent_ItemのownerじゃないUserがログインした場合、ページ遷移させる
     if (this.state.parentItem.owner != this.props.loginUser.id) {
       history.push('/login');
     }
@@ -92,6 +98,10 @@ class Edit_Want_Item_Form extends Component {
       });
     }
   }
+
+  //            ===========           ===========           ===========
+  //                       componentDidMount 終わり
+  //            ===========           ===========           ===========
 
   handleChange = (e) => {
     const name = e.target.name;
@@ -134,9 +144,19 @@ class Edit_Want_Item_Form extends Component {
     return '';
   }
 
-  // ===========           ===========           ===========           ===========           ===========
-  // ===========           ===========           Form送信に関するメソッド           ===========           ===========
-  // ===========           ===========           ===========           ===========           ===========
+  // VVVVVVVVVVV           VVVVVVVVVVV           VVVVVVVVVVV           VVVVVVVVVVV           VVVVVVVVVVV
+  // VVVVVVVVVVV           VVVVVVVVVVV           Form送信に関するメソッド           VVVVVVVVVVV           VVVVVVVVVVV
+  // VVVVVVVVVVV           VVVVVVVVVVV           VVVVVVVVVVV           VVVVVVVVVVV           VVVVVVVVVVV
+
+
+  jumpToList(){
+    history.push("/want/add")
+  }
+
+
+  //            ===========           ===========           ===========
+  //                       handleSubmit 始まり
+  //            ===========           ===========           ===========
 
   handleSubmit = async () => {
     let keywordsList = [];
@@ -174,7 +194,7 @@ class Edit_Want_Item_Form extends Component {
               newKeywords = [...newKeywords, keyword];
             }
             console.log('keyword_id is ' + keyword_ids);
-            console.log('New words are' + newKeywords);
+            console.log('New words are ' + newKeywords);
           })
           .catch((err) => console.log(err));
       })
@@ -187,6 +207,7 @@ class Edit_Want_Item_Form extends Component {
             .post(this.props.axiosUrl + 'keyword/', {
               name: keyword,
             })
+            // DB内に存在していたキーワードと、新たに作成されたキーワードを一つにまとめる。
             .then((res) => {
               keyword_ids = [...keyword_ids, res.data.id];
             })
@@ -196,7 +217,7 @@ class Edit_Want_Item_Form extends Component {
     }
 
     await axios
-      .post(this.props.axiosUrl + 'parent/', {
+      .put(this.props.axiosUrl + 'parent/' + this.props.parent_id + '/', {
         name: this.state.info.name,
         owner: this.state.info.owner,
         bland: bland_id,
@@ -213,28 +234,23 @@ class Edit_Want_Item_Form extends Component {
     // Want_ItemはParent_Itemを外部キーとして持っているため、
     // Parent_Item作成後に、作成される。
     //
-    axios
-      .post(this.props.axiosUrl + 'wantitem/', {
+    await axios
+      .put(this.props.axiosUrl + 'wantitem/' + this.state.wantItem.id + '/', {
         url: this.state.info.url,
-        parentItem: parentItem_id,
       })
       .then((res) => {
-        const wantItem = res.data;
+        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
       });
 
-    this.setState({
-      info: {
-        name: '',
-        keyword1: '',
-        keyword2: '',
-        keyword3: '',
-        url: '',
-      },
-    });
+    history.push('/want/add');
   };
+
+  //            ===========           ===========           ===========
+  //                       handleSubmit 終わり
+  //            ===========           ===========           ===========
 
   render() {
     const { info, message } = this.state;
@@ -313,11 +329,24 @@ class Edit_Want_Item_Form extends Component {
             />
           </div>
 
-          <input
-            type="button"
-            value="編集完了"
-            onClick={this.handleSubmit}
-            disabled={
+          <SmallButton
+            btn_type="button"
+            btn_name="編集完了"
+            btn_click={this.handleSubmit}
+            btn_disable={
+              !this.state.info.name ||
+              !this.state.info.keyword1 ||
+              this.state.message.name ||
+              this.state.message.keyword1 ||
+              this.state.message.keyword2 ||
+              this.state.message.keyword3
+            }
+          />
+          <SmallButton
+            btn_type="button"
+            btn_name="戻る"
+            btn_click={this.jumpToList}
+            btn_disable={
               !this.state.info.name ||
               !this.state.info.keyword1 ||
               this.state.message.name ||

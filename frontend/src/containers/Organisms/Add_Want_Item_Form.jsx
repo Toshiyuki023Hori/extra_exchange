@@ -139,6 +139,7 @@ class Add_Want_Item_Form extends Component {
               name: keyword,
             })
             .then((res) => {
+            // DB内に存在していたキーワードと、新たに作成されたキーワードを一つにまとめる。
               keyword_ids = [...keyword_ids, res.data.id];
             })
             .catch((err) => console.log(err));

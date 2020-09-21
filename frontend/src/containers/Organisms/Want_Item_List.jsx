@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import history from '../../history';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import SmallButton from '../../presentational/shared/SmallButton';
 import zIndex from '@material-ui/core/styles/zIndex';
@@ -16,8 +17,12 @@ class Want_Item_List extends Component {
       wantItems: [],
       inIdUrlName: '',
     };
+    this.jumpToEdit = this.jumpToEdit.bind(this);
   }
 
+  //            ===========           ===========           ===========           ===========
+  //                       componentDidMount 始まり
+  //            ===========           ===========           ===========           ===========
   async componentDidMount() {
     let parentItems_ids;
     let sendToInIdUrl = {};
@@ -76,6 +81,13 @@ class Want_Item_List extends Component {
 
     this.setState(this.setState({ inIdUrlName: sendToInIdUrl }));
   }
+  //            ===========           ===========           ===========           ===========
+  //                       componentDidMount 終わり
+  //            ===========           ===========           ===========           ===========
+
+  jumpToEdit = (parent_id) => {
+    history.push('/want/' + parent_id + '/edit');
+  };
 
   render() {
     if (
@@ -109,12 +121,12 @@ class Want_Item_List extends Component {
                         <>
                           <SmallButton
                             btn_type="submit"
-                            btn_click={this.handleDelete}
+                            btn_click={() => this.handleDelete}
                             btn_name="削除"
                           />
                           <SmallButton
                             btn_type="submit"
-                            btn_click={this.handleEdit}
+                            btn_click={() => this.jumpToEdit(key)}
                             btn_name="編集"
                           />
                         </>
