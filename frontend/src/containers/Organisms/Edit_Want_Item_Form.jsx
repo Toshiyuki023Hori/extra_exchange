@@ -315,7 +315,7 @@ class Edit_Want_Item_Form extends Component {
 
           <input
             type="button"
-            value="登録"
+            value="編集完了"
             onClick={this.handleSubmit}
             disabled={
               !this.state.info.name ||
