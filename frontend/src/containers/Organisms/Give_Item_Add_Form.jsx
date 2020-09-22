@@ -6,7 +6,7 @@ import * as actions from '../../reducks/auth/actions';
 import MiddleButton from '../../presentational/shared/MiddleButton';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-class Add_Give_Item_Form extends Component {
+class Give_Item_Add_Form extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -390,15 +390,18 @@ class Add_Give_Item_Form extends Component {
 
             <div className="imageForm">
               <p>{this.state.message.images}</p>
+              {/*  */}
               <label>商品画像</label>
               {/* Validation適用前から表示させたいためVaildationとは別に記述 */}
               {this.state.imgUrls.length === 0 ? <p>画像は最低一枚投稿してください。</p> : null}
               <input type="file" multiple onChange={this.handleImageSelect} />
+              {/*  */}
               {this.state.imgUrls.length === 0
                 ? null
                 : this.state.imgUrls.map((img, idx) => {
                     return <img key={idx} src={img} alc="アップロード写真" height="150px"></img>;
                   })}
+              {/*  */}
               {this.state.imgUrls.length === 0 ? null : (
                 <button onClick={this.cancelUploadedImage}>画像取り消し</button>
               )}
@@ -438,4 +441,4 @@ class Add_Give_Item_Form extends Component {
   }
 }
 
-export default Add_Give_Item_Form;
+export default Give_Item_Add_Form;

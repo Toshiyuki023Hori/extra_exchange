@@ -1,18 +1,17 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { withRouter } from 'react-router-dom';
-import Edit_Want_Item_Form from '../Organisms/Edit_Want_Item_Form';
-import Header from '../Organisms/Header';
+import { Redirect } from 'react-router-dom';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import User_Edit_Form from '../Organisms/User_Edit_Form';
+import Header from '../Organisms/Header';
 
-class Edit_Want_Item extends Component {
+class UserEdit extends Component {
   constructor(props) {
     super(props);
     this.state = {
       loginUser: '',
     };
   }
-
   componentDidMount() {
     const localhostUrl = 'http://localhost:8000/api/';
     // ParentItemのownerが外部キーなので、レンダー時にログインユーザーをセット
@@ -25,17 +24,24 @@ class Edit_Want_Item extends Component {
   }
 
   render() {
+    // 非認証ユーザーのリダイレクト
+    if (!this.props.isAuthenticated) {
+      return <Redirect to="/login" />;
+    }
     if (this.state.loginUser === '') {
       return <CircularProgress />;
     } else {
       return (
         <>
           <Header loginUser={this.state.loginUser} />
-          <Edit_Want_Item_Form parent_id={this.props.match.params.parent_id} owner={this.state.loginUser} loginUser={this.state.loginUser} axiosUrl="http://localhost:8000/api/" />
+          <User_Edit_Form
+            loginUser={this.state.loginUser}
+            axiosUrl="http://localhost:8000/api/"
+          />
         </>
       );
     }
   }
 }
 
-export default Edit_Want_Item;
+export default UserEdit;

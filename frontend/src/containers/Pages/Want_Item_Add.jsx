@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Redirect } from 'react-router-dom';
 import axios from 'axios';
-import Add_Want_Item_Form from '../Organisms/Add_Want_Item_Form';
+import Want_Item_Add_Form from '../Organisms/Want_Item_Add_Form';
 import Want_Item_List from '../Organisms/Want_Item_List';
 import Header from '../Organisms/Header';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-class Add_Want_Item extends Component {
+class Want_Item_Add extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -26,13 +26,17 @@ class Add_Want_Item extends Component {
   }
 
   render() {
+    // 非認証ユーザーのリダイレクト
+    if (!this.props.isAuthenticated) {
+      return <Redirect to="/login" />;
+    }
     if (this.state.loginUser === '') {
       return <CircularProgress />;
     } else {
       return (
         <div>
           <Header loginUser={this.state.loginUser} />
-          <Add_Want_Item_Form
+          <Want_Item_Add_Form
             owner={this.state.loginUser}
             loginUser={this.state.loginUser}
             axiosUrl="http://localhost:8000/api/"
@@ -49,4 +53,4 @@ class Add_Want_Item extends Component {
   }
 }
 
-export default withRouter(Add_Want_Item);
+export default withRouter(Want_Item_Add);

@@ -5,7 +5,7 @@ import MiddleButton from '../../presentational/shared/MiddleButton';
 import { connect } from 'react-redux';
 import * as actions from '../../reducks/auth/actions';
 
-class LoginForm extends React.Component {
+class Login_Form extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -150,4 +150,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);
+export default connect(mapStateToProps, mapDispatchToProps)(Login_Form);

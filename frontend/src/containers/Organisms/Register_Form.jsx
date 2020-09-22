@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import * as actions from '../../reducks/auth/actions';
 import { Redirect } from 'react-router-dom';
 
-class RegisterForm extends React.Component {
+class Register_Form extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -183,16 +183,9 @@ class RegisterForm extends React.Component {
   }
 }
 
-RegisterForm.propTypes = {
+Register_Form.propTypes = {
   url: PropTypes.string,
   method: PropTypes.string,
-};
-
-const mapStateToProps = (state) => {
-  return {
-    loading: state.loading,
-    error: state.error,
-  };
 };
 
 const mapDispatchToProps = (dispatch) => {
@@ -201,4 +194,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(RegisterForm);
+export default connect(null, mapDispatchToProps)(Register_Form);
