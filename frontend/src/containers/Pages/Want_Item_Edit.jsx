@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
 import axios from 'axios';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Add_Give_Item_Form from '../Organisms/Add_Give_Item_Form';
+import { Redirect } from 'react-router-dom';
+import Want_Item_Edit_Form from '../Organisms/Want_Item_Edit_Form';
 import Header from '../Organisms/Header';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
-class Add_Give_Item extends Component {
+class Want_Item_Edit extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -25,21 +25,22 @@ class Add_Give_Item extends Component {
   }
 
   render() {
+    // 非認証ユーザーのリダイレクト
+    if(!this.props.isAuthenticated){
+      return <Redirect to="/login" />
+    }
+    // setStateのレンダリング完了までスピナー
     if (this.state.loginUser === '') {
       return <CircularProgress />;
     } else {
       return (
-        <div>
+        <>
           <Header loginUser={this.state.loginUser} />
-          <Add_Give_Item_Form
-            owner={this.state.loginUser}
-            loginUser={this.state.loginUser}
-            axiosUrl="http://localhost:8000/api/"
-          />
-        </div>
+          <Want_Item_Edit_Form parent_id={this.props.match.params.parent_id} owner={this.state.loginUser} loginUser={this.state.loginUser} axiosUrl="http://localhost:8000/api/" />
+        </>
       );
     }
   }
 }
 
-export default withRouter(Add_Give_Item);
+export default Want_Item_Edit;

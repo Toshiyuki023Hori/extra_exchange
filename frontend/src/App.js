@@ -9,9 +9,10 @@ import './App.css';
 
 import Register from './containers/Pages/Register';
 import Login from './containers/Pages/Login';
-import Add_Want_Item from './containers/Pages/Add_Want_Item';
-import Edit_Want_Item from './containers/Pages/Edit_Want_Item';
-import Add_Give_Item from './containers/Pages/Add_Give_Item';
+import Want_Item_Add from './containers/Pages/Want_Item_Add';
+import Want_Item_Edit from './containers/Pages/Want_Item_Edit';
+import Give_Item_Add from './containers/Pages/Give_Item_Add';
+import User_Edit from './containers/Pages/User_Edit';
 
 class App extends Component {
   componentDidMount() {
@@ -37,17 +38,21 @@ class App extends Component {
           <Route
             exact
             path="/want/add"
-            render={(routeProps) => <Add_Want_Item {...routeProps} {...this.props} />}
+            render={(routeProps) => <Want_Item_Add {...routeProps} {...this.props} />}
           />
           <Route
             path="/want/:parent_id/edit"
-            render={(routeProps) => <Edit_Want_Item {...routeProps} {...this.props} />}
+            render={(routeProps) => <Want_Item_Edit {...routeProps} {...this.props} />}
           />
         </Switch>
         <Route
           exact
           path="/give/add"
-          render={(routeProps) => <Add_Give_Item {...routeProps} {...this.props} />}
+          render={(routeProps) => <Give_Item_Add {...routeProps} {...this.props} />}
+        />
+        <Route
+          path="/user/edit"
+          render={(routeProps) => <User_Edit {...routeProps} {...this.props} />}
         />
       </Router>
     );

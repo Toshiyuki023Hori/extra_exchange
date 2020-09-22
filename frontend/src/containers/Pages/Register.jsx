@@ -1,6 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import RegisterForm from '../Organisms/RegisterForm';
+import Register_Form from '../Organisms/Register_Form';
 import { connect, useSelector } from 'react-redux';
 
 function Register(props) {
@@ -10,7 +10,7 @@ function Register(props) {
       {console.log(token)}
       {props.isAuthenticated ? <h1>You succeeded in Loging in</h1> : <h1>Don't give up!!</h1>}
       <div>
-        <RegisterForm />
+        <Register_Form />
       </div>
     </>
   );
