@@ -14,6 +14,7 @@ class UserViewSet(viewsets.ModelViewSet):
         permissions.AllowAny
     ]
     serializer_class = UserSerializer
+    # parser_classes = (MultiPartParser,FormParser)
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 

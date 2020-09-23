@@ -41,7 +41,7 @@ class User(AbstractUser):
     email = models.EmailField(max_length=100, unique=True)
     profile = models.TextField(max_length=800, blank=True, null=True)
     icon = models.ImageField(upload_to="images/", blank=True, null=True)
-    background = models.ImageField(upload_to="images/", blank=True, null=True)
+    background = models.ImageField(upload_to="images/", default="./default_image/ユーザーデフォルト背景画像.jpg" ,blank=True, null=True)
     # AbstractUserはfirst_name,last_nameを保持しているため無効化
     first_name = None
     last_name = None

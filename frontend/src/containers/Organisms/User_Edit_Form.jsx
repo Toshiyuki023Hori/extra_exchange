@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { connect } from 'react-redux';
-import styled from "styled-components"
+import styled from 'styled-components';
+import history from '../../history';
 import CircularProgresss from '@material-ui/core/CircularProgress';
 import MiddleButton from '../../presentational/shared/MiddleButton';
 
@@ -29,6 +30,17 @@ class User_Edit_Form extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleImageSelect = this.handleImageSelect.bind(this);
     this.cancelUploadedImage = this.cancelUploadedImage.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.setNoImage = this.setNoImage.bind(this);
+  }
+
+  async componentDidMount() {
+    if (this.state.info.icon != null) {
+      await this.setState({ imgUrls: { ...this.state.imgUrls, icon: this.state.info.icon } });
+    }
+    if (this.state.info.background != null) {
+      this.setState({ imgUrls: { ...this.state.imgUrls, background: this.state.info.background } });
+    }
   }
 
   handleChange(e) {
@@ -46,13 +58,12 @@ class User_Edit_Form extends Component {
   handleImageSelect = async (e) => {
     const name = e.target.name;
     const file = e.target.files[0];
-    console.log(file);
     // Submit用のオブジェクトにアップロードされたファイルを格納
     const { info } = this.state;
     this.setState({
       info: { ...info, [name]: file },
     });
-    console.log(this.state.info.icon)
+    console.log(this.state.info.icon);
     // console.log(this.state.info[name]);
     // 画像プレビュー機能用のオブジェクトにDataURLに返還された画像URLを格納
     let reader = new FileReader();
@@ -62,9 +73,13 @@ class User_Edit_Form extends Component {
     reader.readAsDataURL(file);
   };
 
-  cancelUploadedImage = (target) => {
-    this.setState({ info: { ...this.state.info, [target]: this.props.loginUser.icon } });
-    this.setState({ imgUrls: {...this.state.imgUrls, [target]:null} });
+  setNoImage = async (target) => {
+    await this.setState({ info: { ...this.state.info, [target]: null } });
+  };
+
+  cancelUploadedImage = async (target) => {
+    await this.setState({ info: { ...this.state.info, [target]: this.props.loginUser.icon } });
+    await this.setState({ imgUrls: { ...this.state.imgUrls, [target]: null } });
   };
 
   // ===========           ===========           ===========           ===========           ===========
@@ -100,6 +115,52 @@ class User_Edit_Form extends Component {
   // ===========           ===========           ===========           ===========           ===========
   // ===========           ===========           Form送信に関するメソッド           ===========           ===========
   // ===========           ===========           ===========           ===========           ===========
+
+  //            ===========           ===========           ===========
+  //                       handleSubmit 始まり
+  //            ===========           ===========           ===========
+
+  handleSubmit = async () => {
+    const data = new FormData();
+    const config = {
+      headers: { 'content-type': 'multipart/form-data' },
+    };
+
+    // 編集前に画像が設定されているなら、レンダー時にURLの形で入っている。
+    // Submit時にstringということはhandleImageがemitされていない、
+    // つまり、編集されていないということだからFormDataには入れない(エラーが出るため)
+    const deleteStringUrl = (key) => {
+      if (typeof this.state.info[key] == 'string') {
+        this.setState({ info: { ...this.state.info, [key]: 'noChangeImage' } });
+      }
+    };
+
+    // もしicon,backgroundが編集されなかったらnoChangeImageに変換
+    await deleteStringUrl('icon');
+    await deleteStringUrl('background');
+
+    console.log('Change To ' + this.state.info.icon + ' ?');
+    console.log('Change To ' + this.state.info.background + ' ?');
+
+    Object.keys(this.state.info)
+      // image, backgroundが変更されていない場合、それを取り除くためのfilter
+      .filter((key) => this.state.info[key] !== 'noChangeImage')
+      .map((filteredKey) => {
+        data.append(filteredKey, this.state.info[filteredKey]);
+        console.log(...data);
+      });
+
+    axios
+      .patch(this.props.axiosUrl + 'user/' + this.props.loginUser.id + '/', data)
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+
+    // history.push('/user/edit');
+  };
+
+  //            ===========           ===========           ===========
+  //                       handleSubmit 終わり
+  //            ===========           ===========           ===========
 
   render() {
     return (
@@ -145,7 +206,15 @@ class User_Edit_Form extends Component {
           {this.state.imgUrls.icon != null ? (
             <>
               <Image src={this.state.imgUrls.icon} alt="" />
-              <button name="icon" onClick={() => this.cancelUploadedImage("icon")}>画像取り消し</button>
+              {typeof this.state.info.icon == 'string' ? (
+                <button name="icon" onClick={() => this.setNoImage('icon')}>
+                  アイコンを未設定にする
+                </button>
+              ) : (
+                <button name="icon" onClick={() => this.cancelUploadedImage('icon')}>
+                  画像取り消し
+                </button>
+              )}
             </>
           ) : (
             <Image src="" alt="" />
@@ -158,7 +227,15 @@ class User_Edit_Form extends Component {
           {this.state.imgUrls.background != null ? (
             <>
               <Image src={this.state.imgUrls.background} alt="" />
-              <button name="background" onClick={() => this.cancelUploadedImage("background")}>画像取り消し</button>
+              {typeof this.state.info.background == 'string' ? (
+                <button name="background" onClick={() => this.setNoImage('background')}>
+                  背景を未設定にする
+                </button>
+              ) : (
+                <button name="background" onClick={() => this.cancelUploadedImage('background')}>
+                  画像取り消し
+                </button>
+              )}
             </>
           ) : (
             <Image src="" alt="" />
@@ -168,6 +245,7 @@ class User_Edit_Form extends Component {
         <MiddleButton
           btn_name="編集完了"
           btn_type="submit"
+          btn_click={this.handleSubmit}
           btn_disable={
             !this.state.info.username ||
             !this.state.info.email ||
@@ -181,7 +259,7 @@ class User_Edit_Form extends Component {
 }
 
 const Image = styled.img`
-  width:150px;
+  width: 150px;
 `;
 
 export default User_Edit_Form;
