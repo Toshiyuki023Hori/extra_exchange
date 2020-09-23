@@ -35,7 +35,7 @@ class User_ChangePass extends Component {
           <Header loginUser={this.state.loginUser} />
           <User_ChangePass_Form
             loginUser={this.state.loginUser}
-            authUrl="http://localhost:8000/rest-auth/password/change"
+            authUrl="http://localhost:8000/rest-auth/password/change/"
           />
         </>
       );
