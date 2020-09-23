@@ -13,6 +13,7 @@ import Want_Item_Add from './containers/Pages/Want_Item_Add';
 import Want_Item_Edit from './containers/Pages/Want_Item_Edit';
 import Give_Item_Add from './containers/Pages/Give_Item_Add';
 import User_Edit from './containers/Pages/User_Edit';
+import User_ChangePass from "./containers/Pages/User_ChangePass"
 
 class App extends Component {
   componentDidMount() {
@@ -53,6 +54,10 @@ class App extends Component {
         <Route
           path="/user/edit"
           render={(routeProps) => <User_Edit {...routeProps} {...this.props} />}
+        />
+        <Route
+          path="/user/changepass"
+          render={(routeProps) => <User_ChangePass {...routeProps} {...this.props} />}
         />
       </Router>
     );
