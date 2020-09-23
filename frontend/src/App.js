@@ -13,7 +13,8 @@ import Want_Item_Add from './containers/Pages/Want_Item_Add';
 import Want_Item_Edit from './containers/Pages/Want_Item_Edit';
 import Give_Item_Add from './containers/Pages/Give_Item_Add';
 import User_Edit from './containers/Pages/User_Edit';
-import User_ChangePass from "./containers/Pages/User_ChangePass"
+import User_ChangePass from './containers/Pages/User_ChangePass';
+import Top from './containers/Pages/Top';
 
 class App extends Component {
   componentDidMount() {
@@ -25,6 +26,7 @@ class App extends Component {
     return (
       <Router history={history}>
         {/* Route内のRoutePassはpropsを渡す役割を果たす */}
+        <Route exact path="/top" render={(routeProps) => <Top {...routeProps} {...this.props} />} />
         <Route
           exact
           path="/registration"

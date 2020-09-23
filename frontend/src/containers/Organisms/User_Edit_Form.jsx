@@ -124,6 +124,12 @@ class User_Edit_Form extends Component {
     const config = {
       headers: { 'content-type': 'multipart/form-data' },
     };
+    const token = localStorage.getItem('token');
+    const authHeader = {
+      headers: {
+        Authorization: 'Token ' + token,
+      },
+    };
 
     // 編集前に画像が設定されているなら、レンダー時にURLの形で入っている。
     // Submit時にstringということはhandleImageがemitされていない、
@@ -150,7 +156,7 @@ class User_Edit_Form extends Component {
       });
 
     axios
-      .patch(this.props.axiosUrl + 'user/' + this.props.loginUser.id + '/', data)
+      .patch(this.props.axiosUrl + 'user/' + this.props.loginUser.id + '/', data,authHeader)
       .then((res) => console.log(res))
       .catch((err) => console.log(err));
 

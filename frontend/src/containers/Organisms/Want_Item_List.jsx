@@ -46,35 +46,41 @@ class Want_Item_List extends Component {
     //
     //
     //  ユーザーが持つParent_Itemの中のWant_Itemを取得する
-    await Promise.all(
-      Object.keys(parentItems_ids).map(async (key) => {
-        await axios.get(this.props.axiosUrl + 'wantitem/?parent_item=' + key).then((res) => {
-          //  Want_DataのparentItemと、Parent_Itemが一致した場合、
-          //  length == 1 のArrayが返ってくるため、それの条件分岐
-          if (res.data.length !== 0) {
-            this.setState({ wantItems: [...this.state.wantItems, res.data[0]] });
-            //  <li>タグのディスプレイ時に欲しい情報は、id, name, url
-            //  これらをまとめるために、idをkeyとしたオブジェクトを新規作成
-            for (let parentItem of this.state.parentItems) {
-              if (parentItem.id == res.data[0].parentItem) {
-                sendToInIdUrl = { ...sendToInIdUrl, [parentItem.id]: { name: parentItem.name } };
+  if (this.state.parentItems != "") {
+      await Promise.all(
+        Object.keys(parentItems_ids).map(async (key) => {
+          await axios.get(this.props.axiosUrl + 'wantitem/?parent_item=' + key).then((res) => {
+            //  Want_DataのparentItemと、Parent_Itemが一致した場合、
+            //  length == 1 のArrayが返ってくるため、それの条件分岐
+            if (res.data.length !== 0) {
+              this.setState({ wantItems: [...this.state.wantItems, res.data[0]] });
+              //  <li>タグのディスプレイ時に欲しい情報は、id, name, url
+              //  これらをまとめるために、idをkeyとしたオブジェクトを新規作成
+              for (let parentItem of this.state.parentItems) {
+                if (parentItem.id == res.data[0].parentItem) {
+                  sendToInIdUrl = { ...sendToInIdUrl, [parentItem.id]: { name: parentItem.name } };
+                  console.log(sendToInIdUrl)
+                }
               }
             }
-          }
-        });
-      })
-    );
+          });
+        })
+      );
+    }
 
     //
     //
     //取得したWant_Itemからurlを抽出して、オブジェクトに代入する。
-    for (const want_item of this.state.wantItems) {
-      for (const key in sendToInIdUrl) {
-        if (want_item.parentItem == key) {
-          sendToInIdUrl = {
-            ...sendToInIdUrl,
-            [key]: { ...sendToInIdUrl[key], url: want_item.url },
-          };
+    if (this.state.wantItems.length != 0) {
+      for (const want_item of this.state.wantItems) {
+        for (const key in sendToInIdUrl) {
+          if (want_item.parentItem == key) {
+            sendToInIdUrl = {
+              ...sendToInIdUrl,
+              [key]: { ...sendToInIdUrl[key], url: want_item.url },
+            };
+            console.log(sendToInIdUrl)
+          }
         }
       }
     }

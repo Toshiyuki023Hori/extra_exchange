@@ -341,6 +341,7 @@ class Deal(models.Model):
     # 取引時には、時刻が一つに決定しているため外部キーを使用せずDeal内のattributeに。
     meeting_time = models.DateTimeField()
     completed = models.BooleanField(default=False)
+    join_user_accept = models.BooleanField(default=False)
     history = models.ForeignKey(
         "History", on_delete=models.CASCADE, null=True, related_name="done_deal")
     request_deal = models.ForeignKey(
