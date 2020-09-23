@@ -191,8 +191,6 @@ class Want_Item_Edit_Form extends Component {
             } else {
               newKeywords = [...newKeywords, keyword];
             }
-            console.log('keyword_id is ' + keyword_ids);
-            console.log('New words are ' + newKeywords);
           })
           .catch((err) => console.log(err));
       })
@@ -217,7 +215,6 @@ class Want_Item_Edit_Form extends Component {
     await axios
       .put(this.props.axiosUrl + 'parent/' + this.props.parent_id + '/', {
         name: this.state.info.name,
-        owner: this.state.info.owner,
         bland: bland_id,
         keyword: keyword_ids,
       })

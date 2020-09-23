@@ -296,6 +296,8 @@ class Give_Item_Add_Form extends Component {
     });
   };
 
+  
+
   render() {
     const { info, message, allCategory, allBland } = this.state;
     // setStateが完了するまではnullにする。
