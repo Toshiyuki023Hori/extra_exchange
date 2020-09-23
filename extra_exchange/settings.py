@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     'rest_auth.registration',
     'allauth',
     'allauth.account',
-    'django_filters'
+    'allauth.socialaccount',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -153,7 +154,8 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+        # 'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ],
@@ -187,3 +189,5 @@ ACCOUNT_EMAIL_REQUIRED = True
 
 # 「サインアップ」でユーザーネームが必要か。
 ACCOUNT_USERNAME_REQUIRED = True
+
+OLD_PASSWORD_FIELD_ENABLED = True
