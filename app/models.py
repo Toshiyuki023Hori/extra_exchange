@@ -41,7 +41,7 @@ class User(AbstractUser):
     email = models.EmailField(max_length=100, unique=True)
     profile = models.TextField(max_length=800, blank=True, null=True)
     icon = models.ImageField(upload_to="images/", blank=True, null=True)
-    background = models.ImageField(upload_to="images/", default="images/ユーザーデフォルト背景画像.jpg" ,blank=True, null=True)
+    background = models.ImageField(upload_to="images/" ,blank=True, null=True)
     # AbstractUserはfirst_name,last_nameを保持しているため無効化
     first_name = None
     last_name = None
@@ -341,6 +341,7 @@ class Deal(models.Model):
     # 取引時には、時刻が一つに決定しているため外部キーを使用せずDeal内のattributeに。
     meeting_time = models.DateTimeField()
     completed = models.BooleanField(default=False)
+    join_user_accept = models.BooleanField(default=False)
     history = models.ForeignKey(
         "History", on_delete=models.CASCADE, null=True, related_name="done_deal")
     request_deal = models.ForeignKey(

@@ -190,6 +190,12 @@ class Give_Item_Add_Form extends Component {
     let keyword_ids = [];
     let keywordsList = [];
     let newKeywords = [];
+    const token = localStorage.getItem('token');
+    const authHeader = {
+      headers: {
+        Authorization: 'Token ' + token,
+      },
+    };
     const config = {
       headers: { 'content-type': 'multipart/form-data' },
     };
@@ -231,7 +237,7 @@ class Give_Item_Add_Form extends Component {
           await axios
             .post(this.props.axiosUrl + 'keyword/', {
               name: keyword,
-            })
+            },authHeader)
             .then((res) => {
               keyword_ids = [...keyword_ids, res.data.id];
               console.log(keyword_ids);
@@ -247,7 +253,7 @@ class Give_Item_Add_Form extends Component {
         owner: this.state.info.owner.id,
         bland: bland_id,
         keyword: keyword_ids,
-      })
+      },authHeader)
       .then((res) => {
         parentItem_id = res.data.id;
         console.log('Parent is ' + parentItem_id);
@@ -262,7 +268,7 @@ class Give_Item_Add_Form extends Component {
         category: category_id,
         detail: this.state.info.detail,
         parentItem: parentItem_id,
-      })
+      },authHeader)
       .then((res) => {
         giveItem_id = res.data.id;
         console.log('giveItem is ' + giveItem_id);
@@ -278,7 +284,7 @@ class Give_Item_Add_Form extends Component {
       console.log(data);
 
       axios
-        .post(this.props.axiosUrl + 'image/', data)
+        .post(this.props.axiosUrl + 'image/', data,authHeader)
         .then((res) => console.log('You made it ! \n \n' + res.data))
         .catch((err) => console.log(err));
     });

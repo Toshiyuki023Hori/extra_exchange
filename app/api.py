@@ -3,6 +3,9 @@ from rest_framework import viewsets, permissions
 from .serializers import *
 from django_filters import rest_framework as filters
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework import status
 
 
 # ======      =======      ======      以下、Modelsに関わるViewSet     ======     ======      =======      =======
@@ -11,10 +14,25 @@ from rest_framework.parsers import MultiPartParser, FormParser
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = UserSerializer
     # parser_classes = (MultiPartParser,FormParser)
+
+    # 一度ImageFieldを設定すれば、フロント側からImageFieldをnullでできないためアクションを追加。
+    @action(detail=True, methods=["delete"], url_path="delete-background")
+    def delete_background(self, request, *args, **kwargs):
+        user = self.get_object()
+        user.background = ""
+        user.save()
+        return Response("背景画像の削除が完了しました。", status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, methods=["delete"], url_path="delete-icon")
+    def delete_icon(self, request, *args, **kwargs):
+        user = self.get_object()
+        user.icon = ""
+        user.save()
+        return Response("アイコンの削除が完了しました。", status=status.HTTP_204_NO_CONTENT)
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
@@ -22,7 +40,7 @@ class UserViewSet(viewsets.ModelViewSet):
 class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = RequestSerializer
 
@@ -32,7 +50,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 class NotificationViewSet(viewsets.ModelViewSet):
     queryset = Notification.objects.all()
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = NotificationSerializer
 
@@ -42,7 +60,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
 class FollowViewSet(viewsets.ModelViewSet):
     queryset = Follow.objects.all()
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = FollowSerializer
 
@@ -55,7 +73,7 @@ class FollowViewSet(viewsets.ModelViewSet):
 class PickUp_PlacesViewSet(viewsets.ModelViewSet):
     queryset = PickUp_Places.objects.all()
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = PickUp_PlacesSerializer
 
@@ -65,7 +83,7 @@ class PickUp_PlacesViewSet(viewsets.ModelViewSet):
 class Give_ItemViewSet(viewsets.ModelViewSet):
     queryset = Give_Item.objects.all()
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = Give_ItemSerializer
 
@@ -78,7 +96,7 @@ class Give_ItemViewSet(viewsets.ModelViewSet):
 class FavoriteViewSet(viewsets.ModelViewSet):
     queryset = Favorite.objects.all()
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = FavoriteSerializer
 
@@ -88,7 +106,7 @@ class FavoriteViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = CommentSerializer
 
@@ -98,7 +116,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 class Item_ImageViewSet(viewsets.ModelViewSet):
     queryset = Item_Image.objects.all()
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = Item_ImageSerializer
 
@@ -109,7 +127,7 @@ class Item_ImageViewSet(viewsets.ModelViewSet):
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = CategorySerializer
 
@@ -122,7 +140,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class BlandViewSet(viewsets.ModelViewSet):
     queryset = Bland.objects.all()
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = BlandSerializer
 
@@ -135,7 +153,7 @@ class BlandViewSet(viewsets.ModelViewSet):
 class KeywordViewSet(viewsets.ModelViewSet):
     queryset = Keyword.objects.all()
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = KeywordSerializer
 
@@ -148,7 +166,7 @@ class KeywordViewSet(viewsets.ModelViewSet):
 class Want_ItemViewSet(viewsets.ModelViewSet):
     queryset = Want_Item.objects.all()
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = Want_ItemSerializer
 
@@ -161,7 +179,7 @@ class Want_ItemViewSet(viewsets.ModelViewSet):
 class Parent_ItemViewSet(viewsets.ModelViewSet):
     queryset = Parent_Item.objects.all()
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = Parent_ItemSerializer
 
@@ -174,7 +192,7 @@ class Parent_ItemViewSet(viewsets.ModelViewSet):
 class RequestViewSet(viewsets.ModelViewSet):
     queryset = Request.objects.all()
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = RequestSerializer
 
@@ -184,7 +202,7 @@ class RequestViewSet(viewsets.ModelViewSet):
 class Meeting_TimeViewSet(viewsets.ModelViewSet):
     queryset = Meeting_Time.objects.all()
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = Meeting_TimeSerializer
 
@@ -194,7 +212,7 @@ class Meeting_TimeViewSet(viewsets.ModelViewSet):
 class DealViewSet(viewsets.ModelViewSet):
     queryset = Deal.objects.all()
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = DealSerializer
 
@@ -204,7 +222,7 @@ class DealViewSet(viewsets.ModelViewSet):
 class Private_MessageViewSet(viewsets.ModelViewSet):
     queryset = Private_Message.objects.all()
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = Private_MessageSerializer
 
@@ -214,7 +232,7 @@ class Private_MessageViewSet(viewsets.ModelViewSet):
 class HistoryViewSet(viewsets.ModelViewSet):
     queryset = History.objects.all()
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = HistorySerializer
 
@@ -227,6 +245,6 @@ class HistoryViewSet(viewsets.ModelViewSet):
 class Request_DealViewSet(viewsets.ModelViewSet):
     queryset = Request_Deal.objects.all()
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = Request_DealSerializer

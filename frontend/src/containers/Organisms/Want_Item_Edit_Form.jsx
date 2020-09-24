@@ -162,6 +162,12 @@ class Want_Item_Edit_Form extends Component {
     let bland_id = this.state.info.bland;
     let keyword_ids = [];
     let parentItem_id;
+    const token = localStorage.getItem('token');
+    const authHeader = {
+      headers: {
+        Authorization: 'Token ' + token,
+      },
+    };
     const hasValueInKeyword = (keyword) => {
       if (keyword !== '') {
         keywordsList = [...keywordsList, keyword];
@@ -202,7 +208,7 @@ class Want_Item_Edit_Form extends Component {
           await axios
             .post(this.props.axiosUrl + 'keyword/', {
               name: keyword,
-            })
+            },authHeader)
             // DB内に存在していたキーワードと、新たに作成されたキーワードを一つにまとめる。
             .then((res) => {
               keyword_ids = [...keyword_ids, res.data.id];
@@ -217,7 +223,7 @@ class Want_Item_Edit_Form extends Component {
         name: this.state.info.name,
         bland: bland_id,
         keyword: keyword_ids,
-      })
+      },authHeader)
       .then((res) => {
         parentItem_id = res.data.id;
       })
@@ -232,7 +238,7 @@ class Want_Item_Edit_Form extends Component {
     await axios
       .put(this.props.axiosUrl + 'wantitem/' + this.state.wantItem.id + '/', {
         url: this.state.info.url,
-      })
+      },authHeader)
       .then((res) => {
         console.log(res.data);
       })
