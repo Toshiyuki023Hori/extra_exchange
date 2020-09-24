@@ -40,6 +40,9 @@ class User_Edit_Form extends Component {
     if (this.state.info.background != null) {
       this.setState({ imgUrls: { ...this.state.imgUrls, background: this.state.info.background } });
     }
+    if (this.state.info.profile == 'null') {
+      this.setState({ info: { ...this.state.info, profile: ' ' } });
+    }
   }
 
   handleChange(e) {
@@ -72,8 +75,25 @@ class User_Edit_Form extends Component {
     reader.readAsDataURL(file);
   };
 
-  setNoImage = async (target) => {
-    await this.setState({ info: { ...this.state.info, [target]: null } });
+  setNoImage = (target) => {
+    const token = localStorage.getItem('token');
+    const authHeader = {
+      headers: {
+        Authorization: 'Token ' + token,
+      },
+    };
+    axios
+      .delete(
+        this.props.axiosUrl + 'user/' + this.props.loginUser.id + '/delete-' + target + '/',
+        authHeader
+      )
+      // 画像削除はaxios.deleteで完了。Submitされたくないので、handleSubmitでfilterされるように加工。
+      .then(async (res) => {
+        await this.setState({ info: { ...this.state.info, [target]: 'notNeedSubmit' } });
+        await this.setState({ imgUrls: { ...this.state.imgUrls, [target]: null } });
+        history.push('/user/edit');
+      })
+      .catch((err) => console.log(err));
   };
 
   cancelUploadedImage = async (target) => {
@@ -136,11 +156,11 @@ class User_Edit_Form extends Component {
     // つまり、編集されていないということだからFormDataには入れない(エラーが出るため)
     const deleteStringUrl = (key) => {
       if (typeof this.state.info[key] == 'string') {
-        this.setState({ info: { ...this.state.info, [key]: 'noChangeImage' } });
+        this.setState({ info: { ...this.state.info, [key]: 'notNeedSubmit' } });
       }
     };
 
-    // もしicon,backgroundが編集されなかったらnoChangeImageに変換
+    // もしicon,backgroundが編集されなかったらnotNeedSubmitに変換
     await deleteStringUrl('icon');
     await deleteStringUrl('background');
 
@@ -149,14 +169,16 @@ class User_Edit_Form extends Component {
 
     Object.keys(this.state.info)
       // image, backgroundが変更されていない場合、それを取り除くためのfilter
-      .filter((key) => this.state.info[key] !== 'noChangeImage')
+      .filter((key) => this.state.info[key] !== 'notNeedSubmit')
+      // imageが未設定、もしくは削除されたらnullになるため、それを取り除くfilter
+      .filter((key) => this.state.info[key] !== null)
       .map((filteredKey) => {
         data.append(filteredKey, this.state.info[filteredKey]);
         console.log(...data);
       });
 
     axios
-      .patch(this.props.axiosUrl + 'user/' + this.props.loginUser.id + '/', data,authHeader)
+      .patch(this.props.axiosUrl + 'user/' + this.props.loginUser.id + '/', data, authHeader)
       .then((res) => console.log(res))
       .catch((err) => console.log(err));
 

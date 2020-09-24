@@ -3,6 +3,9 @@ from rest_framework import viewsets, permissions
 from .serializers import *
 from django_filters import rest_framework as filters
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework import status
 
 
 # ======      =======      ======      以下、Modelsに関わるViewSet     ======     ======      =======      =======
@@ -16,19 +19,20 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     # parser_classes = (MultiPartParser,FormParser)
 
+    # 一度ImageFieldを設定すれば、フロント側からImageFieldをnullでできないためアクションを追加。
     @action(detail=True, methods=["delete"], url_path="delete-background")
-    def delete_background(self,request, *args, **kwargs, pk=None):
-        user=self.get_object()
-        user.background=""
+    def delete_background(self, request, *args, **kwargs):
+        user = self.get_object()
+        user.background = ""
         user.save()
         return Response("背景画像の削除が完了しました。", status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True, methods=["delete"], url_path="delete-icon")
-    def delete_icon(self,request, *args, **kwargs, pk=None):
-        user=self.get_object()
-        user.background=""
+    def delete_icon(self, request, *args, **kwargs):
+        user = self.get_object()
+        user.icon = ""
         user.save()
-        return Response("背景画像の削除が完了しました。", status=status.HTTP_204_NO_CONTENT)
+        return Response("アイコンの削除が完了しました。", status=status.HTTP_204_NO_CONTENT)
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
