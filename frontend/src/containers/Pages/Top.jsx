@@ -13,9 +13,10 @@ class Top extends Component {
       categories: [],
     };
   }
-  componentDidMount() {
+  async componentDidMount() {
     const localhostUrl = 'http://localhost:8000/api/';
-    const topCategory = ['メンズ服', 'レディース服', '日用品', '生鮮食品', 'スマートフォン'];
+    const topCategoryList = ['メンズ服', 'レディース服', 'スマートフォン'];
+    let passCategoryToState=[]
     // ParentItemのownerが外部キーなので、レンダー時にログインユーザーをセット
     axios
       .get(localhostUrl + 'user/' + localStorage.getItem('uid'))
@@ -24,25 +25,35 @@ class Top extends Component {
       })
       .catch((err) => console.log(err));
 
-    topCategory.map((category) => {
-      axios
-        .get(localhostUrl + 'category/?name=' + category)
-        .then((res) => this.setState({ categories: [...this.state.categories, res.data] }));
-    });
+    await Promise.all(
+      topCategoryList.map(async (category) => {
+        await axios.get(localhostUrl + 'category/?name=' + category).then((res) => {
+          passCategoryToState=[...passCategoryToState, res.data]
+          console.log(passCategoryToState);
+        });
+      })
+    );
+
+    this.setState((state) => {return {categories : passCategoryToState}})
   }
 
   render() {
     // 非認証ユーザーのリダイレクト
     if (!this.props.isAuthenticated) {
-      return <p>開発中です。</p>;
+      return <p>非ユーザー画面は開発中です。</p>;
     }
-    if (this.state.loginUser === '') {
+    if (this.state.loginUser === '' ) {
       return <CircularProgress />;
     } else {
       return (
         <>
           <Header loginUser={this.state.loginUser} />
-          <Give_Item_List subtitle="メンズの最新投稿一覧" category="" />
+          <Give_Item_List
+            axiosUrl="http://localhost:8000/api/"
+            subtitle="メンズの最新投稿一覧"
+            loginUser={this.state.loginUser}
+            category={this.state.categories[0]}
+          />
         </>
       );
     }

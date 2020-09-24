@@ -16,6 +16,20 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     # parser_classes = (MultiPartParser,FormParser)
 
+    @action(detail=True, methods=["delete"], url_path="delete-background")
+    def delete_background(self,request, *args, **kwargs, pk=None):
+        user=self.get_object()
+        user.background=""
+        user.save()
+        return Response("背景画像の削除が完了しました。", status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, methods=["delete"], url_path="delete-icon")
+    def delete_icon(self,request, *args, **kwargs, pk=None):
+        user=self.get_object()
+        user.background=""
+        user.save()
+        return Response("背景画像の削除が完了しました。", status=status.HTTP_204_NO_CONTENT)
+
 # ======      =======      ======      ======     ======     ======      =======      =======
 
 
