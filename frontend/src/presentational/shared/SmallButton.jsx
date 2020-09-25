@@ -19,8 +19,10 @@ class SmallButton extends Component {
         {this.props.btn_name}
       </StyledButton>
     );
+  }
 }
-}
+
+export default SmallButton;
 
 const Colors = {
   main: '#8DD6FF',
@@ -41,5 +43,3 @@ const StyledButton = styled.button`
   background: ${(props) => props.btn_back};
   color: ${(props) => props.btn_text_color};
 `;
-
-export default SmallButton;

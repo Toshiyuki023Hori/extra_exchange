@@ -104,6 +104,8 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
+export default connect(mapStateToProps, mapDispatchToProps)(Header);
+
 const Wrapper = styled.div`
   background-color: #8dd6ff;
   width: 100%;
@@ -134,5 +136,3 @@ const AuthButtonDiv = styled.div`
   align-items: flex-end;
   height: 80%;
 `;
-
-export default connect(mapStateToProps, mapDispatchToProps)(Header);

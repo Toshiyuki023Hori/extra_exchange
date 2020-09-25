@@ -3,6 +3,7 @@ import axios from 'axios';
 import history from '../../history';
 import styled from 'styled-components';
 import { CircularProgress } from '@material-ui/core';
+import ItemCard from '../../presentational/shared/ItemCard';
 
 class Give_Item_List extends Component {
   constructor(props) {
@@ -10,7 +11,7 @@ class Give_Item_List extends Component {
     this.state = {
       loading: false,
       loginUser: this.props.loginUser,
-      items:""
+      items: '',
     };
   }
 
@@ -22,6 +23,7 @@ class Give_Item_List extends Component {
     // Parent ComponentのsetStateが完了した時点で発火
     // Categoryに合ったGive_Item > Give_ItemのParent＿Item > Image, blandのUrl, name > passParentToStateからStateへ
     if (prevProps.category != this.props.category) {
+      this.setState({loading : true})
       await axios
         .get(this.props.axiosUrl + 'giveitem/?category=' + this.props.category.id)
         .then((res) => {
@@ -74,17 +76,35 @@ class Give_Item_List extends Component {
             .catch((err) => console.log(err));
         })
       ); // Promise all closing tag
-      
-      this.setState({items : passParentToState})
+
+      this.setState({ items: passParentToState });
+      this.setState({loading : false})
     } // if closing tag
   } // componentDidUpdate closing
 
   render() {
     if (this.state.loading == true) {
       return <CircularProgress />;
-    }
-    return <h1>Give_Item_List</h1>;
-  }
-}
+    }else{
+      return (
+        <div>
+          {
+            this.state.items == "" 
+            ? null
+            :Object.keys(this.state.items).map((parentId) => {
+              return (
+                <ItemCard 
+                name={this.state.items[parentId]["name"]}
+                image={this.state.items[parentId]["image"]}
+                bland={this.state.items[parentId]["bland"]}
+                />
+              )
+            })
+          }
+        </div>
+      )
+    }    // else closing tag
+  }    // render closing tag
+}    // Give_Item_List closing tag
 
 export default Give_Item_List;
