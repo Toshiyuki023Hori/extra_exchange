@@ -122,9 +122,9 @@ class Item_ImageViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = Item_ImageSerializer
-    
+
     filter_backends = [filters.DjangoFilterBackend]
-    filterset_fields = "__all__"
+    filterset_fields = ["item"]
 
 
 # ======      =======      ======      ======     ======     ======      =======      =======
