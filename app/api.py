@@ -77,6 +77,9 @@ class PickUp_PlacesViewSet(viewsets.ModelViewSet):
     ]
     serializer_class = PickUp_PlacesSerializer
 
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_fields = "__all__"
+
 # ======      =======      ======      ======     ======     ======      =======      =======
 
 
@@ -119,6 +122,9 @@ class Item_ImageViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = Item_ImageSerializer
+    
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_fields = "__all__"
 
 
 # ======      =======      ======      ======     ======     ======      =======      =======

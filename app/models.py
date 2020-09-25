@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, AbstractUser, BaseUserManager, PermissionsMixin, UserManager
+import django_filters
 
 
 # Djangoの認証をユーザーネームからメールアドレスへ変えるために記述
@@ -226,6 +227,13 @@ class Item_Image(models.Model):
 
     class Meta:
         db_table = "item_images"
+
+
+class Item_ImageFilter(django_filters.FilterSet):
+    class Meta:
+        model:Item_Image
+        exclude:["image"]
+        fields = ['item']
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
