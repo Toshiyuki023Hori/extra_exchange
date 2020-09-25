@@ -10,19 +10,23 @@ class Give_Item_List extends Component {
     this.state = {
       loading: false,
       loginUser: this.props.loginUser,
+      items:""
     };
   }
 
   async componentDidUpdate(prevProps) {
     let pickedGiveItems;
+    // 各ボックスに入れる前に必要な情報をparent_idごとにまとめる
     let passParentToState = {};
 
+    // Parent ComponentのsetStateが完了した時点で発火
+    // Categoryに合ったGive_Item > Give_ItemのParent＿Item > Image, blandのUrl, name > passParentToStateからStateへ
     if (prevProps.category != this.props.category) {
       await axios
         .get(this.props.axiosUrl + 'giveitem/?category=' + this.props.category.id)
         .then((res) => {
           pickedGiveItems = res.data;
-          console.log("pickedGiveItems \n" + pickedGiveItems);
+          console.log('pickedGiveItems \n' + pickedGiveItems);
         })
         .catch((err) => console.log('そのカテゴリーに分類する商品はありません'));
 
@@ -54,12 +58,24 @@ class Give_Item_List extends Component {
       ); // Promise.all closing
 
       await Promise.all(
-        pickedGiveItems.map((giveItem) => {
-          axios.get(this.props.axiosUrl + "image/?item=" + giveItem.id)
-          .then((res) => console.log(res.data))
-          .catch((err) => console.log(err))
+        pickedGiveItems.map(async (giveItem) => {
+          await axios
+            .get(this.props.axiosUrl + 'image/?item=' + giveItem.id)
+            .then((res) => {
+              passParentToState = {
+                ...passParentToState,
+                [giveItem.parentItem]: {
+                  ...passParentToState[giveItem.parentItem],
+                  image: res.data,
+                },
+              }; // passParentToState closing tag(スプレッド構文)
+              console.log(passParentToState);
+            })
+            .catch((err) => console.log(err));
         })
-      )
+      ); // Promise all closing tag
+      
+      this.setState({items : passParentToState})
     } // if closing tag
   } // componentDidUpdate closing
 
