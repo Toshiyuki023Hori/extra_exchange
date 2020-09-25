@@ -14,6 +14,7 @@ class SmallButton extends Component {
         onClick={this.props.btn_click}
         onSubmit={this.props.btn_submit}
         disabled={this.props.btn_disable}
+        {...this.props}
       >
         {this.props.btn_name}
       </StyledButton>
