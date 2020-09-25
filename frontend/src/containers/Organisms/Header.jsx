@@ -68,7 +68,6 @@ class Header extends Component {
                     btn_border="#466A80"
                     btn_back="#8DD6FF"
                     btn_text_color="#466A80"
-                    login
                     btn_name="通知"
                     btn_click=""
                   />
