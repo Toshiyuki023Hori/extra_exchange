@@ -28,7 +28,6 @@ class Give_Item_List extends Component {
         .get(this.props.axiosUrl + 'giveitem/?category=' + this.props.category.id)
         .then((res) => {
           pickedGiveItems = res.data;
-          console.log('pickedGiveItems \n' + pickedGiveItems);
         })
         .catch((err) => console.log('そのカテゴリーに分類する商品はありません'));
 
@@ -39,23 +38,29 @@ class Give_Item_List extends Component {
             .get(this.props.axiosUrl + 'parent/' + giveItem.parentItem)
             .then((res) => {
               passParentToState = { ...passParentToState, [res.data.id]: { ...res.data } };
-              console.log(passParentToState);
             })
             .catch((err) => console.log(err));
         })
       );
 
       await Promise.all(
-        Object.keys(passParentToState).map((parentId) => {
-          axios
-            .get(this.props.axiosUrl + 'bland/' + passParentToState[parentId]['bland'])
-            .then((res) => {
-              passParentToState = {
-                ...passParentToState,
-                [parentId]: { ...passParentToState[parentId], bland: res.data.name },
-              };
-            })
-            .catch((err) => console.log(err));
+        Object.keys(passParentToState).map(async(parentId) => {
+          if(passParentToState[parentId]["bland"] !== null){
+            await axios
+              .get(this.props.axiosUrl + 'bland/' + passParentToState[parentId]['bland'])
+              .then((res) => {
+                passParentToState = {
+                  ...passParentToState,
+                  [parentId]: { ...passParentToState[parentId], bland: res.data.name },
+                };
+              })
+              .catch((err) => console.log(err));
+          }else {
+            passParentToState = {
+              ...passParentToState,
+              [parentId]: { ...passParentToState[parentId], bland: "なし" },
+            };
+          }  // else closing
         }) // Object.keys closing
       ); // Promise.all closing
 
@@ -71,14 +76,14 @@ class Give_Item_List extends Component {
                   image: res.data,
                 },
               }; // passParentToState closing tag(スプレッド構文)
-              console.log(passParentToState);
             })
             .catch((err) => console.log(err));
         })
       ); // Promise all closing tag
 
-      this.setState({ items: passParentToState });
+      console.log(passParentToState)
       this.setState({loading : false})
+      this.setState({ items: passParentToState });
     } // if closing tag
   } // componentDidUpdate closing
 
@@ -91,9 +96,10 @@ class Give_Item_List extends Component {
           {
             this.state.items == "" 
             ? null
-            :Object.keys(this.state.items).map((parentId) => {
+          :Object.keys(this.state.items).map((parentId,idx) => {
               return (
                 <ItemCard 
+                key={idx}
                 name={this.state.items[parentId]["name"]}
                 image={this.state.items[parentId]["image"]}
                 bland={this.state.items[parentId]["bland"]}

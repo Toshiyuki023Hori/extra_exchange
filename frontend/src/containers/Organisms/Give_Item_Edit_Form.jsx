@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { connect } from 'react-redux';
+import history from '../../history';
 import * as actions from '../../reducks/auth/actions';
 import MiddleButton from '../../presentational/shared/MiddleButton';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-class Give_Item_Add_Form extends Component {
+class Give_Item_Edit_Form extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -37,6 +38,8 @@ class Give_Item_Add_Form extends Component {
       allCategory: null,
       allBland: null,
       imgUrls: [],
+      parentItem: '',
+      giveItem: '',
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -48,17 +51,77 @@ class Give_Item_Add_Form extends Component {
   // ===========           ===========           LifeCycleメソッド           ===========           ===========
   // ===========           ===========           ===========           ===========           ===========
 
-  componentDidMount() {
+  async componentDidMount() {
+    const parent_id = parseInt(this.props.parent_id);
+    const { axiosUrl, loginUser } = this.props;
     // ドロップダウン式フォームのためにレンダー時にDB内のカテゴリとブランドを全て表示
-    axios.get(this.props.axiosUrl + 'bland/').then(async (res) => {
-      await this.setState({ ...this.state, allBland: res.data });
-      console.log('Assignment ' + this.state.allBland);
-    });
+    await axios
+      .all([
+        axios.get(axiosUrl + 'bland/'),
+        axios.get(axiosUrl + 'category/'),
+        axios.get(axiosUrl + 'parent/' + parent_id),
+        axios.get(axiosUrl + 'giveitem/?parent_item=' + parent_id),
+      ])
+      .then(
+        axios.spread((resBland, resCategory, resParent, resGive) => {
+          this.setState({ ...this.state, allBland: resBland.data });
+          this.setState({ ...this.state, allCategory: resCategory.data });
+          this.setState({ ...this.state, parentItem: resParent.data });
+          this.setState({ ...this.state, giveItem: resGive.data[0] });
+          this.setState({ info: { ...this.state.info, name: resParent.data.name } });
+          this.setState({ info: { ...this.state.info, state: resGive.data[0].state } });
+          this.setState({ info: { ...this.state.info, detail: resGive.data[0].detail } });
+        })
+      )
+      .catch((err) => console.log(err)); // axios.all closing
 
-    axios.get(this.props.axiosUrl + 'category/').then((res) => {
-      this.setState({ ...this.state, allCategory: res.data });
-      console.log('Assignment ' + this.state.Category);
-    });
+    // Parent_ItemのownerじゃないUserがログインした場合、ページ遷移させる
+    if (this.state.parentItem.owner != loginUser.id) {
+      history.push('/login');
+    }
+
+    // 入力必須項目はaxios.allでまとめてGETリクエストを送る
+    axios
+      .all([
+        axios.get(axiosUrl + 'category/' + this.state.giveItem.category),
+        axios.get(axiosUrl + 'keyword/' + this.state.parentItem.keyword[0]),
+      ])
+      .then(
+        axios.spread((resCategory, resKeyword1) => {
+          this.setState({ info: { ...this.state.info, category: resCategory.data.name } });
+          this.setState({ info: { ...this.state.info, keyword1: resKeyword1.data.name } });
+        })
+      );
+
+    if (this.state.parentItem.bland !== null) {
+      axios.get(axiosUrl + 'bland/' + this.state.parentItem.bland).then((res) => {
+        console.log(res.data);
+        this.setState({ info: { ...this.state.info, bland: res.data.name } });
+      });
+    } else if (this.state.parentItem.bland === null) {
+      this.setState({ info: { ...this.state.info, bland: '無し' } });
+    }
+
+    if (this.state.parentItem.keyword[1]) {
+      axios.get(axiosUrl + 'keyword/' + this.state.parentItem.keyword[1]).then((res) => {
+        this.setState({ info: { ...this.state.info, keyword2: res.data.name } });
+      });
+    }
+
+    if (this.state.parentItem.keyword[2]) {
+      axios.get(axiosUrl + 'keyword/' + this.state.parentItem.keyword[2]).then((res) => {
+        this.setState({ info: { ...this.state.info, keyword3: res.data.name } });
+      });
+    }
+
+    axios
+      .get(axiosUrl + 'image/?item=' + this.state.giveItem.id)
+      .then((res) => {
+        res.data.map((imgObject) => {
+          this.setState({ imgUrls: [...this.state.imgUrls, imgObject['image']] });
+        });
+      })
+      .catch((err) => console.log(err));
   }
 
   // ===========           ===========           ===========           ===========           ===========
@@ -256,7 +319,7 @@ class Give_Item_Add_Form extends Component {
         this.props.axiosUrl + 'parent/',
         {
           name: this.state.info.name,
-          owner: this.state.info.owner,
+          owner: this.state.info.owner.id,
           bland: bland_id,
           keyword: keyword_ids,
         },
@@ -315,9 +378,15 @@ class Give_Item_Add_Form extends Component {
   };
 
   render() {
-    const { info, message, allCategory, allBland } = this.state;
+    const { info, message, allCategory, allBland, imgUrls } = this.state;
     // setStateが完了するまではnullにする。
-    if (this.state.allCategory === null || this.state.allBland === null) {
+    if (
+      allCategory === null ||
+      allBland === null ||
+      info.name == '' ||
+      info.bland == '' ||
+      info.category == ''
+    ) {
       return <CircularProgress />;
     } else {
       return (
@@ -325,17 +394,13 @@ class Give_Item_Add_Form extends Component {
           <form onSubmit={this.handleSubmit}>
             <div className="nameForm textForm">
               <label>商品名</label>
-              <input
-                name="name"
-                type="text"
-                value={this.state.info.name}
-                onChange={this.handleChange}
-              />
-              <p>{this.state.message.name}</p>
+              <input name="name" type="text" value={info.name} onChange={this.handleChange} />
+              <p>{message.name}</p>
             </div>
 
             <div className="stateForm dropdownForm">
               <label>状態</label>
+              <span> : {info.state}</span>
               <select name="state">
                 <option value="新品">新品、未使用</option>
                 <option value="未使用">未使用に近い</option>
@@ -348,15 +413,15 @@ class Give_Item_Add_Form extends Component {
 
             <div className="keywordForm textForm">
               {/* keywordのみValidationを一つに見せるため、上部に全てのメッセージを集約 */}
-              <p>{this.state.message.keyword1}</p>
-              <p>{this.state.message.keyword2}</p>
-              <p>{this.state.message.keyword3}</p>
+              <p>{message.keyword1}</p>
+              <p>{message.keyword2}</p>
+              <p>{message.keyword3}</p>
 
               <label>キーワード1</label>
               <input
                 name="keyword1"
                 type="text"
-                value={this.state.info.keyword1}
+                value={info.keyword1}
                 onChange={this.handleChange}
               />
 
@@ -364,7 +429,7 @@ class Give_Item_Add_Form extends Component {
               <input
                 name="keyword2"
                 type="text"
-                value={this.state.info.keyword2}
+                value={info.keyword2}
                 onChange={this.handleChange}
               />
 
@@ -372,16 +437,17 @@ class Give_Item_Add_Form extends Component {
               <input
                 name="keyword3"
                 type="text"
-                value={this.state.info.keyword3}
+                value={info.keyword3}
                 onChange={this.handleChange}
               />
             </div>
 
             <div className="blandForm dropdownForm">
               <label>ブランド</label>
+              <span> : {info.bland}</span>
               <select name="bland" onChange={this.handleChange}>
                 <option value="">ブランド無し</option>
-                {this.state.allBland.map((bland, idx) => {
+                {allBland.map((bland, idx) => {
                   return (
                     <option key={idx} value={bland.id}>
                       {bland.name}
@@ -393,9 +459,10 @@ class Give_Item_Add_Form extends Component {
 
             <div className="categoryForm dropdownForm">
               <label>カテゴリ</label>
+              <span> : {info.category}</span>
               <select name="category" onChange={this.handleChange}>
                 <option value="">---</option>
-                {this.state.allCategory.map((category, idx) => {
+                {allCategory.map((category, idx) => {
                   return (
                     <option key={idx} value={category.id}>
                       {category.name}
@@ -403,24 +470,22 @@ class Give_Item_Add_Form extends Component {
                   );
                 })}
               </select>
-              <p>{this.state.message.category}</p>
+              <p>{message.category}</p>
             </div>
 
             <div className="imageForm">
-              <p>{this.state.message.images}</p>
+              <p>{message.images}</p>
               {/*  */}
               <label>商品画像</label>
               {/* Validation適用前から表示させたいためVaildationとは別に記述 */}
-              {this.state.imgUrls.length === 0 ? <p>画像は最低一枚投稿してください。</p> : null}
+              {imgUrls.length === 0 && <p>画像は最低一枚投稿してください。</p>}
               <input type="file" multiple onChange={this.handleImageSelect} />
+              {imgUrls.length !== 0 && //
+                imgUrls.map((img, idx) => {
+                  return <img key={idx} src={img} alc="アップロード写真" height="150px"></img>;
+                })}
               {/*  */}
-              {this.state.imgUrls.length === 0
-                ? null
-                : this.state.imgUrls.map((img, idx) => {
-                    return <img key={idx} src={img} alc="アップロード写真" height="150px"></img>;
-                  })}
-              {/*  */}
-              {this.state.imgUrls.length === 0 ? null : (
+              {imgUrls.length !== 0 && (
                 <button onClick={this.cancelUploadedImage}>画像取り消し</button>
               )}
             </div>
@@ -431,7 +496,7 @@ class Give_Item_Add_Form extends Component {
                 name="detail"
                 cols="30"
                 rows="10"
-                value={this.state.info.detail}
+                value={info.detail}
                 onChange={this.handleChange}
               ></textarea>
             </div>
@@ -440,16 +505,16 @@ class Give_Item_Add_Form extends Component {
               btn_name="登録"
               btn_type="submit"
               btn_disable={
-                !this.state.info.name ||
-                !this.state.info.keyword1 ||
-                this.state.info.images.length === 0 ||
-                !this.state.info.category ||
-                this.state.message.name ||
-                this.state.message.keyword1 ||
-                this.state.message.keyword2 ||
-                this.state.message.keyword3 ||
-                this.state.message.images ||
-                this.state.message.category
+                !info.name ||
+                !info.keyword1 ||
+                info.images.length === 0 ||
+                !info.category ||
+                message.name ||
+                message.keyword1 ||
+                message.keyword2 ||
+                message.keyword3 ||
+                message.images ||
+                message.category
               }
             />
           </form>
@@ -459,4 +524,4 @@ class Give_Item_Add_Form extends Component {
   }
 }
 
-export default Give_Item_Add_Form;
+export default Give_Item_Edit_Form;

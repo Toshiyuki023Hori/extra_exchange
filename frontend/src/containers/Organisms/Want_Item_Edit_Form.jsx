@@ -206,9 +206,13 @@ class Want_Item_Edit_Form extends Component {
       await Promise.all(
         newKeywords.map(async (keyword) => {
           await axios
-            .post(this.props.axiosUrl + 'keyword/', {
-              name: keyword,
-            },authHeader)
+            .post(
+              this.props.axiosUrl + 'keyword/',
+              {
+                name: keyword,
+              },
+              authHeader
+            )
             // DB内に存在していたキーワードと、新たに作成されたキーワードを一つにまとめる。
             .then((res) => {
               keyword_ids = [...keyword_ids, res.data.id];
@@ -219,11 +223,15 @@ class Want_Item_Edit_Form extends Component {
     }
 
     await axios
-      .put(this.props.axiosUrl + 'parent/' + this.props.parent_id + '/', {
-        name: this.state.info.name,
-        bland: bland_id,
-        keyword: keyword_ids,
-      },authHeader)
+      .put(
+        this.props.axiosUrl + 'parent/' + this.props.parent_id + '/',
+        {
+          name: this.state.info.name,
+          bland: bland_id,
+          keyword: keyword_ids,
+        },
+        authHeader
+      )
       .then((res) => {
         parentItem_id = res.data.id;
       })
@@ -236,9 +244,13 @@ class Want_Item_Edit_Form extends Component {
     // Parent_Item作成後に、作成される。
     //
     await axios
-      .put(this.props.axiosUrl + 'wantitem/' + this.state.wantItem.id + '/', {
-        url: this.state.info.url,
-      },authHeader)
+      .put(
+        this.props.axiosUrl + 'wantitem/' + this.state.wantItem.id + '/',
+        {
+          url: this.state.info.url,
+        },
+        authHeader
+      )
       .then((res) => {
         console.log(res.data);
       })
@@ -307,7 +319,14 @@ class Want_Item_Edit_Form extends Component {
 
           <div>
             <label>ブランド</label>
-            <span>{this.state.info.bland === '' ? ' ' + 'なし' : ' ' + this.state.info.bland}</span>
+            <span>
+              {
+                // ドロップダウンの横に現在のブランドを表示
+                this.state.info.bland === '' //
+                  ? ' ' + 'なし'
+                  : ' ' + this.state.info.bland
+              }
+            </span>
             <select name="bland" onChange={this.handleChange}>
               <option value="">ブランド無し</option>
               {this.state.allBland.map((bland, idx) => {

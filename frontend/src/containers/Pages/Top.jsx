@@ -15,7 +15,7 @@ class Top extends Component {
   }
   async componentDidMount() {
     const localhostUrl = 'http://localhost:8000/api/';
-    const topCategoryList = ['メンズ服', 'レディース服', 'スマートフォン'];
+    const topCategoryList = ['生鮮食品','メンズ服', 'レディース服'];
     let passCategoryToState = [];
     // ParentItemのownerが外部キーなので、レンダー時にログインユーザーをセット
     await axios

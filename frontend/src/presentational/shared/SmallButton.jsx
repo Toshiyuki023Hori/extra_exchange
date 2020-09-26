@@ -24,14 +24,6 @@ class SmallButton extends Component {
 
 export default SmallButton;
 
-const Colors = {
-  main: '#8DD6FF',
-  characters: '#6C7880',
-  subcolor1: '#D9F1FF',
-  accent1: '#70AACC',
-  accent2: '#466A80',
-};
-
 const StyledButton = styled.button`
   font-size: 1.18em;
   border-radius: 7px;
