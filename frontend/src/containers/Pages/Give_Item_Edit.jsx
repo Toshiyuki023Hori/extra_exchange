@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
+import { withRouter, Redirect } from 'react-router-dom';
 import axios from 'axios';
-import { Redirect } from 'react-router-dom';
-import Want_Item_Edit_Form from '../Organisms/Want_Item_Edit_Form';
-import Header from '../Organisms/Header';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Give_Item_Edit_Form from '../Organisms/Give_Item_Edit_Form';
+import Header from '../Organisms/Header';
 
-class Want_Item_Edit extends Component {
+class Give_Item_Edit extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -29,23 +29,22 @@ class Want_Item_Edit extends Component {
     if (!this.props.isAuthenticated) {
       return <Redirect to="/login" />;
     }
-    // setStateのレンダリング完了までスピナー
     if (this.state.loginUser === '') {
       return <CircularProgress />;
     } else {
       return (
-        <>
+        <div>
           <Header loginUser={this.state.loginUser} />
-          <Want_Item_Edit_Form
+          <Give_Item_Edit_Form
             parent_id={this.props.match.params.parent_id}
             owner={this.state.loginUser}
             loginUser={this.state.loginUser}
             axiosUrl="http://localhost:8000/api/"
           />
-        </>
+        </div>
       );
     }
   }
 }
 
-export default Want_Item_Edit;
+export default withRouter(Give_Item_Edit);
