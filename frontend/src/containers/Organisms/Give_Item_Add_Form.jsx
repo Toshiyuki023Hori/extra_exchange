@@ -336,7 +336,7 @@ class Give_Item_Add_Form extends Component {
 
             <div className="stateForm dropdownForm">
               <label>状態</label>
-              <select name="state">
+              <select onChange={this.handleChange} name="state">
                 <option value="新品">新品、未使用</option>
                 <option value="未使用">未使用に近い</option>
                 <option value="傷や汚れ無し">目立った傷や汚れなし</option>

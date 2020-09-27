@@ -46,6 +46,7 @@ class Want_Item_Edit_Form extends Component {
 
   async componentDidMount() {
     const parent_id = parseInt(this.props.parent_id);
+    const {axiosUrl, loginUser} = this.props;
     // ドロップダウンにDB内のブランドを表示させるために、レンダー時に全カテゴリをセット
     axios
       .get(this.props.axiosUrl + 'bland/')
@@ -73,29 +74,29 @@ class Want_Item_Edit_Form extends Component {
       history.push('/login');
     }
 
+    const fromApiToInfo = (url, modelId, targetState) => {
+      axios
+        .get(axiosUrl + url + modelId)
+        .then((res) => {
+          this.setState({ info: { ...this.state.info, [targetState]: res.data.name } });
+        })
+        .catch((err) => console.log(err));
+    };
+
     if (this.state.parentItem.bland != null) {
-      axios.get(this.props.axiosUrl + 'bland/' + this.state.parentItem.bland).then((res) => {
-        console.log(res.data);
-        this.setState({ info: { ...this.state.info, bland: res.data.name } });
-      });
+      fromApiToInfo("bland/",this.state.parentItem.bland,'bland' )
     }
 
     if (this.state.parentItem.keyword[0]) {
-      axios.get(this.props.axiosUrl + 'keyword/' + this.state.parentItem.keyword[0]).then((res) => {
-        this.setState({ info: { ...this.state.info, keyword1: res.data.name } });
-      });
+      fromApiToInfo('keyword/', this.state.parentItem.keyword[0],'keyword1')
     }
 
     if (this.state.parentItem.keyword[1]) {
-      axios.get(this.props.axiosUrl + 'keyword/' + this.state.parentItem.keyword[1]).then((res) => {
-        this.setState({ info: { ...this.state.info, keyword2: res.data.name } });
-      });
+      fromApiToInfo('keyword/', this.state.parentItem.keyword[1],'keyword2')
     }
 
     if (this.state.parentItem.keyword[2]) {
-      axios.get(this.props.axiosUrl + 'keyword/' + this.state.parentItem.keyword[2]).then((res) => {
-        this.setState({ info: { ...this.state.info, keyword3: res.data.name } });
-      });
+      fromApiToInfo('keyword/', this.state.parentItem.keyword[2],'keyword3')
     }
   }
 
