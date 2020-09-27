@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import history from '../../history';
-import * as actions from '../../reducks/auth/actions';
 import MiddleButton from '../../presentational/shared/MiddleButton';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
@@ -193,6 +192,7 @@ class Give_Item_Edit_Form extends Component {
       })
       .catch((err) => console.log(err));
   };
+  // readImage 終わり
 
   handleImageSelect = async (e) => {
     await this.setState({
@@ -226,19 +226,24 @@ class Give_Item_Edit_Form extends Component {
     );
 
     if (result) {
-      console.log(e.target.src);
-      const filteredImage = Object.keys(this.state.originalImages).filter(
+      let storeFilteredImg = {};
+      const deleteImage = Object.keys(this.state.originalImages).filter(
         (key) => this.state.originalImages[key] == e.target.src
       );
-      const image_id = parseInt(filteredImage[0]);
+      const delete_id = parseInt(deleteImage[0]);
+      // key = Give_Item.id, property = Item_Image.imageとなるオブジェクトのフィルター的役割
+      for (const key in this.state.originalImages) {
+        if (key != delete_id) {
+          storeFilteredImg = { ...storeFilteredImg, [key]: this.state.originalImages[key] };
+          console.log(storeFilteredImg);
+        }
+      }
       // state.info.imagesから削除(レンダーさせるため)
       let passToState = this.state.info.images.filter((imageUrl) => imageUrl !== e.target.src);
       this.setState({ info: { ...this.state.info, images: passToState } });
-      console.log(this.state.info.images);
-      delete this.state.originalImages.image_id;
-      console.log(this.state.originalImages);
+      this.setState({ originalImages: storeFilteredImg });
       axios
-        .delete(this.props.axiosUrl + 'image/' + image_id, authHeader)
+        .delete(this.props.axiosUrl + 'image/' + delete_id, authHeader)
         .then((res) => console.log(res))
         .catch((err) => {
           console.log(err);
@@ -246,6 +251,7 @@ class Give_Item_Edit_Form extends Component {
         });
     }
   };
+  // delete Original 終わり
 
   //
   //
@@ -266,6 +272,8 @@ class Give_Item_Edit_Form extends Component {
         return this.keywordValidation(value);
       case 'category':
         return this.categoryValidation(value);
+      case 'state':
+        return this.stateValidation(value);
     }
   }
 
@@ -284,6 +292,13 @@ class Give_Item_Edit_Form extends Component {
   categoryValidation(value) {
     if (value === '') {
       return 'カテゴリーは必須項目です。';
+    }
+    return '';
+  }
+
+  stateValidation(value) {
+    if (value === '') {
+      return '商品の状態を選択してください';
     }
     return '';
   }
@@ -462,6 +477,7 @@ class Give_Item_Edit_Form extends Component {
               <label>状態</label>
               <span> : {setState}</span>
               <select onChange={this.handleChange} name="state">
+                <option value="">商品状態を選択</option>
                 <option value="新品">新品、未使用</option>
                 <option value="未使用">未使用に近い</option>
                 <option value="傷や汚れ無し">目立った傷や汚れなし</option>
@@ -469,6 +485,7 @@ class Give_Item_Edit_Form extends Component {
                 <option value="傷や汚れあり">傷や汚れあり</option>
                 <option value="状態が悪い">全体的に状態が悪い</option>
               </select>
+              <p>{message.state}</p>
             </div>
 
             <div className="keywordForm textForm">
@@ -575,15 +592,17 @@ class Give_Item_Edit_Form extends Component {
               btn_disable={
                 !info.name ||
                 !info.keyword1 ||
+                !info.category ||
+                info.state == "" ||
                 info.images.length === 0 ||
                 info.images.length > 5 ||
-                !info.category ||
                 message.name ||
                 message.keyword1 ||
                 message.keyword2 ||
                 message.keyword3 ||
-                message.images ||
-                message.category
+                message.category ||
+                message.state ||
+                message.images 
               }
             />
           </form>

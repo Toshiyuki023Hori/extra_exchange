@@ -315,7 +315,7 @@ class Give_Item_Add_Form extends Component {
   };
 
   render() {
-    const { info, message, allCategory, allBland } = this.state;
+    const { info, message, allCategory, allBland, imgUrls } = this.state;
     // setStateが完了するまではnullにする。
     if (this.state.allCategory === null || this.state.allBland === null) {
       return <CircularProgress />;
@@ -325,13 +325,8 @@ class Give_Item_Add_Form extends Component {
           <form onSubmit={this.handleSubmit}>
             <div className="nameForm textForm">
               <label>商品名</label>
-              <input
-                name="name"
-                type="text"
-                value={this.state.info.name}
-                onChange={this.handleChange}
-              />
-              <p>{this.state.message.name}</p>
+              <input name="name" type="text" value={info.name} onChange={this.handleChange} />
+              <p>{message.name}</p>
             </div>
 
             <div className="stateForm dropdownForm">
@@ -348,15 +343,15 @@ class Give_Item_Add_Form extends Component {
 
             <div className="keywordForm textForm">
               {/* keywordのみValidationを一つに見せるため、上部に全てのメッセージを集約 */}
-              <p>{this.state.message.keyword1}</p>
-              <p>{this.state.message.keyword2}</p>
-              <p>{this.state.message.keyword3}</p>
+              <p>{message.keyword1}</p>
+              <p>{message.keyword2}</p>
+              <p>{message.keyword3}</p>
 
               <label>キーワード1</label>
               <input
                 name="keyword1"
                 type="text"
-                value={this.state.info.keyword1}
+                value={info.keyword1}
                 onChange={this.handleChange}
               />
 
@@ -364,7 +359,7 @@ class Give_Item_Add_Form extends Component {
               <input
                 name="keyword2"
                 type="text"
-                value={this.state.info.keyword2}
+                value={info.keyword2}
                 onChange={this.handleChange}
               />
 
@@ -372,7 +367,7 @@ class Give_Item_Add_Form extends Component {
               <input
                 name="keyword3"
                 type="text"
-                value={this.state.info.keyword3}
+                value={info.keyword3}
                 onChange={this.handleChange}
               />
             </div>
@@ -381,7 +376,7 @@ class Give_Item_Add_Form extends Component {
               <label>ブランド</label>
               <select name="bland" onChange={this.handleChange}>
                 <option value="">ブランド無し</option>
-                {this.state.allBland.map((bland, idx) => {
+                {allBland.map((bland, idx) => {
                   return (
                     <option key={idx} value={bland.id}>
                       {bland.name}
@@ -395,7 +390,7 @@ class Give_Item_Add_Form extends Component {
               <label>カテゴリ</label>
               <select name="category" onChange={this.handleChange}>
                 <option value="">---</option>
-                {this.state.allCategory.map((category, idx) => {
+                {allCategory.map((category, idx) => {
                   return (
                     <option key={idx} value={category.id}>
                       {category.name}
@@ -403,24 +398,24 @@ class Give_Item_Add_Form extends Component {
                   );
                 })}
               </select>
-              <p>{this.state.message.category}</p>
+              <p>{message.category}</p>
             </div>
 
             <div className="imageForm">
-              <p>{this.state.message.images}</p>
+              <p>{message.images}</p>
               {/*  */}
               <label>商品画像</label>
               {/* Validation適用前から表示させたいためVaildationとは別に記述 */}
-              {this.state.imgUrls.length === 0 ? <p>画像は最低一枚投稿してください。</p> : null}
+              {imgUrls.length === 0 ? <p>画像は最低一枚投稿してください。</p> : null}
               <input type="file" multiple onChange={this.handleImageSelect} />
               {/*  */}
-              {this.state.imgUrls.length === 0
+              {imgUrls.length === 0
                 ? null
-                : this.state.imgUrls.map((img, idx) => {
+                : imgUrls.map((img, idx) => {
                     return <img key={idx} src={img} alc="アップロード写真" height="150px"></img>;
                   })}
               {/*  */}
-              {this.state.imgUrls.length === 0 ? null : (
+              {imgUrls.length === 0 ? null : (
                 <button onClick={this.cancelUploadedImage}>画像取り消し</button>
               )}
             </div>
@@ -431,7 +426,7 @@ class Give_Item_Add_Form extends Component {
                 name="detail"
                 cols="30"
                 rows="10"
-                value={this.state.info.detail}
+                value={info.detail}
                 onChange={this.handleChange}
               ></textarea>
             </div>
@@ -440,16 +435,16 @@ class Give_Item_Add_Form extends Component {
               btn_name="登録"
               btn_type="submit"
               btn_disable={
-                !this.state.info.name ||
-                !this.state.info.keyword1 ||
-                this.state.info.images.length === 0 ||
-                !this.state.info.category ||
-                this.state.message.name ||
-                this.state.message.keyword1 ||
-                this.state.message.keyword2 ||
-                this.state.message.keyword3 ||
-                this.state.message.images ||
-                this.state.message.category
+                !info.name ||
+                !info.keyword1 ||
+                info.images.length === 0 ||
+                !info.category ||
+                message.name ||
+                message.keyword1 ||
+                message.keyword2 ||
+                message.keyword3 ||
+                message.images ||
+                message.category
               }
             />
           </form>

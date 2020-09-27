@@ -10,11 +10,11 @@ class SmallButton extends Component {
   render() {
     return (
       <StyledButton
+        {...this.props}
         type={this.props.btn_type}
         onClick={this.props.btn_click}
         onSubmit={this.props.btn_submit}
         disabled={this.props.btn_disable}
-        {...this.props}
       >
         {this.props.btn_name}
       </StyledButton>
