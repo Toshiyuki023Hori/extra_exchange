@@ -16,6 +16,7 @@ import Give_Item_Edit from './containers/Pages/Give_Item_Edit';
 import User_Edit from './containers/Pages/User_Edit';
 import User_ChangePass from './containers/Pages/User_ChangePass';
 import Top from './containers/Pages/Top';
+import User_Add_PickUp from "./containers/Pages/User_Add_PickUp";
 
 class App extends Component {
   componentDidMount() {
@@ -65,6 +66,10 @@ class App extends Component {
         <Route
           path="/user/changepass"
           render={(routeProps) => <User_ChangePass {...routeProps} {...this.props} />}
+        />
+        <Route
+          path="/user/pickup"
+          render={(routeProps) => <User_Add_PickUp {...routeProps} {...this.props} />}
         />
       </Router>
     );

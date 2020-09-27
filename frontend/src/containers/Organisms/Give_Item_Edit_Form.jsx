@@ -36,7 +36,7 @@ class Give_Item_Edit_Form extends Component {
       },
       setBland: '',
       setCategory: '',
-      setstate: '',
+      setState: '',
       allCategory: null,
       allBland: null,
       originalImages: {},
@@ -82,9 +82,9 @@ class Give_Item_Edit_Form extends Component {
     // axios.all closing
 
     // Parent_ItemのownerじゃないUserがログインした場合、ページ遷移させる
-    // if (this.state.parentItem.owner != loginUser.id) {
-    //   history.push('/login');
-    // }
+    if (this.state.parentItem.owner != loginUser.id) {
+      history.push('/login');
+    }
 
     // 入力必須項目はaxios.allでまとめてGETリクエストを送る
     axios
@@ -255,9 +255,9 @@ class Give_Item_Edit_Form extends Component {
 
   //
   //
-  // ===========           ===========           ===========           ===========           ===========
-  // ===========           ===========           　Validation　         ===========           ===========
-  // ===========           ===========           ===========           ===========           ===========
+  //           ===========           ===========
+  //           Validation            ===========
+  //           ===========           =========== 
   //
   //
   validator(name, value) {
@@ -480,7 +480,7 @@ class Give_Item_Edit_Form extends Component {
                 <option value="">商品状態を選択</option>
                 <option value="新品">新品、未使用</option>
                 <option value="未使用">未使用に近い</option>
-                <option value="傷や汚れ無し">目立った傷や汚れなし</option>
+                <option value="傷や汚れなし">目立った傷や汚れなし</option>
                 <option value="やや傷や汚れあり">やや傷や汚れあり</option>
                 <option value="傷や汚れあり">傷や汚れあり</option>
                 <option value="状態が悪い">全体的に状態が悪い</option>
@@ -593,7 +593,7 @@ class Give_Item_Edit_Form extends Component {
                 !info.name ||
                 !info.keyword1 ||
                 !info.category ||
-                info.state == "" ||
+                info.state == '' ||
                 info.images.length === 0 ||
                 info.images.length > 5 ||
                 message.name ||
@@ -602,7 +602,7 @@ class Give_Item_Edit_Form extends Component {
                 message.keyword3 ||
                 message.category ||
                 message.state ||
-                message.images 
+                message.images
               }
             />
           </form>
