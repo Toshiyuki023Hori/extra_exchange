@@ -155,7 +155,6 @@ class User_Add_PickUp_Form extends Component {
             <input
               name="textInput"
               type="text"
-              disabled={stations != ''}
               value={textInput}
               onChange={this.handleChange}
             />
