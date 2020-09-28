@@ -68,7 +68,7 @@ class User_Add_PickUp_Form extends Component {
         axiosUrl + 'pickup/',
         {
           name: pickupPlaces,
-          choosingUser: owner.id,
+          choosingUser: [owner.id],
         },
         authHeader
       )
