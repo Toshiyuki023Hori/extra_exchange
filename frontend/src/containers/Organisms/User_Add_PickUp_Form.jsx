@@ -28,7 +28,6 @@ class User_Add_PickUp_Form extends Component {
     axios
       .get('http://express.heartrails.com/api/json?method=getLines&prefecture=東京都')
       .then((res) => {
-        console.log(res.data);
         this.setState({ allLines: res.data.response.line });
       })
       .catch((err) => console.log(err));
@@ -53,32 +52,74 @@ class User_Add_PickUp_Form extends Component {
     this.spreadAndSetState(name, value);
   };
 
-  handleSubmit = () => {
+  handleSubmit = async () => {
     const { owner, lines, stations, textInput, allLines, allStations } = this.state;
     const { axiosUrl } = this.props;
     const token = localStorage.getItem('token');
+    let pickupPlaces;
+    let originalUsers = [];
+    let pickup_id = '';
     const authHeader = {
       headers: {
         Authorization: 'Token ' + token,
       },
     };
-    const pickupPlaces = lines + ' ' + stations + '駅';
-    axios
-      .post(
-        axiosUrl + 'pickup/',
-        {
-          name: pickupPlaces,
-          choosingUser: [owner.id],
-        },
-        authHeader
-      )
-      .then((res) => console.log(res))
+    // 路線名だけ入力してSubmitされるのを防ぐ
+    if (lines != '' && stations != '') {
+      pickupPlaces = lines + ' ' + stations + '駅';
+    } else if (textInput != '') {
+      pickupPlaces = textInput;
+    }
+
+    //登録済みの駅かをgetリクエストで確認
+    // ifで分岐させるために、awaitで非同期制御
+    await axios
+      .get(axiosUrl + 'pickup/?name=' + pickupPlaces)
+      .then((res) => {
+        pickup_id = res.data[0].id;
+        res.data[0].choosingUser.map((user_id) => {
+          originalUsers = [...originalUsers, user_id];
+        });
+      })
       .catch((err) => console.log(err));
+
+    if (typeof pickup_id === 'number') {
+      axios
+        .patch(
+          axiosUrl + 'pickup/' + pickup_id + '/',
+          {
+            choosingUser: [...originalUsers, owner.id],
+          },
+          authHeader
+        )
+        .then((res) => console.log(res))
+        .catch((err) => console.log(err));
+    } else {
+      axios
+        .post(
+          axiosUrl + 'pickup/',
+          {
+            name: pickupPlaces,
+            choosingUser: [owner.id],
+          },
+          authHeader
+        )
+        .then((res) => console.log(res))
+        .catch((err) => window.alert('ピックアップ地点追加の登録に失敗しました。'));
+    }
   };
 
   render() {
     const { owner, lines, stations, textInput, allLines, allStations } = this.state;
-    let mapStations;
+    let disableCondition;
+    let alertMessage;
+    if (stations == '' && textInput == '') {
+      disableCondition = true;
+    } else if (stations != '' && textInput != '') {
+      disableCondition = true;
+      alertMessage = <p>ドロップダウンとテキストの両方が入力されています。</p>;
+    }
+
     if (allLines === '') {
       return <CircularProgress />;
     } else {
@@ -86,8 +127,8 @@ class User_Add_PickUp_Form extends Component {
         <div>
           <div>
             <h2>ピックアップ地点追加</h2>
-            <select name="lines" onChange={this.handleChange}>
-              <option value="">路線を選んでください</option>
+            <select name="lines" disabled={stations != ''} onChange={this.handleChange}>
+              <option value="">路線を選ぶ</option>
               {allLines.map((line, idx) => {
                 return (
                   <option key={idx} value={line}>
@@ -97,7 +138,7 @@ class User_Add_PickUp_Form extends Component {
               })}
             </select>
             <select name="stations" onChange={this.handleChange}>
-              <option value="">駅を選んでください</option>
+              <option value="">駅を選ぶ or 路線を選び直す</option>
               {allStations != '' &&
                 allStations.map((line, idx) => {
                   // console.log(allStations)
@@ -111,9 +152,21 @@ class User_Add_PickUp_Form extends Component {
           </div>
           <div>
             <label>その他の地点をご希望の場合は直接ご記入ください(バス停など)</label>
-            <input name="textInput" type="text" value={textInput} onChange={this.handleChange} />
+            <input
+              name="textInput"
+              type="text"
+              disabled={stations != ''}
+              value={textInput}
+              onChange={this.handleChange}
+            />
           </div>
-          <SmallButton btn_name="追加" btn_type="submit" btn_click={this.handleSubmit} />
+          {alertMessage}
+          <SmallButton
+            btn_name="追加"
+            btn_type="submit"
+            btn_click={this.handleSubmit}
+            btn_disable={disableCondition}
+          />
         </div>
       );
     }
