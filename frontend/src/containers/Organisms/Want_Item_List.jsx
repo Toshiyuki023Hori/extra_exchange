@@ -28,7 +28,6 @@ class Want_Item_List extends Component {
     let sendToInIdUrl = {};
 
     //
-    //
     // Want_ItemはParent_Itemのchild的立ち位置のため、ParentItemを全て取得
     await axios
       .get(this.props.axiosUrl + 'parent/?owner=' + this.state.owner)
