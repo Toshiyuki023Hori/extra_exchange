@@ -143,7 +143,7 @@ class Follow(models.Model):
 class PickUp_Places(models.Model):
     name = models.CharField(max_length=200, unique=True)
     choosing_user = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, related_name="pick_up")
+        settings.AUTH_USER_MODEL, related_name="pick_up", null=True, blank=True)
 
     def __str__(self):
         return self.name

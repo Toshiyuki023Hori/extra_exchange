@@ -7,13 +7,19 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import styled from 'styled-components';
 import history from '../../history';
 import User_Add_PickUp_Form from '../Organisms/User_Add_PickUp_Form';
+import User_PickUp_List from '../Organisms/User_PickUp_List';
+import TouchRipple from '@material-ui/core/ButtonBase/TouchRipple';
 
 class User_Add_PickUp extends Component {
   constructor(props) {
     super(props);
     this.state = {
       loginUser: '',
+      permissionAdd: true,
+      numOwnPickUps: '',
     };
+    this.switchPermission = this.switchPermission.bind(this);
+    this.updateNum = this.updateNum.bind(this);
   }
   componentDidMount() {
     const localhostUrl = 'http://localhost:8000/api/';
@@ -25,6 +31,18 @@ class User_Add_PickUp extends Component {
       })
       .catch((err) => console.log(err));
   }
+
+  switchPermission = () => {
+    if (this.state.numOwnPickUps > 3) {
+      this.setState({ permissionAdd: false });
+    } else if (!this.state.numOwnPickUps <= 3) {
+      this.setState({ permissionAdd: true });
+    }
+  };
+
+  updateNum = (value) => {
+    this.setState({numOwnPickUps:value})
+  };
 
   render() {
     // 非認証ユーザーのリダイレクト
@@ -40,6 +58,14 @@ class User_Add_PickUp extends Component {
           <User_Add_PickUp_Form
             loginUser={this.state.loginUser}
             axiosUrl="http://localhost:8000/api/"
+            permission={this.state.permissionAdd}
+          />
+          <User_PickUp_List
+            loginUser={this.state.loginUser}
+            axiosUrl="http://localhost:8000/api/"
+            permission={this.state.permissionAdd}
+            length={this.state.numOwnPickUps}
+            updateNum={this.updateNum}
           />
         </>
       );
