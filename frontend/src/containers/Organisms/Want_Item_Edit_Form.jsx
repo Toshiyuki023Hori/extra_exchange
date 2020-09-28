@@ -46,7 +46,7 @@ class Want_Item_Edit_Form extends Component {
 
   async componentDidMount() {
     const parent_id = parseInt(this.props.parent_id);
-    const {axiosUrl, loginUser} = this.props;
+    const { axiosUrl, loginUser } = this.props;
     // ドロップダウンにDB内のブランドを表示させるために、レンダー時に全カテゴリをセット
     axios
       .get(this.props.axiosUrl + 'bland/')
@@ -84,19 +84,19 @@ class Want_Item_Edit_Form extends Component {
     };
 
     if (this.state.parentItem.bland != null) {
-      fromApiToInfo("bland/",this.state.parentItem.bland,'bland' )
+      fromApiToInfo('bland/', this.state.parentItem.bland, 'bland');
     }
 
     if (this.state.parentItem.keyword[0]) {
-      fromApiToInfo('keyword/', this.state.parentItem.keyword[0],'keyword1')
+      fromApiToInfo('keyword/', this.state.parentItem.keyword[0], 'keyword1');
     }
 
     if (this.state.parentItem.keyword[1]) {
-      fromApiToInfo('keyword/', this.state.parentItem.keyword[1],'keyword2')
+      fromApiToInfo('keyword/', this.state.parentItem.keyword[1], 'keyword2');
     }
 
     if (this.state.parentItem.keyword[2]) {
-      fromApiToInfo('keyword/', this.state.parentItem.keyword[2],'keyword3')
+      fromApiToInfo('keyword/', this.state.parentItem.keyword[2], 'keyword3');
     }
   }
 
@@ -116,9 +116,9 @@ class Want_Item_Edit_Form extends Component {
     });
   };
 
-  // ===========           ===========           ===========           ===========           ===========
-  // ===========           ===========           Validation           ===========           ===========
-  // ===========           ===========           ===========           ===========           ===========
+  //           ===========           ===========
+  //           Validation            ===========
+  //           ===========           ===========
 
   validator(name, value) {
     switch (name) {

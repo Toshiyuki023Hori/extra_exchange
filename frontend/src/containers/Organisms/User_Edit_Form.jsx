@@ -101,9 +101,9 @@ class User_Edit_Form extends Component {
     await this.setState({ imgUrls: { ...this.state.imgUrls, [target]: null } });
   };
 
-  // ===========           ===========           ===========           ===========           ===========
-  // ===========           ===========           Validation           ===========           ===========
-  // ===========           ===========           ===========           ===========           ===========
+  //           ===========           ===========
+  //           Validation            ===========
+  //           ===========           ===========
 
   validator(name, value) {
     switch (name) {
