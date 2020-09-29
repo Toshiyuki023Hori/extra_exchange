@@ -7,16 +7,17 @@ import { Link } from 'react-router-dom';
 import { store } from './index';
 import './App.css';
 
+import Top from './containers/Pages/Top';
 import Register from './containers/Pages/Register';
 import Login from './containers/Pages/Login';
 import Want_Item_Add from './containers/Pages/Want_Item_Add';
 import Want_Item_Edit from './containers/Pages/Want_Item_Edit';
 import Give_Item_Add from './containers/Pages/Give_Item_Add';
+import Give_Item_Detail from './containers/Pages/Give_Item_Detail';
 import Give_Item_Edit from './containers/Pages/Give_Item_Edit';
-import User_Edit from './containers/Pages/User_Edit';
-import User_ChangePass from './containers/Pages/User_ChangePass';
-import Top from './containers/Pages/Top';
 import User_Add_PickUp from "./containers/Pages/User_Add_PickUp";
+import User_ChangePass from './containers/Pages/User_ChangePass';
+import User_Edit from './containers/Pages/User_Edit';
 
 class App extends Component {
   componentDidMount() {
@@ -53,6 +54,10 @@ class App extends Component {
             exact
             path="/give/add"
             render={(routeProps) => <Give_Item_Add {...routeProps} {...this.props} />}
+          />
+          <Route
+            path="/give/:parent_id/detail"
+            render={(routeProps) => <Give_Item_Detail {...routeProps} {...this.props} />}
           />
           <Route
             path="/give/:parent_id/edit"
