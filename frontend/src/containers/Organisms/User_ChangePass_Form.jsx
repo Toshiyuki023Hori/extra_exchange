@@ -116,19 +116,18 @@ class User_ChangePass_Form extends Component {
   }
 
   render() {
-    const { flashMessage, info, message } = this.state;
     return (
       <div>
-        <p>{flashMessage}</p>
+        <p>{this.state.flashMessage}</p>
         <div>
           <label>旧パスワード</label>
           <input
             onChange={this.handleChange}
             type="password"
             name="oldPassword"
-            value={info.oldPassword}
+            value={this.state.oldPassword}
           />
-          {message.oldPassword}
+          {this.state.message.oldPassword}
         </div>
         <div>
           <label>新パスワード</label>
@@ -136,9 +135,9 @@ class User_ChangePass_Form extends Component {
             onChange={this.handleChange}
             type="password"
             name="newPassword1"
-            value={info.newPassword1}
+            value={this.state.newPassword1}
           />
-          {message.newPassword1}
+          {this.state.message.newPassword1}
         </div>
         <div>
           <label>新パスワード(確認用)</label>
@@ -146,21 +145,21 @@ class User_ChangePass_Form extends Component {
             onChange={this.handleChange}
             type="password"
             name="newPassword2"
-            value={info.newPassword2}
+            value={this.state.newPassword2}
           />
-          {message.newPassword2}
+          {this.state.message.newPassword2}
         </div>
         <SmallButton
           btn_name="変更"
           btn_type="submit"
           btn_click={this.handleSubmit}
           btn_disable={
-            !info.oldPassword ||
-            !info.newPassword1 ||
-            !info.newPassword2 ||
-            message.oldPassword ||
-            message.newPassword1 ||
-            message.newPassword2
+            !this.state.info.oldPassword ||
+            !this.state.info.newPassword1 ||
+            !this.state.info.newPassword2 ||
+            this.state.message.oldPassword ||
+            this.state.message.newPassword1 ||
+            this.state.message.newPassword2
           }
         />
       </div>

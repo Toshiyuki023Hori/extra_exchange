@@ -40,52 +40,6 @@ class Header extends Component {
   }
 
   render() {
-    const { isAuthenticated } = this.props;
-    const { loginUser } = this.state;
-    let authenticatedView;
-    let guestView;
-    if (isAuthenticated) {
-      authenticatedView = (
-        <>
-          {/* 　ログイン済ユーザー */}
-          <div>
-            <MessageToUserDiv>
-              <span>こんにちは {loginUser.username}さん</span>　
-              <LogoutButton onClick={this.handleLogout}>ログアウト</LogoutButton>
-            </MessageToUserDiv>
-            <AuthButtonDiv>
-              <SmallButton
-                btn_border="#466A80"
-                btn_back="#466A80"
-                btn_text_color="#D9F1FF"
-                btn_name="ポスト"
-                btn_click={this.jumpToPostGive}
-              />
-              <SmallButton
-                btn_border="#466A80"
-                btn_back="#8DD6FF"
-                btn_text_color="#466A80"
-                btn_name="通知"
-                btn_click=""
-              />
-            </AuthButtonDiv>
-          </div>
-        </>
-      );
-    } else {
-      guestView = (
-        <>
-          {/* ゲストユーザー */}
-          <div>
-            <p>こんにちは ゲストさん</p>
-            <AuthButtonDiv>
-              <SmallButton btn_name="登録" btn_click={this.jumpToRegister} />
-              <SmallButton btn_name="ログイン" btn_click={this.jumpToLogin} />
-            </AuthButtonDiv>
-          </div>
-        </>
-      );
-    }
     return (
       <>
         <Wrapper>
@@ -94,8 +48,44 @@ class Header extends Component {
           {/* CSS Grid( 1 : 1 : 1) 中央 */}
           <SearchBox />
           {/* CSS Grid( 1 : 1 : 1) 右 */}
-          {authenticatedView}
-          {guestView}
+          {this.props.isAuthenticated ? (
+            <>
+              {/* 　ログイン済ユーザー */}
+              <div>
+                <MessageToUserDiv>
+                  <span>こんにちは {this.state.loginUser.username}さん</span>　
+                  <LogoutButton onClick={this.handleLogout}>ログアウト</LogoutButton>
+                </MessageToUserDiv>
+                <AuthButtonDiv>
+                  <SmallButton
+                    btn_border="#466A80"
+                    btn_back="#466A80"
+                    btn_text_color="#D9F1FF"
+                    btn_name="ポスト"
+                    btn_click={this.jumpToPostGive}
+                  />
+                  <SmallButton
+                    btn_border="#466A80"
+                    btn_back="#8DD6FF"
+                    btn_text_color="#466A80"
+                    btn_name="通知"
+                    btn_click=""
+                  />
+                </AuthButtonDiv>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* ゲストユーザー */}
+              <div>
+                <p>こんにちは ゲストさん</p>
+                <AuthButtonDiv>
+                  <SmallButton btn_name="登録" btn_click={this.jumpToRegister} />
+                  <SmallButton btn_name="ログイン" btn_click={this.jumpToLogin} />
+                </AuthButtonDiv>
+              </div>
+            </>
+          )}
         </Wrapper>
       </>
     );

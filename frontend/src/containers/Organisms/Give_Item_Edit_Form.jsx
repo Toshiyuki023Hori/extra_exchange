@@ -257,7 +257,7 @@ class Give_Item_Edit_Form extends Component {
   //
   //           ===========           ===========
   //           Validation            ===========
-  //           ===========           ===========
+  //           ===========           =========== 
   //
   //
   validator(name, value) {
@@ -379,7 +379,7 @@ class Give_Item_Edit_Form extends Component {
         axiosUrl + 'parent/' + parentItem_id + '/',
         {
           name: this.state.info.name,
-          // owner: this.state.info.owner,
+          owner: this.state.info.owner.id,
           bland: bland_id,
           keyword: keyword_ids,
         },

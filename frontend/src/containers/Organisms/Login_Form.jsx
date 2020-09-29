@@ -97,8 +97,13 @@ class Login_Form extends React.Component {
 
           <div>
             <label>ユーザーネーム</label>
-            <input name="username" type="text" value={info.username} onChange={this.handleChange} />
-            <p>{message.username}</p>
+            <input
+              name="username"
+              type="text"
+              value={this.state.info.username}
+              onChange={this.handleChange}
+            />
+            <p>{this.state.message.username}</p>
           </div>
 
           <div>
@@ -106,16 +111,21 @@ class Login_Form extends React.Component {
             <input
               name="password"
               type="password"
-              value={info.password}
+              value={this.state.info.password}
               onChange={this.handleChange}
             />
-            <p>{message.password}</p>
+            <p>{this.state.message.password}</p>
           </div>
 
           <MiddleButton
             btn_name="ログイン"
             btn_click={this.handleSubmit}
-            btn_disable={!info.username || !info.password || message.username || message.password}
+            btn_disable={
+              !this.state.info.username ||
+              !this.state.info.password ||
+              this.state.message.username ||
+              this.state.message.password
+            }
           />
 
           <MiddleButton btn_name="サインアウト" btn_click={this.props.logout} />
@@ -124,6 +134,7 @@ class Login_Form extends React.Component {
     );
   }
 }
+
 
 const mapStateToProps = (state) => {
   return {

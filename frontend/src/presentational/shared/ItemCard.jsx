@@ -8,30 +8,22 @@ class ItemCard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: '',
-      bland: '',
+      name : "",
+      bland: "",
       image: '',
-      pickups: '',
     };
   }
 
   render() {
-    const { name, bland, image, pickups } = this.props;
-    if (image == '' || name == '') {
+    console.log(this.props)
+if (this.props.image == '' ) {
       return <CircularProgress />;
     } else {
       return (
         <Card>
-          <ItemImage src={image[0]['image']} alt="" />
-          <ItemName>{name}</ItemName>
-          <p>Bland : {bland}</p>
-          <p>
-            {pickups.map((pickupObj, index) => {
-              if (index != pickups.length - 1) {
-                return <span key={pickupObj.id}>{pickupObj.name} / </span>;
-              }
-              return <span key={pickupObj.id}>{pickupObj.name} </span>;
-            })}
+          <ItemImage src={this.props.image[0]['image']} alt="" />
+          <ItemName>{this.props.name}</ItemName>
+          <p>Bland : {this.props.bland}
           </p>
         </Card>
       );
@@ -45,7 +37,7 @@ const Card = styled.div`
   height: 275px;
   width: 220px;
   border-radius: 8px;
-  border: 2px solid ${Colors.accent2};
+  border:2px solid ${Colors.accent2};
   overflow: scroll;
   margin: 5px 12px;
 `;

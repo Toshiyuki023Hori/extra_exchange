@@ -26,12 +26,11 @@ class Want_Item_List extends Component {
   async componentDidMount() {
     let parentItems_ids;
     let sendToInIdUrl = {};
-    const { axiosUrl } = this.props;
 
     //
     // Want_ItemはParent_Itemのchild的立ち位置のため、ParentItemを全て取得
     await axios
-      .get(axiosUrl + 'parent/?owner=' + this.state.owner)
+      .get(this.props.axiosUrl + 'parent/?owner=' + this.state.owner)
       .then((res) => {
         this.setState({ parentItems: res.data });
         for (let i = 0; i < this.state.parentItems.length; i++) {
@@ -46,10 +45,10 @@ class Want_Item_List extends Component {
     //
     //
     //  ユーザーが持つParent_Itemの中のWant_Itemを取得する
-    if (this.state.parentItems != '') {
+  if (this.state.parentItems != "") {
       await Promise.all(
         Object.keys(parentItems_ids).map(async (key) => {
-          await axios.get(axiosUrl + 'wantitem/?parent_item=' + key).then((res) => {
+          await axios.get(this.props.axiosUrl + 'wantitem/?parent_item=' + key).then((res) => {
             //  Want_DataのparentItemと、Parent_Itemが一致した場合、
             //  length == 1 のArrayが返ってくるため、それの条件分岐
             if (res.data.length !== 0) {
@@ -59,7 +58,7 @@ class Want_Item_List extends Component {
               for (let parentItem of this.state.parentItems) {
                 if (parentItem.id == res.data[0].parentItem) {
                   sendToInIdUrl = { ...sendToInIdUrl, [parentItem.id]: { name: parentItem.name } };
-                  console.log(sendToInIdUrl);
+                  console.log(sendToInIdUrl)
                 }
               }
             }
@@ -79,7 +78,7 @@ class Want_Item_List extends Component {
               ...sendToInIdUrl,
               [key]: { ...sendToInIdUrl[key], url: want_item.url },
             };
-            console.log(sendToInIdUrl);
+            console.log(sendToInIdUrl)
           }
         }
       }
@@ -96,30 +95,34 @@ class Want_Item_List extends Component {
   };
 
   render() {
-    const { wantItems, parentItems, inIdUrlName, owner, loginUser } = this.state;
-    const { h2Title } = this.props;
-    if (parentItems === '' || wantItems === [] || inIdUrlName === '') {
+    if (
+      this.state.wantItems === [] ||
+      this.state.parentItems === '' ||
+      this.state.inIdUrlName === ''
+    ) {
       return <CircularProgress />;
     } else {
       return (
         <div>
-          <h2>{h2Title}</h2>
+          <h2>{this.props.h2Title}</h2>
           <ol>
-            {wantItems.length === 0
+            {this.state.wantItems.length === 0
               ? null
-              : Object.keys(inIdUrlName).map((key, idx) => {
+              : Object.keys(this.state.inIdUrlName).map((key, idx) => {
                   return (
                     <>
                       <li key={idx}>
                         {/* URLを持っていたら、リンク先まで飛べるように条件分岐 */}
-                        {inIdUrlName[key]['url'] == '' ? (
-                          inIdUrlName[key]['name']
+                        {this.state.inIdUrlName[key]['url'] == '' ? (
+                          this.state.inIdUrlName[key]['name']
                         ) : (
-                          <a href={inIdUrlName[key]['url']}>{inIdUrlName[key]['name']}</a>
+                          <a href={this.state.inIdUrlName[key]['url']}>
+                            {this.state.inIdUrlName[key]['name']}
+                          </a>
                         )}
                       </li>
                       {/* ログインユーザーがownerの場合、UpdataとDeleteを許可する */}
-                      {owner == loginUser ? (
+                      {this.state.owner == this.state.loginUser ? (
                         <>
                           <SmallButton
                             btn_type="submit"
