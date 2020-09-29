@@ -16,101 +16,135 @@ class Give_Item_List extends Component {
   }
 
   async componentDidUpdate(prevProps) {
+    const { axiosUrl, category } = this.props;
     let pickedGiveItems;
+    let owner_id;
+    let pickupsObject = {};
     // 各ボックスに入れる前に必要な情報をparent_idごとにまとめる
-    let passParentToState = {};
+    let itemsForState = {};
 
     // Parent ComponentのsetStateが完了した時点で発火
-    // Categoryに合ったGive_Item > Give_ItemのParent＿Item > Image, blandのUrl, name > passParentToStateからStateへ
-    if (prevProps.category != this.props.category) {
-      this.setState({loading : true})
+    // Categoryに合ったGive_Item > Give_ItemのParent＿Item > Image, blandのUrl, name > itemsForStateからStateへ
+    if (prevProps.category != category) {
+      this.setState({ loading: true });
       await axios
-        .get(this.props.axiosUrl + 'giveitem/?category=' + this.props.category.id)
+        .get(axiosUrl + 'giveitem/?category=' + category.id)
         .then((res) => {
           pickedGiveItems = res.data;
         })
         .catch((err) => console.log('そのカテゴリーに分類する商品はありません'));
 
       // 並び順担保のために、一度別のvariableに入れてからまとめてsetStateを行う。
+      // keyがParentItems.id, valueにBland等を持つオブジェクトの作成
       await Promise.all(
         pickedGiveItems.map(async (giveItem) => {
           await axios
-            .get(this.props.axiosUrl + 'parent/' + giveItem.parentItem)
+            .get(axiosUrl + 'parent/' + giveItem.parentItem)
             .then((res) => {
-              passParentToState = { ...passParentToState, [res.data.id]: { ...res.data } };
+              itemsForState = { ...itemsForState, [res.data.id]: { ...res.data } };
             })
             .catch((err) => console.log(err));
         })
       );
 
+      //itemsForStateへblandを代入
       await Promise.all(
-        Object.keys(passParentToState).map(async(parentId) => {
-          if(passParentToState[parentId]["bland"] !== null){
+        Object.keys(itemsForState).map(async (parentId) => {
+          if (itemsForState[parentId]['bland'] !== null) {
             await axios
-              .get(this.props.axiosUrl + 'bland/' + passParentToState[parentId]['bland'])
+              .get(axiosUrl + 'bland/' + itemsForState[parentId]['bland'])
               .then((res) => {
-                passParentToState = {
-                  ...passParentToState,
-                  [parentId]: { ...passParentToState[parentId], bland: res.data.name },
+                itemsForState = {
+                  ...itemsForState,
+                  [parentId]: { ...itemsForState[parentId], bland: res.data.name },
                 };
               })
               .catch((err) => console.log(err));
-          }else {
-            passParentToState = {
-              ...passParentToState,
-              [parentId]: { ...passParentToState[parentId], bland: "なし" },
+          } else {
+            itemsForState = {
+              ...itemsForState,
+              [parentId]: { ...itemsForState[parentId], bland: 'なし' },
             };
-          }  // else closing
+          } // else closing
         }) // Object.keys closing
       ); // Promise.all closing
 
+      // Parent_Itemのownerが登録しているPickUp_Placeを取得
+      await Promise.all(
+        Object.keys(itemsForState).map(async (parentId) => {
+          await axios
+            .get(axiosUrl + 'pickup/?choosingUser=' + itemsForState[parentId]['owner'])
+            .then((res) => {
+              pickupsObject = { ...pickupsObject, [itemsForState[parentId]['owner']]: res.data };
+            })
+            .catch((err) => console.log(err));
+        })
+      );
+
+      //取得したPickUp_PlaceをitemForStateオブジェクトへ代入
+      await Promise.all(
+        Object.keys(pickupsObject).map(async (user_id) => {
+          await Object.keys(itemsForState).map((parentId) => {
+            if (itemsForState[parentId]['owner'] == user_id) {
+              itemsForState = {
+                ...itemsForState,
+                [parentId]: {
+                  ...itemsForState[parentId],
+                  pickups: pickupsObject[user_id],
+                },
+              };
+            }
+          });
+        })
+      );
+
+      // giveItemが持つItem_ImageをitemForStateオブジェクトへ代入
       await Promise.all(
         pickedGiveItems.map(async (giveItem) => {
           await axios
-            .get(this.props.axiosUrl + 'image/?item=' + giveItem.id)
+            .get(axiosUrl + 'image/?item=' + giveItem.id)
             .then((res) => {
-              passParentToState = {
-                ...passParentToState,
+              itemsForState = {
+                ...itemsForState,
                 [giveItem.parentItem]: {
-                  ...passParentToState[giveItem.parentItem],
+                  ...itemsForState[giveItem.parentItem],
                   image: res.data,
                 },
-              }; // passParentToState closing tag(スプレッド構文)
+              }; // itemsForState closing tag(スプレッド構文)
             })
             .catch((err) => console.log(err));
         })
       ); // Promise all closing tag
 
-      console.log(passParentToState)
-      this.setState({loading : false})
-      this.setState({ items: passParentToState });
+      console.log(itemsForState);
+      this.setState({ loading: false });
+      this.setState({ items: itemsForState });
     } // if closing tag
   } // componentDidUpdate closing
 
   render() {
     if (this.state.loading == true) {
       return <CircularProgress />;
-    }else{
+    } else {
       return (
         <div>
-          {
-            this.state.items == "" 
+          {this.state.items == ''
             ? null
-          :Object.keys(this.state.items).map((parentId,idx) => {
-              return (
-                <ItemCard 
-                key={idx}
-                name={this.state.items[parentId]["name"]}
-                image={this.state.items[parentId]["image"]}
-                bland={this.state.items[parentId]["bland"]}
-                />
-              )
-            })
-          }
+            : Object.keys(this.state.items).map((parentId, idx) => {
+                return (
+                  <ItemCard
+                    key={idx}
+                    name={this.state.items[parentId]['name']}
+                    image={this.state.items[parentId]['image']}
+                    bland={this.state.items[parentId]['bland']}
+                    pickups={this.state.items[parentId]['pickups']}
+                  />
+                );
+              })}
         </div>
-      )
-    }    // else closing tag
-  }    // render closing tag
-}    // Give_Item_List closing tag
+      );
+    } // else closing tag
+  } // render closing tag
+} // Give_Item_List closing tag
 
 export default Give_Item_List;

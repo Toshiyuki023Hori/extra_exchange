@@ -91,6 +91,7 @@ class Want_Item_Add_Form extends Component {
   // ===========           ===========           ===========           ===========           ===========
 
   handleSubmit = async () => {
+    const { axiosUrl } = this.props;
     let keywordsList = [];
     let newKeywords = [];
     let bland_id = this.state.info.bland;
@@ -121,7 +122,7 @@ class Want_Item_Add_Form extends Component {
     await Promise.all(
       keywordsList.map(async (keyword) => {
         await axios
-          .get(this.props.axiosUrl + 'keyword/?name=' + keyword)
+          .get(axiosUrl + 'keyword/?name=' + keyword)
           .then((res) => {
             console.log(res);
             // すでにDB内に存在していたらarrayに代入されて返ってくる
@@ -142,9 +143,13 @@ class Want_Item_Add_Form extends Component {
       await Promise.all(
         newKeywords.map(async (keyword) => {
           await axios
-            .post(this.props.axiosUrl + 'keyword/', {
-              name: keyword,
-            }, authHeader)
+            .post(
+              axiosUrl + 'keyword/',
+              {
+                name: keyword,
+              },
+              authHeader
+            )
             .then((res) => {
               // DB内に存在していたキーワードと、新たに作成されたキーワードを一つにまとめる。
               keyword_ids = [...keyword_ids, res.data.id];
@@ -155,12 +160,16 @@ class Want_Item_Add_Form extends Component {
     }
 
     await axios
-      .post(this.props.axiosUrl + 'parent/', {
-        name: this.state.info.name,
-        owner: this.state.info.owner,
-        bland: bland_id,
-        keyword: keyword_ids,
-      },authHeader)
+      .post(
+        axiosUrl + 'parent/',
+        {
+          name: this.state.info.name,
+          owner: this.state.info.owner,
+          bland: bland_id,
+          keyword: keyword_ids,
+        },
+        authHeader
+      )
       .then((res) => {
         parentItem_id = res.data.id;
       })
@@ -173,10 +182,14 @@ class Want_Item_Add_Form extends Component {
     // Parent_Item作成後に、作成される。
     //
     await axios
-      .post(this.props.axiosUrl + 'wantitem/', {
-        url: this.state.info.url,
-        parentItem: parentItem_id,
-      },authHeader)
+      .post(
+        axiosUrl + 'wantitem/',
+        {
+          url: this.state.info.url,
+          parentItem: parentItem_id,
+        },
+        authHeader
+      )
       .then((res) => {
         const wantItem = res.data;
       })
@@ -188,7 +201,7 @@ class Want_Item_Add_Form extends Component {
   };
 
   render() {
-    const { info, message } = this.state;
+    const { info, message, allBland } = this.state;
     if (this.state.info.owner === '' || this.state.allBland === '') {
       return <CircularProgress />;
     } else {
@@ -196,49 +209,29 @@ class Want_Item_Add_Form extends Component {
         <div>
           <div>
             <label>商品名</label>
-            <input
-              name="name"
-              type="text"
-              value={this.state.info.name}
-              onChange={this.handleChange}
-            />
-            <p>{this.state.message.name}</p>
+            <input name="name" type="text" value={info.name} onChange={this.handleChange} />
+            <p>{message.name}</p>
           </div>
 
           <div>
-            <p>{this.state.message.keyword1}</p>
-            <p>{this.state.message.keyword2}</p>
-            <p>{this.state.message.keyword3}</p>
+            <p>{message.keyword1}</p>
+            <p>{message.keyword2}</p>
+            <p>{message.keyword3}</p>
             <label>キーワード1</label>
-            <input
-              name="keyword1"
-              type="text"
-              value={this.state.info.keyword1}
-              onChange={this.handleChange}
-            />
+            <input name="keyword1" type="text" value={info.keyword1} onChange={this.handleChange} />
 
             <label>キーワード2</label>
-            <input
-              name="keyword2"
-              type="text"
-              value={this.state.info.keyword2}
-              onChange={this.handleChange}
-            />
+            <input name="keyword2" type="text" value={info.keyword2} onChange={this.handleChange} />
 
             <label>キーワード3</label>
-            <input
-              name="keyword3"
-              type="text"
-              value={this.state.info.keyword3}
-              onChange={this.handleChange}
-            />
+            <input name="keyword3" type="text" value={info.keyword3} onChange={this.handleChange} />
           </div>
 
           <div>
             <label>ブランド</label>
             <select name="bland" onChange={this.handleChange}>
               <option value="">ブランド無し</option>
-              {this.state.allBland.map((bland, idx) => {
+              {allBland.map((bland, idx) => {
                 return (
                   <option key={idx} value={bland.id}>
                     {bland.name}
@@ -250,12 +243,7 @@ class Want_Item_Add_Form extends Component {
 
           <div>
             <label>商品参考URL</label>
-            <input
-              name="url"
-              type="text"
-              value={this.state.info.url}
-              onChange={this.handleChange}
-            />
+            <input name="url" type="text" value={info.url} onChange={this.handleChange} />
           </div>
 
           <input
@@ -263,12 +251,12 @@ class Want_Item_Add_Form extends Component {
             value="登録"
             onClick={this.handleSubmit}
             disabled={
-              !this.state.info.name ||
-              !this.state.info.keyword1 ||
-              this.state.message.name ||
-              this.state.message.keyword1 ||
-              this.state.message.keyword2 ||
-              this.state.message.keyword3
+              !info.name ||
+              !info.keyword1 ||
+              message.name ||
+              message.keyword1 ||
+              message.keyword2 ||
+              message.keyword3
             }
           />
         </div>
