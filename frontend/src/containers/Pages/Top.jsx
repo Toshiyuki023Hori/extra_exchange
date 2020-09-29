@@ -15,7 +15,7 @@ class Top extends Component {
   }
   async componentDidMount() {
     const localhostUrl = 'http://localhost:8000/api/';
-    const topCategoryList = ['生鮮食品','メンズ服', 'レディース服'];
+    const topCategoryList = ['ゲーム・書籍', 'メンズ服', 'レディース服'];
     let passCategoryToState = [];
     // ParentItemのownerが外部キーなので、レンダー時にログインユーザーをセット
     await axios
@@ -40,7 +40,17 @@ class Top extends Component {
   render() {
     // 非認証ユーザーのリダイレクト
     if (!this.props.isAuthenticated) {
-      return <p>非ユーザー画面は開発中です。</p>;
+      return (
+        <>
+          <Header loginUser={this.state.loginUser} />
+          <Give_Item_List
+            axiosUrl="http://localhost:8000/api/"
+            subtitle="の最新投稿一覧"
+            loginUser=''
+            category={this.state.categories[0]}
+          />
+        </>
+      );
     }
     if (this.state.loginUser === '') {
       return <CircularProgress />;

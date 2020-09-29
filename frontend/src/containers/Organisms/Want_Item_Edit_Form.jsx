@@ -29,6 +29,7 @@ class Want_Item_Edit_Form extends Component {
         keyword3: '',
       },
       allBland: '',
+      originalBland: '',
       parentItem: '',
       wantItem: '',
     };
@@ -49,7 +50,7 @@ class Want_Item_Edit_Form extends Component {
     const { axiosUrl, loginUser } = this.props;
     // ドロップダウンにDB内のブランドを表示させるために、レンダー時に全カテゴリをセット
     axios
-      .get(this.props.axiosUrl + 'bland/')
+      .get(axiosUrl + 'bland/')
       .then((res) => {
         this.setState({ ...this.state, allBland: res.data });
       })
@@ -57,8 +58,8 @@ class Want_Item_Edit_Form extends Component {
 
     await axios
       .all([
-        axios.get(this.props.axiosUrl + 'parent/' + parent_id),
-        axios.get(this.props.axiosUrl + 'wantitem/?parent_item=' + parent_id),
+        axios.get(axiosUrl + 'parent/' + parent_id),
+        axios.get(axiosUrl + 'wantitem/?parent_item=' + parent_id),
       ])
       .then(
         axios.spread(async (resParent, resWant) => {
@@ -84,7 +85,10 @@ class Want_Item_Edit_Form extends Component {
     };
 
     if (this.state.parentItem.bland != null) {
-      fromApiToInfo('bland/', this.state.parentItem.bland, 'bland');
+      axios.get(axiosUrl + 'bland/' + this.state.parentItem.bland).then((res) => {
+        this.setState({ originalBland: res.data.name });
+        this.setState({ info: { ...this.state.info, bland: res.data.id } });
+      });
     }
 
     if (this.state.parentItem.keyword[0]) {
@@ -163,6 +167,7 @@ class Want_Item_Edit_Form extends Component {
     let bland_id = this.state.info.bland;
     let keyword_ids = [];
     let parentItem_id;
+    const { axiosUrl, parent_id } = this.props;
     const token = localStorage.getItem('token');
     const authHeader = {
       headers: {
@@ -188,7 +193,7 @@ class Want_Item_Edit_Form extends Component {
     await Promise.all(
       keywordsList.map(async (keyword) => {
         await axios
-          .get(this.props.axiosUrl + 'keyword/?name=' + keyword)
+          .get(axiosUrl + 'keyword/?name=' + keyword)
           .then((res) => {
             console.log(res);
             // すでにDB内に存在していたらarrayに代入されて返ってくる
@@ -208,7 +213,7 @@ class Want_Item_Edit_Form extends Component {
         newKeywords.map(async (keyword) => {
           await axios
             .post(
-              this.props.axiosUrl + 'keyword/',
+              axiosUrl + 'keyword/',
               {
                 name: keyword,
               },
@@ -225,7 +230,7 @@ class Want_Item_Edit_Form extends Component {
 
     await axios
       .put(
-        this.props.axiosUrl + 'parent/' + this.props.parent_id + '/',
+        axiosUrl + 'parent/' + parent_id + '/',
         {
           name: this.state.info.name,
           bland: bland_id,
@@ -246,7 +251,7 @@ class Want_Item_Edit_Form extends Component {
     //
     await axios
       .put(
-        this.props.axiosUrl + 'wantitem/' + this.state.wantItem.id + '/',
+        axiosUrl + 'wantitem/' + this.state.wantItem.id + '/',
         {
           url: this.state.info.url,
         },
@@ -259,7 +264,7 @@ class Want_Item_Edit_Form extends Component {
         console.log(err);
       });
 
-    history.push('/want/add');
+    // history.push('/want/add');
   };
 
   //            ===========           ===========           ===========
@@ -267,55 +272,30 @@ class Want_Item_Edit_Form extends Component {
   //            ===========           ===========           ===========
 
   render() {
-    const { info, message } = this.state;
-    if (
-      this.state.info.owner === '' ||
-      this.state.allBland === '' ||
-      this.state.parentItem === '' ||
-      this.state.wantItem === ''
-    ) {
+    const { info, message, allBland, parentItem, wantItem,originalBland } = this.state;
+    if (info.owner === '' || allBland === '' || parentItem === '' || wantItem === '') {
       return <CircularProgress />;
     } else {
       return (
         <div>
           <div>
             <label>商品名</label>
-            <input
-              name="name"
-              type="text"
-              value={this.state.info.name}
-              onChange={this.handleChange}
-            />
-            <p>{this.state.message.name}</p>
+            <input name="name" type="text" value={info.name} onChange={this.handleChange} />
+            <p>{message.name}</p>
           </div>
 
           <div>
-            <p>{this.state.message.keyword1}</p>
-            <p>{this.state.message.keyword2}</p>
-            <p>{this.state.message.keyword3}</p>
+            <p>{message.keyword1}</p>
+            <p>{message.keyword2}</p>
+            <p>{message.keyword3}</p>
             <label>キーワード1</label>
-            <input
-              name="keyword1"
-              type="text"
-              value={this.state.info.keyword1}
-              onChange={this.handleChange}
-            />
+            <input name="keyword1" type="text" value={info.keyword1} onChange={this.handleChange} />
 
             <label>キーワード2</label>
-            <input
-              name="keyword2"
-              type="text"
-              value={this.state.info.keyword2}
-              onChange={this.handleChange}
-            />
+            <input name="keyword2" type="text" value={info.keyword2} onChange={this.handleChange} />
 
             <label>キーワード3</label>
-            <input
-              name="keyword3"
-              type="text"
-              value={this.state.info.keyword3}
-              onChange={this.handleChange}
-            />
+            <input name="keyword3" type="text" value={info.keyword3} onChange={this.handleChange} />
           </div>
 
           <div>
@@ -323,14 +303,14 @@ class Want_Item_Edit_Form extends Component {
             <span>
               {
                 // ドロップダウンの横に現在のブランドを表示
-                this.state.info.bland === '' //
+                info.bland === '' //
                   ? ' ' + 'なし'
-                  : ' ' + this.state.info.bland
+                  : ' ' + originalBland
               }
             </span>
             <select name="bland" onChange={this.handleChange}>
               <option value="">ブランド無し</option>
-              {this.state.allBland.map((bland, idx) => {
+              {allBland.map((bland, idx) => {
                 return (
                   <option key={idx} value={bland.id}>
                     {bland.name}
@@ -342,12 +322,7 @@ class Want_Item_Edit_Form extends Component {
 
           <div>
             <label>商品参考URL</label>
-            <input
-              name="url"
-              type="text"
-              value={this.state.info.url}
-              onChange={this.handleChange}
-            />
+            <input name="url" type="text" value={info.url} onChange={this.handleChange} />
           </div>
 
           <SmallButton
@@ -355,27 +330,15 @@ class Want_Item_Edit_Form extends Component {
             btn_name="編集完了"
             btn_click={this.handleSubmit}
             btn_disable={
-              !this.state.info.name ||
-              !this.state.info.keyword1 ||
-              this.state.message.name ||
-              this.state.message.keyword1 ||
-              this.state.message.keyword2 ||
-              this.state.message.keyword3
+              !info.name ||
+              !info.keyword1 ||
+              message.name ||
+              message.keyword1 ||
+              message.keyword2 ||
+              message.keyword3
             }
           />
-          <SmallButton
-            btn_type="button"
-            btn_name="戻る"
-            btn_click={this.jumpToList}
-            btn_disable={
-              !this.state.info.name ||
-              !this.state.info.keyword1 ||
-              this.state.message.name ||
-              this.state.message.keyword1 ||
-              this.state.message.keyword2 ||
-              this.state.message.keyword3
-            }
-          />
+          <SmallButton btn_type="button" btn_name="戻る" btn_click={this.jumpToList} />
         </div>
       );
     }

@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import { connect } from 'react-redux';
-import * as actions from '../../reducks/auth/actions';
+import history from '../../history';
 import MiddleButton from '../../presentational/shared/MiddleButton';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
@@ -122,7 +121,7 @@ class Give_Item_Add_Form extends Component {
   //           ===========           ===========
   //           Validation            ===========
   //           ===========           ===========
-  
+
   validator(name, value) {
     switch (name) {
       case 'name':
@@ -173,12 +172,7 @@ class Give_Item_Add_Form extends Component {
 
   handleSubmit = async (e) => {
     e.preventDefault();
-    // Parent_Item = name, owner , keyword(Keyword), bland(Bland)
-    // Give_Item = state, detail, category(Category), parent_item(Parent_Item)
-    // Item_Image = image, Item(Give_Item)
-    // Category = name
-    // Bland = name
-    // Keyword = name
+    const { axiosUrl } = this.props;
 
     // モデル作成順序
     // Bland, Category, Keyword => Parent_Item => Give_Item => Item_Image
@@ -214,7 +208,7 @@ class Give_Item_Add_Form extends Component {
     await Promise.all(
       keywordsList.map(async (keyword) => {
         await axios
-          .get(this.props.axiosUrl + 'keyword/?name=' + keyword)
+          .get(axiosUrl + 'keyword/?name=' + keyword)
           .then((res) => {
             console.log(res);
             // すでにDB内に存在していたらarrayに代入されて返ってくる
@@ -236,7 +230,7 @@ class Give_Item_Add_Form extends Component {
         newKeywords.map(async (keyword) => {
           await axios
             .post(
-              this.props.axiosUrl + 'keyword/',
+              axiosUrl + 'keyword/',
               {
                 name: keyword,
               },
@@ -253,7 +247,7 @@ class Give_Item_Add_Form extends Component {
 
     await axios
       .post(
-        this.props.axiosUrl + 'parent/',
+        axiosUrl + 'parent/',
         {
           name: this.state.info.name,
           owner: this.state.info.owner,
@@ -272,7 +266,7 @@ class Give_Item_Add_Form extends Component {
 
     await axios
       .post(
-        this.props.axiosUrl + 'giveitem/',
+        axiosUrl + 'giveitem/',
         {
           state: this.state.info.state,
           category: category_id,
@@ -296,26 +290,29 @@ class Give_Item_Add_Form extends Component {
       console.log(data);
 
       axios
-        .post(this.props.axiosUrl + 'image/', data, authHeader)
+        .post(axiosUrl + 'image/', data, authHeader)
         .then((res) => console.log('You made it ! \n \n' + res.data))
         .catch((err) => console.log(err));
     });
 
-    this.setState({
-      info: {
-        name: '',
-        keyword1: '',
-        keyword2: '',
-        keyword3: '',
-        image: '',
-        detail: '',
-      },
-      imgUrls: '',
-    });
+    history.push('/give/add');
   };
 
   render() {
     const { info, message, allCategory, allBland, imgUrls } = this.state;
+    let mapImages;
+    let deleteUploadedButton;
+    let alertMessage;
+    if (imgUrls.length === 0) {
+      mapImages = null;
+      alertMessage = <p>画像は最低一枚投稿してください。</p>;
+    } else {
+      mapImages = imgUrls.map((img, idx) => {
+        return <img key={idx} src={img} alc="アップロード写真" height="150px"></img>;
+      });
+      deleteUploadedButton = <button onClick={this.cancelUploadedImage}>画像取り消し</button>;
+    }
+
     // setStateが完了するまではnullにする。
     if (this.state.allCategory === null || this.state.allBland === null) {
       return <CircularProgress />;
@@ -406,18 +403,10 @@ class Give_Item_Add_Form extends Component {
               {/*  */}
               <label>商品画像</label>
               {/* Validation適用前から表示させたいためVaildationとは別に記述 */}
-              {imgUrls.length === 0 ? <p>画像は最低一枚投稿してください。</p> : null}
+              {alertMessage}
               <input type="file" multiple onChange={this.handleImageSelect} />
-              {/*  */}
-              {imgUrls.length === 0
-                ? null
-                : imgUrls.map((img, idx) => {
-                    return <img key={idx} src={img} alc="アップロード写真" height="150px"></img>;
-                  })}
-              {/*  */}
-              {imgUrls.length === 0 ? null : (
-                <button onClick={this.cancelUploadedImage}>画像取り消し</button>
-              )}
+              {mapImages}
+              {deleteUploadedButton}
             </div>
 
             <div className="detailForm textarea">

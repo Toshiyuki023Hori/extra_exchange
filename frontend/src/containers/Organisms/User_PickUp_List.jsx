@@ -21,15 +21,14 @@ class User_PickUp_List extends Component {
       .get(axiosUrl + 'pickup/?choosingUser=' + loginUser.id)
       .then((res) => {
         this.setState({ pickupList: res.data });
-        this.setState({ lengthPickUps: res.data.length });
       })
       .catch((err) => console.log(err));
 
-    updateNum(this.state.lengthPickUps);
+    updateNum(this.state.pickupList.length);
   }
 
   handleDelete = async (pickup_id, choosingUser) => {
-    const { axiosUrl } = this.props;
+    const { axiosUrl, updateNum } = this.props;
     const token = localStorage.getItem('token');
     const authHeader = {
       headers: {
@@ -52,40 +51,39 @@ class User_PickUp_List extends Component {
         filteredPickUps = this.state.pickupList.filter((pickupObj) => {
           return pickupObj.id != pickup_id;
         });
-        this.setState({pickupList : filteredPickUps})
+        this.setState({ pickupList: filteredPickUps });
       })
       .catch((err) => console.log(err));
+
+    updateNum(this.state.pickupList.length);
   };
 
   render() {
     const { loginUser, pickupList } = this.state;
-    if (pickupList == '') {
-      return <CircularProgress />;
-    } else {
-      return (
+
+    return (
+      <div>
+        <h3>現在の登録地点</h3>
         <div>
-          <h3>現在の登録地点</h3>
-          <div>
-            <ul>
-              {pickupList.map((pickup) => {
-                return (
-                  <>
-                    <li key={pickup.id} id={pickup.id}>
-                      {pickup.name}
-                    </li>
-                    <SmallButton
-                      btn_name="削除"
-                      btn_type="submit"
-                      btn_click={() => this.handleDelete(pickup.id, pickup.choosingUser)}
-                    />
-                  </>
-                );
-              })}
-            </ul>
-          </div>
+          <ul>
+            {pickupList.map((pickup) => {
+              return (
+                <>
+                  <li key={pickup.id} id={pickup.id}>
+                    {pickup.name}
+                  </li>
+                  <SmallButton
+                    btn_name="削除"
+                    btn_type="submit"
+                    btn_click={() => this.handleDelete(pickup.id, pickup.choosingUser)}
+                  />
+                </>
+              );
+            })}
+          </ul>
         </div>
-      );
-    }
+      </div>
+    );
   }
 }
 
