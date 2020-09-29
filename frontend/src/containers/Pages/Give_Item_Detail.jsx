@@ -3,6 +3,7 @@ import axios from 'axios';
 import styled from 'styled-components';
 import history from '../../history';
 import Give_Item_Description from '../Organisms/Give_Item_Description';
+import Header from '../Organisms/Header';
 
 class Give_Item_Detail extends Component {
   constructor(props) {
@@ -24,7 +25,7 @@ class Give_Item_Detail extends Component {
 
   render() {
     if (this.state.loginUser === '') {
-      return <p>編集詳細ビューは開発中です。</p>
+      return <p>編集詳細ビューは開発中です。</p>;
     } else {
       return (
         <div>

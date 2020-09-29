@@ -7,40 +7,53 @@ class Give_Item_Description extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      parentItem:'',
-      giveItem:'',
-      pickups:[],
+      parentItem: '',
+      giveItem: '',
+      pickups: [],
+      images: [],
+    };
+  }
+
+  setDataToState = (key, value) => {
+    this.setState({[key] : value})
+  };
+
+  componentDidMount() {
+    const { axiosUrl, loginUser } = this.props;
+    const { parentItem, giveItem, pickups } = this.state;
+    const parent_id = parseInt(this.props.parent_id);
+
+
+    axios
+      .all([
+        axios.get(axiosUrl + 'parent/' + parent_id),
+        axios.get(axiosUrl + 'giveitem/?parent_item=' + parent_id),
+      ])
+      .then(
+        axios.spread((resParent, resGive) => {
+          this.setDataToState("parentItem", resParent.data);
+          this.setDataToState("giveItem", resGive.data[0]);
+        })
+      )
+      .catch((err) => console.log(err));
+  }
+
+  componentDidUpdate(prevProps, prevState){
+    const {axiosUrl, loginUser} = this.props;
+    const {parentItem, giveItem, pickups} = this.state;
+
+    if(prevState.giveItem !== this.state.giveItem){
+        axios.get(axiosUrl + 'category/' + this.state.giveItem.category)
+        .then((res) => {
+            console.log(res.data)
+            this.setState({parentItem : {...parentItem, category:res.data.name}})
+        });
     }
   }
 
-  componentDidMount(){
-    const {parent_id, axiosUrl, loginUser} = this.props;
-    const {parentItem, giveItem, pickups} = this.state;
-    const parent_id = parseInt(parent_id);
-    
-    setDataToState = (key, value) => {
-        this.setState({[key] : value})
-    };
-
-    await axios.all([
-        axios.get(axiosUrl + 'parent/' + parent_id),
-        axios.get(axiosUrl + 'giveitem/?parent_item=' + parent_id),
-    ])
-    .then(axios.spread((resParent, resGive) => {
-        setDataToState("parentItem", resParent.data);
-        setDataToState("giveItem", resGive.data[0]);
-    }))
-    .catch((err) => console.log(err));
-
-    
-  }
-
-  render(){
-      return(
-          <h2>This is temp change</h2>
-      )
+  render() {
+    return <h2>TEST</h2>;
   }
 }
-
 
 export default Give_Item_Description;
