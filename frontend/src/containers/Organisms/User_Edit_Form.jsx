@@ -34,14 +34,19 @@ class User_Edit_Form extends Component {
   }
 
   async componentDidMount() {
-    if (this.state.info.icon != null) {
-      await this.setState({ imgUrls: { ...this.state.imgUrls, icon: this.state.info.icon } });
+    const { info, imgUrls } = this.state;
+    const spreadAssign = (spreadKey, key, value) => {
+      this.setState({ [spreadKey]: { ...[spreadKey], [key]: value } });
+    };
+
+    if (info.icon != null) {
+      await spreadAssign('imgUrls', 'icon', info.icon);
     }
-    if (this.state.info.background != null) {
-      this.setState({ imgUrls: { ...this.state.imgUrls, background: this.state.info.background } });
+    if (info.background != null) {
+      spreadAssign('imgUrls', 'background', info.background);
     }
-    if (this.state.info.profile == 'null') {
-      this.setState({ info: { ...this.state.info, profile: ' ' } });
+    if (info.profile == 'null') {
+      spreadAssign(info, 'profile', ' ');
     }
   }
 
@@ -190,29 +195,20 @@ class User_Edit_Form extends Component {
   //            ===========           ===========           ===========
 
   render() {
+    const { info, message, imgUrls } = this.state;
     return (
       <>
         <div>
           <div>
             <label>ユーザーネーム</label>
-            <input
-              name="username"
-              type="text"
-              value={this.state.info.username}
-              onChange={this.handleChange}
-            />
-            <p>{this.state.message.username}</p>
+            <input name="username" type="text" value={info.username} onChange={this.handleChange} />
+            <p>{message.username}</p>
           </div>
 
           <div>
             <label>メール</label>
-            <input
-              name="email"
-              type="email"
-              value={this.state.info.email}
-              onChange={this.handleChange}
-            />
-            <p>{this.state.message.email}</p>
+            <input name="email" type="email" value={info.email} onChange={this.handleChange} />
+            <p>{message.email}</p>
           </div>
         </div>
 
@@ -220,7 +216,7 @@ class User_Edit_Form extends Component {
           <label>プロフィール</label>　
           <textarea
             name="profile"
-            value={this.state.info.profile}
+            value={info.profile}
             cols="30"
             rows="10"
             onChange={this.handleChange}
@@ -230,10 +226,10 @@ class User_Edit_Form extends Component {
         <div>
           <label>アイコン画像</label>
           <input name="icon" type="file" onChange={this.handleImageSelect} />
-          {this.state.imgUrls.icon != null ? (
+          {imgUrls.icon != null ? (
             <>
-              <Image src={this.state.imgUrls.icon} alt="" />
-              {typeof this.state.info.icon == 'string' ? (
+              <Image src={imgUrls.icon} alt="" />
+              {typeof info.icon == 'string' ? (
                 <button name="icon" onClick={() => this.setNoImage('icon')}>
                   アイコンを未設定にする
                 </button>
@@ -251,10 +247,10 @@ class User_Edit_Form extends Component {
         <div>
           <label>背景画像</label>
           <input name="background" type="file" onChange={this.handleImageSelect} />
-          {this.state.imgUrls.background != null ? (
+          {imgUrls.background != null ? (
             <>
-              <Image src={this.state.imgUrls.background} alt="" />
-              {typeof this.state.info.background == 'string' ? (
+              <Image src={imgUrls.background} alt="" />
+              {typeof info.background == 'string' ? (
                 <button name="background" onClick={() => this.setNoImage('background')}>
                   背景を未設定にする
                 </button>
@@ -273,12 +269,7 @@ class User_Edit_Form extends Component {
           btn_name="編集完了"
           btn_type="submit"
           btn_click={this.handleSubmit}
-          btn_disable={
-            !this.state.info.username ||
-            !this.state.info.email ||
-            this.state.message.username ||
-            this.state.message.email
-          }
+          btn_disable={!info.username || !info.email || message.username || message.email}
         />
       </>
     );

@@ -120,24 +120,14 @@ class Register_Form extends React.Component {
         <div>
           <div className="nameForm textForm">
             <label>ユーザーネーム</label>
-            <input
-              name="username"
-              type="text"
-              value={this.state.info.username}
-              onChange={this.handleChange}
-            />
-            <p>{this.state.message.username}</p>
+            <input name="username" type="text" value={info.username} onChange={this.handleChange} />
+            <p>{message.username}</p>
           </div>
 
           <div className="emailForm textForm">
             <label>メール</label>
-            <input
-              name="email"
-              type="email"
-              value={this.state.info.email}
-              onChange={this.handleChange}
-            />
-            <p>{this.state.message.email}</p>
+            <input name="email" type="email" value={info.email} onChange={this.handleChange} />
+            <p>{message.email}</p>
           </div>
 
           <div className="passwordForm textForm">
@@ -145,10 +135,10 @@ class Register_Form extends React.Component {
             <input
               name="password"
               type="password"
-              value={this.state.info.password}
+              value={info.password}
               onChange={this.handleChange}
             />
-            <p>{this.state.message.password}</p>
+            <p>{message.password}</p>
           </div>
 
           <div className="passwordForm textForm">
@@ -156,10 +146,10 @@ class Register_Form extends React.Component {
             <input
               name="confirmPass"
               type="password"
-              value={this.state.info.confirmPass}
+              value={info.confirmPass}
               onChange={this.handleChange}
             />
-            <p>{this.state.message.confirmPass}</p>
+            <p>{message.confirmPass}</p>
           </div>
 
           <MiddleButton
@@ -167,14 +157,14 @@ class Register_Form extends React.Component {
             btn_type="submit"
             btn_click={this.handleSubmit}
             btn_disable={
-              !this.state.info.username ||
-              !this.state.info.email ||
-              !this.state.info.password ||
-              !this.state.info.confirmPass ||
-              this.state.message.username ||
-              this.state.message.email ||
-              this.state.message.password ||
-              this.state.message.confirmPass
+              !info.username ||
+              !info.email ||
+              !info.password ||
+              !info.confirmPass ||
+              message.username ||
+              message.email ||
+              message.password ||
+              message.confirmPass
             }
           />
         </div>

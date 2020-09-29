@@ -21,11 +21,10 @@ class User_PickUp_List extends Component {
       .get(axiosUrl + 'pickup/?choosingUser=' + loginUser.id)
       .then((res) => {
         this.setState({ pickupList: res.data });
-        this.setState({ lengthPickUps: res.data.length });
       })
       .catch((err) => console.log(err));
 
-    updateNum(this.state.lengthPickUps);
+    updateNum(this.state.pickupList.length);
   }
 
   handleDelete = async (pickup_id, choosingUser) => {
