@@ -32,11 +32,13 @@ class Give_Item_Description extends Component {
     }))
     .catch((err) => console.log(err));
 
-    
+
   }
 
   render(){
-      return()
+      return(
+          <h2>This is temp change</h2>
+      )
   }
 }
 
