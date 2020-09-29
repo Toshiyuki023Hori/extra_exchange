@@ -32,38 +32,7 @@ class Give_Item_Description extends Component {
     }))
     .catch((err) => console.log(err));
 
-    if (this.state.parentItem.bland !== null) {
-        axios.get(axiosUrl + 'bland/' + this.state.parentItem.bland).then((res) => {
-          this.setState({ info: { ...this.state.info, bland: res.data.id } });
-          this.setState({ setBland: res.data.name });
-        });
-      } else if (this.state.parentItem.bland === null) {
-        this.setState({ info: { ...this.state.info, bland: '無し' } });
-      }
-  
-      if (this.state.parentItem.keyword[1]) {
-        fromApiToInfo('keyword/', this.state.parentItem.keyword[1], 'keyword2');
-      }
-  
-      if (this.state.parentItem.keyword[2]) {
-        fromApiToInfo('keyword/', this.state.parentItem.keyword[2], 'keyword3');
-      }
-  
-      axios
-        .get(axiosUrl + 'image/?item=' + this.state.giveItem.id)
-        .then((res) => {
-          res.data.map((imgObject) => {
-            this.setState({
-              originalImages: { ...this.state.originalImages, [imgObject['id']]: imgObject['image'] },
-            });
-            this.setState({
-              //Submitボタンdisableの条件は、this.state.imagesなのでこちらにもset
-              info: { ...this.state.info, images: [...this.state.info.images, imgObject['image']] },
-            });
-          });
-        })
-        .catch((err) => console.log(err));
-    }
+    
   }
 
   render(){
