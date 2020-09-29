@@ -110,14 +110,10 @@ class User_Add_PickUp_Form extends Component {
   };
 
   render() {
-    const { permission } = this.props;
     const { owner, lines, stations, textInput, allLines, allStations } = this.state;
     let disableCondition;
     let alertMessage;
-    if (!permission){
-      disableCondition = true;
-      alertMessage = <p>登録できるピックアップ地点は最大3件までです。</p>
-    } else if (stations == '' && textInput == '') {
+    if (stations == '' && textInput == '') {
       disableCondition = true;
     } else if (stations != '' && textInput != '') {
       disableCondition = true;
@@ -156,7 +152,12 @@ class User_Add_PickUp_Form extends Component {
           </div>
           <div>
             <label>その他の地点をご希望の場合は直接ご記入ください(バス停など)</label>
-            <input name="textInput" type="text" value={textInput} onChange={this.handleChange} />
+            <input
+              name="textInput"
+              type="text"
+              value={textInput}
+              onChange={this.handleChange}
+            />
           </div>
           {alertMessage}
           <SmallButton

@@ -32,16 +32,10 @@ class User_Add_PickUp extends Component {
       .catch((err) => console.log(err));
   }
 
-  componentDidUpdate(prevProps, prevState){
-    if(prevState.numOwnPickUps != this.state.numOwnPickUps){
-      this.switchPermission()
-    }
-  }
-
   switchPermission = () => {
-    if (this.state.numOwnPickUps >= 3) {
+    if (this.state.numOwnPickUps > 3) {
       this.setState({ permissionAdd: false });
-    } else if (!this.state.numOwnPickUps < 3) {
+    } else if (!this.state.numOwnPickUps <= 3) {
       this.setState({ permissionAdd: true });
     }
   };

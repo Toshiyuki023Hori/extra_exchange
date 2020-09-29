@@ -29,7 +29,7 @@ class User_PickUp_List extends Component {
   }
 
   handleDelete = async (pickup_id, choosingUser) => {
-    const { axiosUrl,updateNum } = this.props;
+    const { axiosUrl } = this.props;
     const token = localStorage.getItem('token');
     const authHeader = {
       headers: {
@@ -55,8 +55,6 @@ class User_PickUp_List extends Component {
         this.setState({pickupList : filteredPickUps})
       })
       .catch((err) => console.log(err));
-
-    updateNum(this.state.pickupList.length)
   };
 
   render() {
