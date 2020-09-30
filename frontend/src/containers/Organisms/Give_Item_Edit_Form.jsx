@@ -221,10 +221,13 @@ class Give_Item_Edit_Form extends Component {
         Authorization: 'Token ' + token,
       },
     };
-    let result = window.confirm(
-      'この画像を削除しますか？(同じ画像を使う場合は、再アップロードが必要です。)'
-    );
-
+    
+    if(Object.keys(this.state.originalImages).length === 1){
+      window.alert("この画像が削除されると、登録画像が0になるため削除できません。\n他の画像をアップロード後お試しください。")
+    }else{   
+      let result = window.confirm(
+        'この画像を削除しますか？(同じ画像を使う場合は、再アップロードが必要です。)'
+      );
     if (result) {
       let storeFilteredImg = {};
       const deleteImage = Object.keys(this.state.originalImages).filter(
@@ -249,7 +252,9 @@ class Give_Item_Edit_Form extends Component {
           console.log(err);
           window.alert('削除に失敗しました');
         });
-    }
+  }
+  }
+
   };
   // delete Original 終わり
 
