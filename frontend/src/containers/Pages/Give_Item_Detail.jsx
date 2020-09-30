@@ -4,13 +4,16 @@ import styled from 'styled-components';
 import history from '../../history';
 import Give_Item_Description from '../Organisms/Give_Item_Description';
 import Header from '../Organisms/Header';
+import User_Description from '../Organisms/User_Description';
 
 class Give_Item_Detail extends Component {
   constructor(props) {
     super(props);
     this.state = {
       loginUser: '',
+      owner: '',
     };
+    this.setOwner = this.setOwner.bind(this);
   }
   componentDidMount() {
     const localhostUrl = 'http://localhost:8000/api/';
@@ -23,15 +26,27 @@ class Give_Item_Detail extends Component {
       .catch((err) => console.log(err));
   }
 
+  setOwner = (owner_id) => {
+    this.setState({ owner: owner_id });
+  };
+
   render() {
+    const { loginUser, owner } = this.state;
     if (this.state.loginUser === '') {
       return <p>編集詳細ビューは開発中です。</p>;
     } else {
       return (
         <div>
-          <Header loginUser={this.state.loginUser} />
+          <Header loginUser={loginUser} />
           <Give_Item_Description
             parent_id={this.props.match.params.parent_id}
+            loginUser={loginUser}
+            axiosUrl="http://localhost:8000/api/"
+            setOwner={this.setOwner}
+          />
+          <User_Description
+            owner={owner}
+            loginUser={loginUser}
             axiosUrl="http://localhost:8000/api/"
           />
         </div>
@@ -41,4 +56,3 @@ class Give_Item_Detail extends Component {
 }
 
 export default Give_Item_Detail;
-

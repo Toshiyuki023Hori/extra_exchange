@@ -29,7 +29,7 @@ class Give_Item_Description extends Component {
   };
 
   async componentDidMount() {
-    const { axiosUrl, loginUser } = this.props;
+    const { axiosUrl, loginUser, setOwner } = this.props;
     const parent_id = parseInt(this.props.parent_id);
 
     await axios
@@ -41,6 +41,7 @@ class Give_Item_Description extends Component {
         axios.spread((resParent, resGive) => {
           this.setDataToState('parentItem', resParent.data);
           this.setDataToState('giveItem', resGive.data[0]);
+          setOwner(resParent.data.owner);
         })
       )
       .catch((err) => console.log(err));
@@ -84,18 +85,20 @@ class Give_Item_Description extends Component {
     return (
       <DescriptionWrapper>
         <Carousel images={images} />
-        <h1>{parentItem.name}</h1>
-        <p>{giveItem.createdAt}に投稿</p>
-        <p>状態 : {giveItem.state}</p>
-        <p>ブランド : {parentItem.bland}</p>
-        <p>{giveItem.detail}</p>
-        <p>{giveItem.category}</p>
-        <p>ピックアップ地点</p>
-        <ul>
-          {pickups.map((pickup) => {
-            return <li>{pickup}</li>;
-          })}
-        </ul>
+        <div>
+          <h1>{parentItem.name}</h1>
+          <p>{giveItem.createdAt}に投稿</p>
+          <p>状態 : {giveItem.state}</p>
+          <p>ブランド : {parentItem.bland}</p>
+          <p>{giveItem.detail}</p>
+          <p>{giveItem.category}</p>
+          <p>ピックアップ地点</p>
+          <ul>
+            {pickups.map((pickup) => {
+              return <li>{pickup}</li>;
+            })}
+          </ul>
+        </div>
       </DescriptionWrapper>
     );
   }
@@ -104,7 +107,7 @@ class Give_Item_Description extends Component {
 export default Give_Item_Description;
 
 const DescriptionWrapper = styled.div`
-  width:77%;
-  margin-left:auto;
-  margin-right:auto;
+  width: 77%;
+  margin-left: auto;
+  margin-right: auto;
 `;

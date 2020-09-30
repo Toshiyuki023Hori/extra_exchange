@@ -6,7 +6,7 @@ import 'swiper/swiper.scss';
 import 'swiper/components/navigation/navigation.scss';
 import 'swiper/components/pagination/pagination.scss';
 import 'swiper/components/scrollbar/scrollbar.scss';
-import './Carousel.scss'
+import './static/Carousel.scss'
 
 SwiperCore.use([Navigation, Pagination, Autoplay]);
 
@@ -27,7 +27,7 @@ class Carousel extends Component {
       type:'bullets',
       clickable:true
     }}
-    autoplay={{display:3000}}
+    autoplay={{display:4850}}
     centeredSlides={true}
     slidesPerView={1.2}
     >
