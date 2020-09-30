@@ -4,7 +4,7 @@ import axios from 'axios';
 import MiddleButton from '../../presentational/shared/MiddleButton';
 import { connect } from 'react-redux';
 import * as actions from '../../reducks/auth/actions';
-import history from "../../history";
+import history from '../../history';
 
 class Login_Form extends React.Component {
   constructor(props) {
@@ -72,8 +72,12 @@ class Login_Form extends React.Component {
   // ===========           ===========           Form送信に関するメソッド           ===========           ===========
   // ===========           ===========           ===========           ===========           ===========
 
-  handleSubmit = async() => {
+  handleSubmit = async () => {
     this.props.onAuth(this.state.info.username, this.state.info.password);
+  };
+
+  handleLogout = () => {
+    this.props.logout();
   };
 
   render() {
@@ -111,7 +115,7 @@ class Login_Form extends React.Component {
             btn_disable={!info.username || !info.password || message.username || message.password}
           />
 
-          <MiddleButton btn_name="サインアウト" btn_click={this.props.logout} />
+          <MiddleButton btn_name="サインアウト" btn_click={this.handleLogout} />
         </div>
       </>
     );
@@ -128,7 +132,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     onAuth: (username, password) => dispatch(actions.authLogin(username, password)),
-    logout: () => dispatch(actions.logout),
+    logout: () => dispatch(actions.logout()),
   };
 };
 

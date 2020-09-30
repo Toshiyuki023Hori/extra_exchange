@@ -16,14 +16,15 @@ class Header extends Component {
       loginUser: this.props.loginUser,
     };
     this.jumpToLogin = this.jumpToLogin.bind(this);
-    this.jumpToPostGive = this.jumpToPostGive.bind(this);
     this.jumpToRegister = this.jumpToRegister.bind(this);
+    this.jumpToTop = this.jumpToTop.bind(this);
+    this.jumpToPostGive = this.jumpToPostGive.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
   }
 
-  handleLogout() {
-    this.props.logout();
-    history.push('/login');
+  async handleLogout() {
+    await this.props.logout();
+    history.push('/top');
   }
 
   jumpToLogin() {
@@ -32,6 +33,10 @@ class Header extends Component {
 
   jumpToRegister() {
     history.push('/registration');
+  }
+
+  jumpToTop(){
+    history.push("/top")
   }
 
   jumpToPostGive() {
@@ -101,7 +106,7 @@ class Header extends Component {
       <>
         <Wrapper>
           {/* CSS Grid( 1 : 1 : 1) 左 */}
-          <Image src={Logo} alt="" />
+          <Image src={Logo} alt="" onClick={this.jumpToTop}/>
           {/* CSS Grid( 1 : 1 : 1) 中央 */}
           <SearchBox />
           {/* CSS Grid( 1 : 1 : 1) 右 */}
@@ -121,7 +126,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    logout: () => dispatch(actions.logout),
+    logout: () => dispatch(actions.logout()),
   };
 };
 

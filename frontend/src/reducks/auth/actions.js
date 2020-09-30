@@ -2,7 +2,7 @@ import * as actionTypes from './actionType';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { store } from '../../index';
-import history from "../../history";
+import history from '../../history';
 
 export const authStart = () => {
   return {
@@ -32,20 +32,31 @@ export const authFail = (error) => {
   };
 };
 
-export const logout = () => {
+export const authLogout = () => {
   localStorage.removeItem('token');
   localStorage.removeItem('expirationDate');
   localStorage.removeItem('uid');
-  axios
-    .post('http://localhost:8000/rest-auth/logout/')
-    .then((res) => {
-      console.log(res.json());
-    })
-    .catch((err) => {
-      console.log(err);
-    });
   return {
     type: actionTypes.AUTH_LOGOUT,
+  };
+};
+
+export const logout = () => {
+  return (dispatch) => {
+    const token = localStorage.getItem('token');
+    const authHeader = {
+      headers: {
+        Authorization: 'Token ' + token,
+      },
+    };
+    axios
+      .post('http://localhost:8000/rest-auth/logout/', authHeader)
+      .then((res) => {
+        dispatch(authLogout());
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 };
 
@@ -69,9 +80,9 @@ export const getUserId = (username) => {
         const users = res.data;
         const currentUser = users.filter((user) => user.username === username)[0];
         const uid = currentUser.id;
-        await localStorage.setItem('uid', uid);
+        localStorage.setItem('uid', uid);
         dispatch(authSuccess(localStorage.getItem('token'), uid));
-        history.push("/top")
+        history.push('/top');
       })
       .catch((err) => {
         localStorage.removeItem('uid');
@@ -116,8 +127,8 @@ export const authSignup = (username, email, password) => {
         localStorage.setItem('token', token);
         localStorage.setItem('expirationDate', expirationDate);
         // getUserId内でauthSuccessが実行され、auth_SUCCESSへuid, tokenがセット
-        dispatch(getUserId(username));
         dispatch(checkAuthTimeout(3600));
+        dispatch(getUserId(username));
       })
       .catch((err) => {
         dispatch(authFail(err));
@@ -134,8 +145,9 @@ export const authCheckState = () => {
       const expirationDate = new Date(localStorage.getItem('expirationDate'));
       if (expirationDate <= new Date()) {
         dispatch(logout());
-    } else {
+      } else {
         const uid = localStorage.getItem('uid');
+        console.log('Fire');
         if (uid) {
           dispatch(authSuccess(token, uid));
         }
