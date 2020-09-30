@@ -97,6 +97,7 @@ class Want_Item_Add_Form extends Component {
     let bland_id = this.state.info.bland;
     let keyword_ids = [];
     let parentItem_id;
+    let wantItem;
     const token = localStorage.getItem('token');
     const authHeader = {
       headers: {
@@ -191,13 +192,13 @@ class Want_Item_Add_Form extends Component {
         authHeader
       )
       .then((res) => {
-        const wantItem = res.data;
+        wantItem = res.data;
       })
       .catch((err) => {
         console.log(err);
       });
 
-    history.push('/want/add');
+    history.push('/want/' + parentItem_id + "/edit");
   };
 
   render() {

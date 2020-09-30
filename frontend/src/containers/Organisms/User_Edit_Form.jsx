@@ -34,19 +34,18 @@ class User_Edit_Form extends Component {
   }
 
   async componentDidMount() {
-    const { info, imgUrls } = this.state;
     const spreadAssign = (spreadKey, key, value) => {
-      this.setState({ [spreadKey]: { ...[spreadKey], [key]: value } });
+      this.setState({ [spreadKey]: { ...this.state[spreadKey], [key]: value } });
     };
 
-    if (info.icon != null) {
-      await spreadAssign('imgUrls', 'icon', info.icon);
+    if (this.state.info.icon != null) {
+      await spreadAssign('imgUrls', 'icon', this.state.info.icon);
     }
-    if (info.background != null) {
-      spreadAssign('imgUrls', 'background', info.background);
+    if (this.state.info.background != null) {
+      spreadAssign('imgUrls', 'background', this.state.info.background);
     }
-    if (info.profile == 'null') {
-      spreadAssign(info, 'profile', ' ');
+    if (this.state.info.profile == 'null') {
+      spreadAssign('info', 'profile', ' ');
     }
   }
 

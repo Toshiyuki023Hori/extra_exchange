@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import history from '../../history';
-import { Colors } from './CSSvariables';
+import { Colors } from './static/CSSvariables';
 
 class ItemCard extends Component {
   constructor(props) {

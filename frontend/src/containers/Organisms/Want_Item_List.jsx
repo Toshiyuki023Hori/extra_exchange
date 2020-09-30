@@ -13,9 +13,8 @@ class Want_Item_List extends Component {
       loginUser: this.props.loginUser.id,
       // res.dataはオブジェクトをarrayで返してくるため ''
       parentItems: '',
-      // 後にarrayメソッドを使うため empty array.
       wantItems: [],
-      inIdUrlName: '',
+      itemObject: '',
     };
     this.jumpToEdit = this.jumpToEdit.bind(this);
   }
@@ -25,7 +24,7 @@ class Want_Item_List extends Component {
   //            ===========           ===========           ===========           ===========
   async componentDidMount() {
     let parentItems_ids;
-    let sendToInIdUrl = {};
+    let objectForState = {};
     const { axiosUrl } = this.props;
 
     //
@@ -58,8 +57,11 @@ class Want_Item_List extends Component {
               //  これらをまとめるために、idをkeyとしたオブジェクトを新規作成
               for (let parentItem of this.state.parentItems) {
                 if (parentItem.id == res.data[0].parentItem) {
-                  sendToInIdUrl = { ...sendToInIdUrl, [parentItem.id]: { name: parentItem.name } };
-                  console.log(sendToInIdUrl);
+                  objectForState = {
+                    ...objectForState,
+                    [parentItem.id]: { name: parentItem.name },
+                  };
+                  console.log(objectForState);
                 }
               }
             }
@@ -73,20 +75,25 @@ class Want_Item_List extends Component {
     //取得したWant_Itemからurlを抽出して、オブジェクトに代入する。
     if (this.state.wantItems.length != 0) {
       for (const want_item of this.state.wantItems) {
-        for (const key in sendToInIdUrl) {
+        for (const key in objectForState) {
           if (want_item.parentItem == key) {
-            sendToInIdUrl = {
-              ...sendToInIdUrl,
-              [key]: { ...sendToInIdUrl[key], url: want_item.url },
+            objectForState = {
+              ...objectForState,
+              [key]: { ...objectForState[key], url: want_item.url },
             };
-            console.log(sendToInIdUrl);
+            objectForState = {
+              ...objectForState,
+              [key]: { ...objectForState[key], want_id: want_item.id },
+            };
+            console.log(objectForState);
           }
         }
       }
     }
 
-    this.setState(this.setState({ inIdUrlName: sendToInIdUrl }));
+    this.setState({ itemObject: objectForState });
   }
+
   //            ===========           ===========           ===========           ===========
   //                       componentDidMount 終わり
   //            ===========           ===========           ===========           ===========
@@ -95,10 +102,36 @@ class Want_Item_List extends Component {
     history.push('/want/' + parent_id + '/edit');
   };
 
+  handleDelete = (parent_id) => {
+    let filteredItems = {};
+    const { axiosUrl } = this.props;
+    const token = localStorage.getItem('token');
+    const authHeader = {
+      headers: {
+        Authorization: 'Token ' + token,
+      },
+    };
+    const result = window.confirm('このアイテムを削除しますか??');
+
+    if (result) {
+      axios
+        .delete(axiosUrl + 'parent/' + parent_id, authHeader)
+        .then((res) => {
+          for (let key in this.state.itemObject) {
+            if (key != parent_id) {
+              filteredItems = { ...filteredItems, [key]: this.state.itemObject[key] };
+            }
+          }
+          this.setState({ itemObject: filteredItems });
+        })
+        .catch((err) => window.alert('削除に失敗しました。'));
+    }
+  };
+
   render() {
-    const { wantItems, parentItems, inIdUrlName, owner, loginUser } = this.state;
+    const { wantItems, parentItems, itemObject, owner, loginUser } = this.state;
     const { h2Title } = this.props;
-    if (parentItems === '' || wantItems === [] || inIdUrlName === '') {
+    if (parentItems === '' || wantItems === [] || itemObject === '') {
       return <CircularProgress />;
     } else {
       return (
@@ -107,15 +140,15 @@ class Want_Item_List extends Component {
           <ol>
             {wantItems.length === 0
               ? null
-              : Object.keys(inIdUrlName).map((key, idx) => {
+              : Object.keys(itemObject).map((key, idx) => {
                   return (
                     <>
                       <li key={idx}>
                         {/* URLを持っていたら、リンク先まで飛べるように条件分岐 */}
-                        {inIdUrlName[key]['url'] == '' ? (
-                          inIdUrlName[key]['name']
+                        {itemObject[key]['url'] == '' ? (
+                          itemObject[key]['name']
                         ) : (
-                          <a href={inIdUrlName[key]['url']}>{inIdUrlName[key]['name']}</a>
+                          <a href={itemObject[key]['url']}>{itemObject[key]['name']}</a>
                         )}
                       </li>
                       {/* ログインユーザーがownerの場合、UpdataとDeleteを許可する */}
@@ -123,7 +156,7 @@ class Want_Item_List extends Component {
                         <>
                           <SmallButton
                             btn_type="submit"
-                            btn_click={() => this.handleDelete}
+                            btn_click={() => this.handleDelete(key)}
                             btn_name="削除"
                           />
                           <SmallButton

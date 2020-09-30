@@ -8,7 +8,7 @@ class User_PickUp_List extends Component {
     super(props);
     this.state = {
       loginUser: this.props.loginUser,
-      pickupList: [],
+      pickupList: 'Before Loading',
       lengthPickUps: '',
     };
     this.handleDelete = this.handleDelete.bind(this);
@@ -60,30 +60,33 @@ class User_PickUp_List extends Component {
 
   render() {
     const { loginUser, pickupList } = this.state;
-
-    return (
-      <div>
-        <h3>現在の登録地点</h3>
+    if (pickupList === 'Before Loading') {
+      return <CircularProgress />;
+    } else {
+      return (
         <div>
-          <ul>
-            {pickupList.map((pickup) => {
-              return (
-                <>
-                  <li key={pickup.id} id={pickup.id}>
-                    {pickup.name}
-                  </li>
-                  <SmallButton
-                    btn_name="削除"
-                    btn_type="submit"
-                    btn_click={() => this.handleDelete(pickup.id, pickup.choosingUser)}
-                  />
-                </>
-              );
-            })}
-          </ul>
+          <h3>現在の登録地点</h3>
+          <div>
+            <ul>
+              {pickupList.map((pickup) => {
+                return (
+                  <>
+                    <li key={pickup.id} id={pickup.id}>
+                      {pickup.name}
+                    </li>
+                    <SmallButton
+                      btn_name="削除"
+                      btn_type="submit"
+                      btn_click={() => this.handleDelete(pickup.id, pickup.choosingUser)}
+                    />
+                  </>
+                );
+              })}
+            </ul>
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
   }
 }
 
