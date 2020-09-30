@@ -41,3 +41,4 @@ class Give_Item_Detail extends Component {
 }
 
 export default Give_Item_Detail;
+

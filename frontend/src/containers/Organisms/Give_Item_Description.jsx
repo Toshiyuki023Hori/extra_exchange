@@ -82,7 +82,7 @@ class Give_Item_Description extends Component {
       return <CircularProgress />;
     }
     return (
-      <div>
+      <DescriptionWrapper>
         <Carousel images={images} />
         <h1>{parentItem.name}</h1>
         <p>{giveItem.createdAt}に投稿</p>
@@ -96,9 +96,15 @@ class Give_Item_Description extends Component {
             return <li>{pickup}</li>;
           })}
         </ul>
-      </div>
+      </DescriptionWrapper>
     );
   }
 }
 
 export default Give_Item_Description;
+
+const DescriptionWrapper = styled.div`
+  width:77%;
+  margin-left:auto;
+  margin-right:auto;
+`;

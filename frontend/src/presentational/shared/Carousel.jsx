@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
-import SwiperCore, { Navigation, Pagination, Scrollbar, A11y } from 'swiper';
+import SwiperCore, { Navigation, Pagination, Autoplay } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
 //
 import 'swiper/swiper.scss';
 import 'swiper/components/navigation/navigation.scss';
 import 'swiper/components/pagination/pagination.scss';
 import 'swiper/components/scrollbar/scrollbar.scss';
+import './Carousel.scss'
 
-SwiperCore.use([Navigation, Pagination, Scrollbar, A11y]);
+SwiperCore.use([Navigation, Pagination, Autoplay]);
 
 class Carousel extends Component {
   constructor(props) {
@@ -18,12 +19,23 @@ class Carousel extends Component {
     const {images} = this.props;
     
     return (
-      <Swiper wrapperTag="ul">
+    <Swiper 
+    wrapperTag='ul'
+    effect={"slide"}
+    navigation
+    pagination={{
+      type:'bullets',
+      clickable:true
+    }}
+    autoplay={{display:3000}}
+    centeredSlides={true}
+    slidesPerView={1.2}
+    >
         {
           images.map((image, key) => {
             return (
-            <SwiperSlide key={key} tag="li">
-              <img src={image} alt={"image" + key}/>
+            <SwiperSlide key={key} tag='li'>
+              <img className="swiper__img" src={image} alt={"image" + key}/>
             </SwiperSlide>
             )
           })
@@ -34,3 +46,4 @@ class Carousel extends Component {
 }
 
 export default Carousel;
+
