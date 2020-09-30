@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import history from '../../history';
-import {CircularProgress, Chip} from '@material-ui/core';
+import { CircularProgress, Chip } from '@material-ui/core';
+import Carousel from '../../presentational/shared/Carousel';
 
 class Give_Item_Description extends Component {
   constructor(props) {
@@ -78,24 +79,25 @@ class Give_Item_Description extends Component {
   render() {
     const { parentItem, giveItem, pickups, images } = this.state;
     if (images === []) {
-        return <CircularProgress/>
+      return <CircularProgress />;
     }
     return (
-        <div>
-            <h1>{parentItem.name}</h1>
-            <p>{giveItem.createdAt}に投稿</p>
-            <p>状態 : {giveItem.state}</p>
-            <p>ブランド : {parentItem.bland}</p>
-            <p>{giveItem.detail}</p>
-            <p>{giveItem.category}</p>
-            <p>ピックアップ地点</p>
-            <ul>
-                {pickups.map((pickup) => {
-                    return <li>{pickup}</li>
-                })}
-            </ul>
-        </div>
-    ) 
+      <div>
+        <Carousel images={images} />
+        <h1>{parentItem.name}</h1>
+        <p>{giveItem.createdAt}に投稿</p>
+        <p>状態 : {giveItem.state}</p>
+        <p>ブランド : {parentItem.bland}</p>
+        <p>{giveItem.detail}</p>
+        <p>{giveItem.category}</p>
+        <p>ピックアップ地点</p>
+        <ul>
+          {pickups.map((pickup) => {
+            return <li>{pickup}</li>;
+          })}
+        </ul>
+      </div>
+    );
   }
 }
 
