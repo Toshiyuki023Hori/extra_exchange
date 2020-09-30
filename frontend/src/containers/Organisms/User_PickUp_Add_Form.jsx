@@ -5,7 +5,7 @@ import axios from 'axios';
 import { CircularProgress } from '@material-ui/core';
 import SmallButton from '../../presentational/shared/SmallButton';
 
-class User_Add_PickUp_Form extends Component {
+class User_PickUp_Add_Form extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -92,7 +92,7 @@ class User_Add_PickUp_Form extends Component {
           },
           authHeader
         )
-        .then((res) => console.log(res))
+        .then((res) => history.push("/user/pickup"))
         .catch((err) => console.log(err));
     } else {
       axios
@@ -104,7 +104,7 @@ class User_Add_PickUp_Form extends Component {
           },
           authHeader
         )
-        .then((res) => console.log(res))
+        .then((res) => history.push("/user/pickup"))
         .catch((err) => window.alert('ピックアップ地点追加の登録に失敗しました。'));
     }
   };
@@ -171,4 +171,4 @@ class User_Add_PickUp_Form extends Component {
   }
 }
 
-export default User_Add_PickUp_Form;
+export default User_PickUp_Add_Form;

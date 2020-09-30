@@ -6,11 +6,11 @@ import SmallButton from '../../presentational/shared/SmallButton';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import styled from 'styled-components';
 import history from '../../history';
-import User_Add_PickUp_Form from '../Organisms/User_Add_PickUp_Form';
+import User_PickUp_Add_Form from '../Organisms/User_PickUp_Add_Form';
 import User_PickUp_List from '../Organisms/User_PickUp_List';
 import TouchRipple from '@material-ui/core/ButtonBase/TouchRipple';
 
-class User_Add_PickUp extends Component {
+class User_PickUp_Add extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -61,7 +61,7 @@ class User_Add_PickUp extends Component {
       return (
         <>
           <Header loginUser={this.state.loginUser} />
-          <User_Add_PickUp_Form
+          <User_PickUp_Add_Form
             loginUser={this.state.loginUser}
             axiosUrl="http://localhost:8000/api/"
             permission={this.state.permissionAdd}
@@ -79,4 +79,4 @@ class User_Add_PickUp extends Component {
   }
 }
 
-export default User_Add_PickUp;
+export default User_PickUp_Add;

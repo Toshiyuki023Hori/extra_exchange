@@ -4,6 +4,7 @@ import axios from 'axios';
 import MiddleButton from '../../presentational/shared/MiddleButton';
 import { connect } from 'react-redux';
 import * as actions from '../../reducks/auth/actions';
+import history from "../../history";
 
 class Login_Form extends React.Component {
   constructor(props) {
@@ -71,16 +72,8 @@ class Login_Form extends React.Component {
   // ===========           ===========           Form送信に関するメソッド           ===========           ===========
   // ===========           ===========           ===========           ===========           ===========
 
-  handleSubmit = () => {
+  handleSubmit = async() => {
     this.props.onAuth(this.state.info.username, this.state.info.password);
-
-    // インプットを空白に戻すためのコード
-    this.setState({
-      info: {
-        username: '',
-        password: '',
-      },
-    });
   };
 
   render() {

@@ -2,6 +2,7 @@ import * as actionTypes from './actionType';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { store } from '../../index';
+import history from "../../history";
 
 export const authStart = () => {
   return {
@@ -64,12 +65,13 @@ export const getUserId = (username) => {
   return (dispatch) => {
     axios
       .get('http://localhost:8000/api/user')
-      .then((res) => {
+      .then(async (res) => {
         const users = res.data;
         const currentUser = users.filter((user) => user.username === username)[0];
         const uid = currentUser.id;
-        localStorage.setItem('uid', uid);
+        await localStorage.setItem('uid', uid);
         dispatch(authSuccess(localStorage.getItem('token'), uid));
+        history.push("/top")
       })
       .catch((err) => {
         localStorage.removeItem('uid');
@@ -90,8 +92,8 @@ export const authLogin = (username, password) => {
         const expirationDate = new Date(new Date().getTime() + 3600 * 1000);
         localStorage.setItem('token', token);
         localStorage.setItem('expirationDate', expirationDate);
-        dispatch(getUserId(username));
         dispatch(checkAuthTimeout(3600));
+        dispatch(getUserId(username));
       })
       .catch((err) => {
         dispatch(authFail(err));

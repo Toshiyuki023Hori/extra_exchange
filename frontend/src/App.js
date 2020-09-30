@@ -15,7 +15,7 @@ import Want_Item_Edit from './containers/Pages/Want_Item_Edit';
 import Give_Item_Add from './containers/Pages/Give_Item_Add';
 import Give_Item_Detail from './containers/Pages/Give_Item_Detail';
 import Give_Item_Edit from './containers/Pages/Give_Item_Edit';
-import User_Add_PickUp from "./containers/Pages/User_Add_PickUp";
+import User_PickUp_Add from "./containers/Pages/User_PickUp_Add";
 import User_ChangePass from './containers/Pages/User_ChangePass';
 import User_Edit from './containers/Pages/User_Edit';
 
@@ -74,7 +74,7 @@ class App extends Component {
         />
         <Route
           path="/user/pickup"
-          render={(routeProps) => <User_Add_PickUp {...routeProps} {...this.props} />}
+          render={(routeProps) => <User_PickUp_Add {...routeProps} {...this.props} />}
         />
       </Router>
     );
