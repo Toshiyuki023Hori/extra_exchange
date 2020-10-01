@@ -17,7 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ['id']
 
     def validate_username(self, value):
-        if len(value) <= 5:
+        if len(value) <= 4:
             raise serializers.ValidationError("ユーザーネームは5文字以上で入力してください")
         return value
 
