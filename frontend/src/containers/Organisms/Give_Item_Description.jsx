@@ -29,7 +29,7 @@ class Give_Item_Description extends Component {
   };
 
   async componentDidMount() {
-    const { axiosUrl, loginUser, setOwner } = this.props;
+    const { axiosUrl, loginUser, setOwner, setGiveItem } = this.props;
     const parent_id = parseInt(this.props.parent_id);
 
     await axios
@@ -42,6 +42,7 @@ class Give_Item_Description extends Component {
           this.setDataToState('parentItem', resParent.data);
           this.setDataToState('giveItem', resGive.data[0]);
           setOwner(resParent.data.owner);
+          setGiveItem(resGive.data[0].id)
         })
       )
       .catch((err) => console.log(err));

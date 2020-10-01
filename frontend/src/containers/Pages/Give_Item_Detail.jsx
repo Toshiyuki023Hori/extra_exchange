@@ -5,6 +5,7 @@ import history from '../../history';
 import Give_Item_Description from '../Organisms/Give_Item_Description';
 import Header from '../Organisms/Header';
 import User_Description from '../Organisms/User_Description';
+import Chat_Place from '../Organisms/Chat_Place';
 
 class Give_Item_Detail extends Component {
   constructor(props) {
@@ -12,8 +13,10 @@ class Give_Item_Detail extends Component {
     this.state = {
       loginUser: '',
       owner: '',
+      giveItem: '',
     };
     this.setOwner = this.setOwner.bind(this);
+    this.setGiveItem = this.setGiveItem.bind(this);
   }
   componentDidMount() {
     const localhostUrl = 'http://localhost:8000/api/';
@@ -30,8 +33,12 @@ class Give_Item_Detail extends Component {
     this.setState({ owner: owner_id });
   };
 
+  setGiveItem = (giveItem_id) => {
+    this.setState({ giveItem: giveItem_id });
+  };
+
   render() {
-    const { loginUser, owner } = this.state;
+    const { loginUser, owner, giveItem } = this.state;
     if (this.state.loginUser === '') {
       return <p>編集詳細ビューは開発中です。</p>;
     } else {
@@ -43,9 +50,15 @@ class Give_Item_Detail extends Component {
             loginUser={loginUser}
             axiosUrl="http://localhost:8000/api/"
             setOwner={this.setOwner}
+            setGiveItem={this.setGiveItem}
           />
           <User_Description
             owner={owner}
+            loginUser={loginUser}
+            axiosUrl="http://localhost:8000/api/"
+          />
+          <Chat_Place
+            giveItem={giveItem}
             loginUser={loginUser}
             axiosUrl="http://localhost:8000/api/"
           />
