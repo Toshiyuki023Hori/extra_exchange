@@ -3,7 +3,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, AbstractUser, BaseUserManager, PermissionsMixin, UserManager
 
 
-
 # Djangoの認証をユーザーネームからメールアドレスへ変えるために記述
 class CustomUserManager(UserManager):
 
@@ -42,7 +41,7 @@ class User(AbstractUser):
     email = models.EmailField(max_length=100, unique=True)
     profile = models.TextField(max_length=800, blank=True, null=True)
     icon = models.ImageField(upload_to="images/", blank=True, null=True)
-    background = models.ImageField(upload_to="images/" ,blank=True, null=True)
+    background = models.ImageField(upload_to="images/", blank=True, null=True)
     # AbstractUserはfirst_name,last_nameを保持しているため無効化
     first_name = None
     last_name = None
@@ -107,6 +106,7 @@ class Review(models.Model):
 
 class Notification(models.Model):
     message = models.CharField(null=True, blank=True, max_length=150)
+    read = models.BooleanField(default=False)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="notification")
 
@@ -344,8 +344,8 @@ class Deal(models.Model):
     meeting_time = models.DateTimeField()
     completed = models.BooleanField(default=False)
     join_user_accept = models.BooleanField(default=False)
-    history = models.ForeignKey(
-        "History", on_delete=models.CASCADE, null=True, related_name="done_deal")
+    # history = models.ForeignKey(
+    #     "History", on_delete=models.CASCADE, null=True, related_name="done_deal")
     request_deal = models.OneToOneField(
         "Request_Deal", on_delete=models.CASCADE, related_name="deal")
     created_at = models.DateTimeField(auto_now_add=True)
@@ -381,6 +381,8 @@ class Private_Message(models.Model):
 class History(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE, related_name="done_deal")
+    deal = models.OneToOneField(
+        Deal, on_delete=models.CASCADE, null=True, related_name="history")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -402,8 +404,10 @@ class Request_Deal(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="host_request_deal")
     join_user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="join_request_deal")
-    host_item = models.ForeignKey(Give_Item, on_delete=models.CASCADE, related_name="as_host")
-    join_item = models.ForeignKey(Give_Item, on_delete=models.CASCADE, related_name="as_join")
+    host_item = models.ForeignKey(
+        Give_Item, on_delete=models.CASCADE, related_name="as_host")
+    join_item = models.ForeignKey(
+        Give_Item, on_delete=models.CASCADE, related_name="as_join")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
