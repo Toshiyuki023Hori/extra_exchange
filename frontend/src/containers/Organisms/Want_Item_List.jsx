@@ -61,14 +61,14 @@ class Want_Item_List extends Component {
                     ...objectForState,
                     [parentItem.id]: { name: parentItem.name },
                   };
-                  console.log(objectForState);
+                  // console.log(objectForState);
                 }
-              }
-            }
-          });
-        })
-      );
-    }
+              } // for of closing
+            } // if res.data.length closing tag
+          }); // then closing tag
+        }) // map closing tag
+      ); // Promise all closing tag
+    } // if closing tag
 
     //
     //
@@ -87,9 +87,9 @@ class Want_Item_List extends Component {
             };
             console.log(objectForState);
           }
-        }
-      }
-    }
+        } // for in closing
+      } // for of closing
+    } // if closing
 
     this.setState({ itemObject: objectForState });
   }
@@ -131,45 +131,48 @@ class Want_Item_List extends Component {
   render() {
     const { wantItems, parentItems, itemObject, owner, loginUser } = this.state;
     const { h2Title } = this.props;
+    let itemList;
+    if (wantItems.length !== 0) {
+      itemList = Object.keys(itemObject).map((key, idx) => {
+        return (
+          <>
+            <li key={idx}>
+              {/* URLを持っていたら、リンク先まで飛べるように条件分岐 */}
+              {itemObject[key]['url'] == '' ? (
+                itemObject[key]['name']
+              ) : (
+                <a key={idx} href={itemObject[key]['url']}>
+                  {itemObject[key]['name']}
+                </a>
+              )}
+            </li>
+            {/* ログインユーザーがownerの場合、UpdataとDeleteを許可する */}
+            {owner == loginUser && (
+              <>
+                <SmallButton
+                  btn_type="submit"
+                  btn_click={() => this.handleDelete(key)}
+                  btn_name="削除"
+                />
+                <SmallButton
+                  btn_type="submit"
+                  btn_click={() => this.jumpToEdit(key)}
+                  btn_name="編集"
+                />
+              </>
+            )}
+          </>
+        );
+      });
+    }
+
     if (parentItems === '' || wantItems === [] || itemObject === '') {
       return <CircularProgress />;
     } else {
       return (
         <div>
           <h2>{h2Title}</h2>
-          <ol>
-            {wantItems.length === 0
-              ? null
-              : Object.keys(itemObject).map((key, idx) => {
-                  return (
-                    <>
-                      <li key={idx}>
-                        {/* URLを持っていたら、リンク先まで飛べるように条件分岐 */}
-                        {itemObject[key]['url'] == '' ? (
-                          itemObject[key]['name']
-                        ) : (
-                          <a href={itemObject[key]['url']}>{itemObject[key]['name']}</a>
-                        )}
-                      </li>
-                      {/* ログインユーザーがownerの場合、UpdataとDeleteを許可する */}
-                      {owner == loginUser ? (
-                        <>
-                          <SmallButton
-                            btn_type="submit"
-                            btn_click={() => this.handleDelete(key)}
-                            btn_name="削除"
-                          />
-                          <SmallButton
-                            btn_type="submit"
-                            btn_click={() => this.jumpToEdit(key)}
-                            btn_name="編集"
-                          />
-                        </>
-                      ) : null}
-                    </>
-                  );
-                })}
-          </ol>
+          <ol>{itemList}</ol>
         </div>
       );
     }

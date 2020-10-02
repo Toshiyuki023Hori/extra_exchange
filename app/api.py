@@ -69,6 +69,7 @@ class FollowViewSet(viewsets.ModelViewSet):
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
+
 class PickUp_PlacesViewSet(viewsets.ModelViewSet):
     queryset = PickUp_Places.objects.all()
     permission_classes = [
@@ -82,7 +83,8 @@ class PickUp_PlacesViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if self.request.query_params.get("choosingUser"):
             choosingUser = self.request.query_params.get('choosingUser')
-            queryset = PickUp_Places.objects.filter(choosing_user__id=choosingUser)
+            queryset = PickUp_Places.objects.filter(
+                choosing_user__id=choosingUser)
         else:
             queryset = PickUp_Places.objects.all()
         return queryset
@@ -119,6 +121,9 @@ class CommentViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = CommentSerializer
+
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_fields = "__all__"
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 

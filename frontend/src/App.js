@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Router, Route, withRouter, Switch } from 'react-router-dom';
+import { Router, Route, withRouter, Switch, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as actions from './reducks/auth/actions';
 import history from './history';
@@ -40,6 +40,18 @@ class App extends Component {
           path="/login"
           render={(routeProps) => <Login {...routeProps} {...this.props} />}
         />
+        <Route
+          path="/user/edit"
+          render={(routeProps) => <User_Edit {...routeProps} {...this.props} />}
+        />
+        <Route
+          path="/user/changepass"
+          render={(routeProps) => <User_ChangePass {...routeProps} {...this.props} />}
+        />
+        <Route
+          path="/user/pickup"
+          render={(routeProps) => <User_PickUp_Add {...routeProps} {...this.props} />}
+        />
         <Switch>
           <Route
             exact
@@ -63,19 +75,11 @@ class App extends Component {
             path="/give/:parent_id/edit"
             render={(routeProps) => <Give_Item_Edit {...routeProps} {...this.props} />}
           />
+          <Redirect to="/top"/>
+          {/* <Route
+            render={(routeProps) => <Top {...routeProps} {...this.props} />}
+          /> */}
         </Switch>
-        <Route
-          path="/user/edit"
-          render={(routeProps) => <User_Edit {...routeProps} {...this.props} />}
-        />
-        <Route
-          path="/user/changepass"
-          render={(routeProps) => <User_ChangePass {...routeProps} {...this.props} />}
-        />
-        <Route
-          path="/user/pickup"
-          render={(routeProps) => <User_PickUp_Add {...routeProps} {...this.props} />}
-        />
       </Router>
     );
   }

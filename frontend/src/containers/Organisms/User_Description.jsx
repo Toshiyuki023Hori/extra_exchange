@@ -12,25 +12,24 @@ class User_Description extends Component {
       user: '',
     };
   }
-  componentDidUpdate(prevProps) {
+  componentDidMount() {
     const { owner, axiosUrl } = this.props;
-    if (prevProps.owner != owner) {
+    console.log("Owner is " + owner)
       axios
         .get(axiosUrl + 'user/' + owner)
         .then((res) => this.setState({ user: res.data }))
         .catch((err) => console.log(err));
-    }
   }
 
   render() {
     const { user } = this.state;
     const { loginUser } = this.props;
     if(user == ''){
-        return <CircularProgress/>
+        return null
     } else {
         return (
             <DescriptionWrapper>
-                <Icon icon={user.icon} img_width="65px" img_height="65px" img_radius="50%"/>
+                <Icon icon={user.icon} img_width="70px" img_height="70px" img_radius="50%"/>
                 <h1>{user.username}</h1>
                 <Want_Item_List
                 owner={user}

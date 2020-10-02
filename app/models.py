@@ -294,8 +294,6 @@ class Parent_Item(models.Model):
     # Categoryと同じく、Parent_Itemが削除された時、ブランドも同時に削除されるのを防ぐためにnull = True
     bland = models.ForeignKey(
         Bland, on_delete=models.SET_NULL, null=True, related_name="parent_item")
-    request_deal = models.ForeignKey(
-        "Request_Deal", null=True, on_delete=models.CASCADE, related_name="parent_item")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -310,8 +308,9 @@ class Parent_Item(models.Model):
 
 class Request(models.Model):
     note = models.CharField(max_length=400, blank=True, null=True)
-    request_deal = models.ForeignKey(
-        "Request_Deal", null=True, on_delete=models.CASCADE, related_name="request")
+    accepted = models.BooleanField(default=False)
+    request_deal = models.OneToOneField(
+        "Request_Deal", on_delete=models.CASCADE, related_name="request")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -320,6 +319,7 @@ class Request(models.Model):
 
     class Meta:
         db_table = "requests"
+
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
@@ -335,6 +335,7 @@ class Meeting_Time(models.Model):
     class Meta:
         db_table = "meeting_times"
 
+
 # ======      =======      ======      ======     ======     ======      =======      =======
 
 
@@ -345,8 +346,8 @@ class Deal(models.Model):
     join_user_accept = models.BooleanField(default=False)
     history = models.ForeignKey(
         "History", on_delete=models.CASCADE, null=True, related_name="done_deal")
-    request_deal = models.ForeignKey(
-        "Request_Deal", null=True, on_delete=models.CASCADE, related_name="deal")
+    request_deal = models.OneToOneField(
+        "Request_Deal", on_delete=models.CASCADE, related_name="deal")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -395,10 +396,14 @@ class History(models.Model):
 
 
 class Request_Deal(models.Model):
+    # リクエスト送信時に一つに絞られるため、外部キーを使用しない。
+    pickups = models.CharField(max_length=200)
     host_user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="host_request_deal")
     join_user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="join_request_deal")
+    host_item = models.ForeignKey(Give_Item, on_delete=models.CASCADE, related_name="as_host")
+    join_item = models.ForeignKey(Give_Item, on_delete=models.CASCADE, related_name="as_join")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
