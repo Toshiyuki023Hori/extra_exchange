@@ -56,16 +56,7 @@ class Give_Item_Detail extends Component {
           loginUser={loginUser}
           axiosUrl="http://localhost:8000/api/"
         />
-      );
-
-      chatPlace = (
-        <Chat_Place
-          owner={parentItem.owner}
-          giveItem={giveItem}
-          loginUser={loginUser}
-          axiosUrl="http://localhost:8000/api/"
-        />
-      );
+      );;
     }
 
     if (this.state.loginUser === '' || this.state.parentItem === '') {
@@ -81,7 +72,12 @@ class Give_Item_Detail extends Component {
             setGiveItem={this.setGiveItem}
           />
           {userDescription}
-          {chatPlace}
+          <Chat_Place
+          owner={parentItem.owner}
+          giveItem={giveItem}
+          loginUser={loginUser}
+          axiosUrl="http://localhost:8000/api/"
+        />
         </div>
       );
     }
