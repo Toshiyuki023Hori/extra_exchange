@@ -58,6 +58,7 @@ class Give_Item_Detail extends Component {
             axiosUrl="http://localhost:8000/api/"
           />
           <Chat_Place
+            owner={owner}
             giveItem={giveItem}
             loginUser={loginUser}
             axiosUrl="http://localhost:8000/api/"

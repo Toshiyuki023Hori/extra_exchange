@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Word_Bubble from "../../presentational/shared/Word_Bubble";
+import { Colors } from '../../presentational/shared/static/CSSvariables';
 
 class Chat_Place extends Component {
   constructor(props) {
@@ -68,12 +70,14 @@ class Chat_Place extends Component {
   render() {
     const { allComments, comment } = this.state;
     let commentsView;
-    console.log(allComments);
+    //
     if (allComments === 'まだ投稿がありません') {
       commentsView = <p>{allComments}</p>;
     } else if (allComments.length > 0) {
       commentsView = allComments.map((commentObj) => {
-        return <p key={commentObj.id}>{commentObj.comment}</p>;
+        return (
+            <Word_Bubble key={commentObj.id} background={Colors.accent2} text={commentObj.comment} />
+        ) 
       });
     }
 
