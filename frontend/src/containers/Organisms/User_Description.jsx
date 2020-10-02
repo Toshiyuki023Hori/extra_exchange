@@ -14,7 +14,6 @@ class User_Description extends Component {
   }
   componentDidMount() {
     const { owner, axiosUrl } = this.props;
-    console.log("Owner is " + owner)
       axios
         .get(axiosUrl + 'user/' + owner)
         .then((res) => this.setState({ user: res.data }))

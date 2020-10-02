@@ -45,7 +45,7 @@ class Top extends Component {
           <Header loginUser={this.state.loginUser} />
           <Give_Item_List
             axiosUrl="http://localhost:8000/api/"
-            subtitle="の最新投稿一覧"
+            h2title="の最新投稿一覧"
             loginUser=''
             category={this.state.categories[0]}
           />
@@ -60,7 +60,7 @@ class Top extends Component {
           <Header loginUser={this.state.loginUser} />
           <Give_Item_List
             axiosUrl="http://localhost:8000/api/"
-            subtitle="の最新投稿一覧"
+            h2title="の最新投稿一覧"
             loginUser={this.state.loginUser}
             category={this.state.categories[0]}
           />

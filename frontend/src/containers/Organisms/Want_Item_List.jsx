@@ -85,7 +85,7 @@ class Want_Item_List extends Component {
               ...objectForState,
               [key]: { ...objectForState[key], want_id: want_item.id },
             };
-            console.log(objectForState);
+            // console.log(objectForState);
           }
         } // for in closing
       } // for of closing
