@@ -76,13 +76,19 @@ class Chat_Place extends Component {
     } else if (allComments.length > 0) {
       commentsView = allComments.map((commentObj) => {
         return (
-            <Word_Bubble key={commentObj.id} background={Colors.accent2} text={commentObj.comment} />
+            <Word_Bubble 
+            axiosUrl="http://localhost:8000/api/"
+            key={commentObj.id} 
+            background={Colors.accent2} 
+            text={commentObj.comment} 
+            commenter={commentObj.owner}
+            />
         ) 
       });
     }
 
     if (this.state.allComments == '') {
-      return <CircularProgress />;
+      return null
     } else {
       return (
         <CommentWrapper>

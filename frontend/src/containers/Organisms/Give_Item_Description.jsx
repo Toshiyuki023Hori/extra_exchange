@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import history from '../../history';
 import { CircularProgress, Chip } from '@material-ui/core';
 import Carousel from '../../presentational/shared/Carousel';
+import MiddleButton from "../../presentational/shared/MiddleButton";
 
 class Give_Item_Description extends Component {
   constructor(props) {
@@ -29,7 +30,7 @@ class Give_Item_Description extends Component {
   };
 
   async componentDidMount() {
-    const { axiosUrl, loginUser, setOwner, setGiveItem } = this.props;
+    const { axiosUrl, loginUser, setGiveItem } = this.props;
     const parent_id = parseInt(this.props.parent_id);
 
     await axios
@@ -41,7 +42,6 @@ class Give_Item_Description extends Component {
         axios.spread((resParent, resGive) => {
           this.setDataToState('parentItem', resParent.data);
           this.setDataToState('giveItem', resGive.data[0]);
-          setOwner(resParent.data.owner);
           setGiveItem(resGive.data[0].id)
         })
       )
@@ -53,11 +53,9 @@ class Give_Item_Description extends Component {
 
     if (this.state.parentItem.bland !== null) {
       axios.get(axiosUrl + 'bland/' + this.state.parentItem.bland).then((res) => {
-        console.log(res.data.name);
         this.spreadDataToObject('parentItem', 'bland', res.data.name);
       });
     } else if (this.state.parentItem.bland === null) {
-      console.log('Else if');
       this.spreadDataToObject('parentItem', 'bland', '無し');
     }
 
@@ -80,6 +78,20 @@ class Give_Item_Description extends Component {
 
   render() {
     const { parentItem, giveItem, pickups, images } = this.state;
+    let editButton;
+    let deleteButon;
+    if(parentItem.owner === this.props.loginUser.id){
+      editButton = 
+      <MiddleButton
+      btn_name="編集"
+      btn_click={this.jumpToEdit}
+      />
+      deleteButon =
+      <MiddleButton
+      btn_name="削除"
+      btn_click={this.handleDelete}
+      />
+    }
     if (images === []) {
       return <CircularProgress />;
     }
@@ -99,6 +111,8 @@ class Give_Item_Description extends Component {
               return <li>{pickup}</li>;
             })}
           </ul>
+          {editButton}
+          {deleteButon}
         </div>
       </DescriptionWrapper>
     );
