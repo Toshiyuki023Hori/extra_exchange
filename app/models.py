@@ -382,7 +382,7 @@ class History(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE, related_name="done_deal")
     deal = models.OneToOneField(
-        Deal, on_delete=models.CASCADE, null=True, related_name="history")
+        Deal, on_delete=models.CASCADE, related_name="history")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
