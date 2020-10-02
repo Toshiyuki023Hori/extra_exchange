@@ -125,17 +125,24 @@ class Give_Item_List extends Component {
   } // componentDidUpdate closing
 
   render() {
+    let subtitle;
+    if(this.props.category){
+      subtitle = <h2>{this.props.category.name + this.props.h2title}</h2>
+    }
+
     if (this.state.loading == true) {
       return <CircularProgress />;
     } else {
       return (
         <div>
+          {subtitle}
           {this.state.items == ''
             ? null
             : Object.keys(this.state.items).map((parentId, idx) => {
                 return (
                   <ItemCard
                     key={idx}
+                    parentId={parentId}
                     name={this.state.items[parentId]['name']}
                     image={this.state.items[parentId]['image']}
                     bland={this.state.items[parentId]['bland']}

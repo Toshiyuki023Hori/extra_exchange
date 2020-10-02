@@ -6,6 +6,7 @@ import Give_Item_Description from '../Organisms/Give_Item_Description';
 import Header from '../Organisms/Header';
 import User_Description from '../Organisms/User_Description';
 import Chat_Place from '../Organisms/Chat_Place';
+import Give_Item_List_byUser from '../Organisms/Give_Item_List_byUser';
 import { CircularProgress } from '@material-ui/core';
 
 class Give_Item_Detail extends Component {
@@ -56,7 +57,7 @@ class Give_Item_Detail extends Component {
           loginUser={loginUser}
           axiosUrl="http://localhost:8000/api/"
         />
-      );;
+      );
     }
 
     if (this.state.loginUser === '' || this.state.parentItem === '') {
@@ -73,11 +74,15 @@ class Give_Item_Detail extends Component {
           />
           {userDescription}
           <Chat_Place
-          owner={parentItem.owner}
-          giveItem={giveItem}
-          loginUser={loginUser}
-          axiosUrl="http://localhost:8000/api/"
-        />
+            owner={parentItem.owner}
+            giveItem={giveItem}
+            loginUser={loginUser}
+            axiosUrl="http://localhost:8000/api/"
+          />
+          <Give_Item_List_byUser
+            owner={parentItem.owner}
+            axiosUrl="http://localhost:8000/api/"
+          />
         </div>
       );
     }

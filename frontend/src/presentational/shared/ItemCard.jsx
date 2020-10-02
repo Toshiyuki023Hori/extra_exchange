@@ -7,22 +7,21 @@ import { Colors } from './static/CSSvariables';
 class ItemCard extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      name: '',
-      bland: '',
-      image: '',
-      pickups: '',
-    };
+    this.jumpToDetail = this.jumpToDetail.bind(this);
   }
 
+  jumpToDetail = (parentId) => {
+    history.push("/give/" + parentId + "/detail")
+  };
+
   render() {
-    const { name, bland, image, pickups } = this.props;
+    const { name, bland, image, pickups,parentId } = this.props;
     if (image == '' || name == '') {
       return <CircularProgress />;
     } else {
       return (
         <Card>
-          <ItemImage src={image[0]['image']} alt="" />
+          <ItemImage onClick={() => this.jumpToDetail(parentId)} src={image[0]['image']} alt="" />
           <ItemName>{name}</ItemName>
           <p>Bland : {bland}</p>
           <p>
