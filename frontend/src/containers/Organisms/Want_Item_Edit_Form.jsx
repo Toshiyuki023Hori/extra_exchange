@@ -264,7 +264,7 @@ class Want_Item_Edit_Form extends Component {
         console.log(err);
       });
 
-    // history.push('/want/add');
+    history.push('/want/add');
   };
 
   //            ===========           ===========           ===========

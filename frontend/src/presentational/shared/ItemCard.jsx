@@ -11,7 +11,7 @@ class ItemCard extends Component {
   }
 
   jumpToDetail = (parentId) => {
-    history.push("/give/" + parentId + "/detail")
+    history.push("/give/detail/" + parentId)
   };
 
   render() {

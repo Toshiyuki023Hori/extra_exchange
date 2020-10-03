@@ -18,6 +18,7 @@ import Give_Item_Edit from './containers/Pages/Give_Item_Edit';
 import User_PickUp_Add from "./containers/Pages/User_PickUp_Add";
 import User_ChangePass from './containers/Pages/User_ChangePass';
 import User_Edit from './containers/Pages/User_Edit';
+import User_Detail from './containers/Pages/User_Detail';
 
 class App extends Component {
   componentDidMount() {
@@ -29,7 +30,7 @@ class App extends Component {
     return (
       <Router history={history}>
         {/* Route内のRoutePassはpropsを渡す役割を果たす */}
-        <Route exact path="/top" render={(routeProps) => <Top {...routeProps} {...this.props} />} />
+        <Switch>
         <Route
           exact
           path="/registration"
@@ -41,25 +42,33 @@ class App extends Component {
           render={(routeProps) => <Login {...routeProps} {...this.props} />}
         />
         <Route
+          exact
+          path="/user/detail"
+          render={(routeProps) => <User_Detail {...routeProps} {...this.props} />}
+        />
+        <Route
+          exact
           path="/user/edit"
           render={(routeProps) => <User_Edit {...routeProps} {...this.props} />}
         />
         <Route
+          exact
           path="/user/changepass"
           render={(routeProps) => <User_ChangePass {...routeProps} {...this.props} />}
         />
         <Route
+          exact
           path="/user/pickup"
           render={(routeProps) => <User_PickUp_Add {...routeProps} {...this.props} />}
         />
-        <Switch>
+        <Route exact path="/top" render={(routeProps) => <Top {...routeProps} {...this.props} />} />
           <Route
             exact
             path="/want/add"
             render={(routeProps) => <Want_Item_Add {...routeProps} {...this.props} />}
           />
           <Route
-            path="/want/:parent_id/edit"
+            path="/want/edit/:parent_id"
             render={(routeProps) => <Want_Item_Edit {...routeProps} {...this.props} />}
           />
           <Route
@@ -68,11 +77,11 @@ class App extends Component {
             render={(routeProps) => <Give_Item_Add {...routeProps} {...this.props} />}
           />
           <Route
-            path="/give/:parent_id/detail"
+            path="/give/detail/:parent_id"
             render={(routeProps) => <Give_Item_Detail {...routeProps} {...this.props} />}
           />
           <Route
-            path="/give/:parent_id/edit"
+            path="/give/edit/:parent_id"
             render={(routeProps) => <Give_Item_Edit {...routeProps} {...this.props} />}
           />
           <Redirect to="/top"/>

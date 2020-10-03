@@ -198,7 +198,7 @@ class Want_Item_Add_Form extends Component {
         console.log(err);
       });
 
-    history.push('/want/' + parentItem_id + "/edit");
+    history.push('/want/edit/' + parentItem_id);
   };
 
   render() {

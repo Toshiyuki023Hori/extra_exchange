@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Word_Bubble from "../../presentational/shared/Word_Bubble";
+import Word_Bubble from '../../presentational/shared/Word_Bubble';
 import { Colors } from '../../presentational/shared/static/CSSvariables';
 
 class Chat_Place extends Component {
@@ -68,6 +68,7 @@ class Chat_Place extends Component {
   };
 
   render() {
+    const { loginUser } = this.props;
     const { allComments, comment } = this.state;
     let commentsView;
     //
@@ -76,19 +77,19 @@ class Chat_Place extends Component {
     } else if (allComments.length > 0) {
       commentsView = allComments.map((commentObj) => {
         return (
-            <Word_Bubble 
+          <Word_Bubble
             axiosUrl="http://localhost:8000/api/"
-            key={commentObj.id} 
-            background={Colors.accent2} 
-            text={commentObj.comment} 
+            key={commentObj.id}
+            background={Colors.accent2}
+            text={commentObj.comment}
             commenter={commentObj.owner}
-            />
-        ) 
+          />
+        );
       });
     }
 
     if (this.state.allComments == '') {
-      return null
+      return null;
     } else {
       return (
         <CommentWrapper>
@@ -100,6 +101,7 @@ class Chat_Place extends Component {
             name="comment"
             onChange={this.handleChange}
             placeholder="コメントを入力してください"
+            disabled={this.props.loginUser === "なし"}
           />
           <button type="submit" onClick={this.handleSubmit}>
             送信
