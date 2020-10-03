@@ -38,17 +38,26 @@ class Top extends Component {
   }
 
   render() {
-    // 非認証ユーザーのリダイレクト
+    let header = (value) => {
+      return <Header loginUser={value} />;
+    };
+
+    let giveItemList = (value) => {
+      return (
+        <Give_Item_List
+          axiosUrl="http://localhost:8000/api/"
+          h2title="の最新投稿一覧"
+          loginUser={value}
+          category={this.state.categories[0]}
+        />
+      );
+    };
+
     if (!this.props.isAuthenticated) {
       return (
         <>
-          <Header loginUser={this.state.loginUser} />
-          <Give_Item_List
-            axiosUrl="http://localhost:8000/api/"
-            h2title="の最新投稿一覧"
-            loginUser=''
-            category={this.state.categories[0]}
-          />
+          {header('')}
+          {giveItemList('')}
         </>
       );
     }
@@ -57,13 +66,8 @@ class Top extends Component {
     } else {
       return (
         <>
-          <Header loginUser={this.state.loginUser} />
-          <Give_Item_List
-            axiosUrl="http://localhost:8000/api/"
-            h2title="の最新投稿一覧"
-            loginUser={this.state.loginUser}
-            category={this.state.categories[0]}
-          />
+          {header(this.state.loginUser)}
+          {giveItemList(this.state.loginUser)}
         </>
       );
     }

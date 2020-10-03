@@ -47,41 +47,44 @@ class Give_Item_List_byUser extends Component {
     if (parentItems != '') {
       await Promise.all(
         Object.keys(parentItems).map(async (parent_id) => {
-          await axios.get(axiosUrl + 'giveitem/?parent_item=' + parent_id).then((res) => {
-            if (res.data.length !== 0) {
-              parentItems = {
-                ...parentItems,
-                [parent_id]: {
-                  ...parentItems[parent_id],
-                  give_id: res.data[0].id,
-                  pickups: pickupList,
-                },
-              }; // itemForState(スプレッド) closing
-            } // if closing
-          }) // then closing
-          .catch((err) => console.log(err)) 
+          await axios
+            .get(axiosUrl + 'giveitem/?parent_item=' + parent_id)
+            .then((res) => {
+              if (res.data.length !== 0) {
+                parentItems = {
+                  ...parentItems,
+                  [parent_id]: {
+                    ...parentItems[parent_id],
+                    give_id: res.data[0].id,
+                    pickups: pickupList,
+                  },
+                }; // itemForState(スプレッド) closing
+              } // if closing
+            }) // then closing
+            .catch((err) => console.log(err));
           // axios.get Fin
 
-          if(parentItems[parent_id]['bland'] !== null){
-              await axios.get(axiosUrl + 'bland/?item=' + parent_id)
+          if (parentItems[parent_id]['bland'] !== null) {
+            await axios
+              .get(axiosUrl + 'bland/?item=' + parent_id)
               .then((res) => {
                 parentItems = {
-                    ...parentItems,
-                    [parent_id]: {
-                      ...parentItems[parent_id],
-                      bland:res.data[0].name
-                    },
-                  }; // itemForState(スプレッド) closing
-              })// then closing
-              .catch((err) => console.log(err))
+                  ...parentItems,
+                  [parent_id]: {
+                    ...parentItems[parent_id],
+                    bland: res.data[0].name,
+                  },
+                }; // itemForState(スプレッド) closing
+              }) // then closing
+              .catch((err) => console.log(err));
           } else {
             parentItems = {
-                ...parentItems,
-                [parent_id]: {
-                  ...parentItems[parent_id],
-                  bland:"なし"
-                },
-              }; // itemForState(スプレッド) closing
+              ...parentItems,
+              [parent_id]: {
+                ...parentItems[parent_id],
+                bland: 'なし',
+              },
+            }; // itemForState(スプレッド) closing
           }
         }) // map closing
       ); // Promise.all Closing
@@ -106,49 +109,47 @@ class Give_Item_List_byUser extends Component {
               (itemsForState = {
                 ...itemsForState,
                 [parent_id]: { ...itemsForState[parent_id], image: res.data },
-              })  // itemsForState(スプレッド) closing
+              }) // itemsForState(スプレッド) closing
           ) // then closing
           .catch((err) => console.log(err));
       }) // map closing
-    );// Promise all closing
+    ); // Promise all closing
 
-    this.setState({items : itemsForState});
-    console.log(this.state.items)
-    this.setState({loading : false})
+    this.setState({ items: itemsForState });
+    this.setState({ loading: false });
   }
 
   render() {
-    const {user, items} = this.state;
+    const { user, items } = this.state;
     let itemCards;
 
-    if(items === "商品が投稿されていません"){
-      itemCards = <h3>{items}</h3>
+    if (items === '商品が投稿されていません') {
+      itemCards = <h3>{items}</h3>;
     } else {
-      itemCards = 
-      Object.keys(this.state.items).map((parent_id, idx) => {
-          return (
-              <ItemCard
-              key={idx}
-              // リダイレクトのParameter用
-              parentId={parent_id}
-              name={items[parent_id]["name"]}
-              bland={items[parent_id]["bland"]}
-              image={items[parent_id]["image"]}
-              pickups={items[parent_id]["pickups"]}
-              />
-          )
-        })
+      itemCards = Object.keys(this.state.items).map((parent_id, idx) => {
+        return (
+          <ItemCard
+            key={idx}
+            name={items[parent_id]['name']}
+            bland={items[parent_id]['bland']}
+            image={items[parent_id]['image']}
+            pickups={items[parent_id]['pickups']}
+            // リダイレクトのParameter用にpropsへ
+            parentId={parent_id}
+          />
+        );
+      });
     }
 
     if (this.state.loading == true) {
       return null;
     }
     return (
-        <div>
-            <h2>{user.username + "さんのアイテム"}</h2>
-            {itemCards}
-        </div>
-    )
+      <div>
+        <h2>{user.username + 'さんのアイテム'}</h2>
+        {itemCards}
+      </div>
+    );
   }
 }
 
