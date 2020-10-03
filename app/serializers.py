@@ -85,6 +85,8 @@ class PickUp_PlacesSerializer(serializers.ModelSerializer):
 
 
 class Give_ItemSerializer(serializers.ModelSerializer):
+    # API動作確認時用(idだと見辛いので、閲覧時のみコメントアウト)
+    # parent_item = serializers.StringRelatedField()
 
     class Meta:
         model = Give_Item

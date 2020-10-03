@@ -80,6 +80,16 @@ class Give_Item_Description extends Component {
     const { parentItem, giveItem, pickups, images } = this.state;
     let editButton;
     let deleteButon;
+    let pickupView;
+
+    if(pickups.length !== 0){
+      pickupView = 
+        pickups.map((pickup) => {
+          return <li>{pickup}</li>;
+        })
+    } else{
+      pickupView = <li>未登録</li>
+    }
     if(parentItem.owner === this.props.loginUser.id){
       editButton = 
       <MiddleButton
@@ -107,9 +117,7 @@ class Give_Item_Description extends Component {
           <p>{giveItem.category}</p>
           <p>ピックアップ地点</p>
           <ul>
-            {pickups.map((pickup) => {
-              return <li>{pickup}</li>;
-            })}
+            {pickupView}
           </ul>
           {editButton}
           {deleteButon}

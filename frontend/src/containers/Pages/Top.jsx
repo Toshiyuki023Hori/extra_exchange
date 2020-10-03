@@ -38,11 +38,11 @@ class Top extends Component {
   }
 
   render() {
-    let header = (value) => {
+    const header = (value) => {
       return <Header loginUser={value} />;
     };
 
-    let giveItemList = (value) => {
+    const giveItemList = (value) => {
       return (
         <Give_Item_List
           axiosUrl="http://localhost:8000/api/"

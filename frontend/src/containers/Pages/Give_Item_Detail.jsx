@@ -49,7 +49,8 @@ class Give_Item_Detail extends Component {
   render() {
     const { loginUser, parentItem, giveItem } = this.state;
     let userDescription;
-    let chatPlace;
+    let giveItemList;
+    // Give_Itemのオーナーが閲覧していた場合、編集と削除を許可。
     if (parentItem.owner !== loginUser.id) {
       userDescription = (
         <User_Description
@@ -58,6 +59,13 @@ class Give_Item_Detail extends Component {
           axiosUrl="http://localhost:8000/api/"
         />
       );
+
+      giveItemList = (
+        <Give_Item_List_byUser
+          owner={parentItem.owner}
+          axiosUrl="http://localhost:8000/api/"
+        />
+      )
     }
 
     if (this.state.loginUser === '' || this.state.parentItem === '') {
@@ -79,10 +87,7 @@ class Give_Item_Detail extends Component {
             loginUser={loginUser}
             axiosUrl="http://localhost:8000/api/"
           />
-          <Give_Item_List_byUser
-            owner={parentItem.owner}
-            axiosUrl="http://localhost:8000/api/"
-          />
+          {giveItemList}
         </div>
       );
     }

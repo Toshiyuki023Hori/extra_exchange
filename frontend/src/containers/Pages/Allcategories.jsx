@@ -4,7 +4,7 @@ import axios from 'axios';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Category_List from '../Organisms/Category_List';
 import Header from '../Organisms/Header';
-import Give_Item_List from "../Organisms/Give_Item_List";
+import Give_Item_List from '../Organisms/Give_Item_List';
 
 class Allcategories extends Component {
   constructor(props) {
@@ -28,25 +28,41 @@ class Allcategories extends Component {
 
   // Category_ListからクリックされたcategoryをpickedCategoryへ渡す。
   setCategoryToState = (categoryObj) => {
-    this.setState({pickedCategory : categoryObj})
+    this.setState({ pickedCategory: categoryObj });
   };
 
   render() {
-    let header = (value) => {
+    //   //   //   //jsx内のvariable, function 始まり
+    //
+    const header = (value) => {
       return <Header loginUser={value} />;
     };
 
-    const categoryList = 
-    <Category_List 
-    axiosUrl="http://localhost:8000/api/"
-    setCategoryToState = {this.setCategoryToState}
-    />;
+    const categoryList = (
+      <Category_List
+        axiosUrl="http://localhost:8000/api/"
+        setCategoryToState={this.setCategoryToState}
+      />
+    );
+
+    const giveItemList = (
+      <Give_Item_List
+        axiosUrl="http://localhost:8000/api/"
+        h2title="カテゴリの投稿一覧"
+        category={this.state.pickedCategory}
+      />
+    );
+
+    //
+    //   //   //   //jsx内のvariable, function 終わり
 
     if (!this.props.isAuthenticated) {
       return (
         <>
           {header('')}
+          <h3>カテゴリ一覧</h3>
           {categoryList}
+          {giveItemList}
         </>
       );
     }
@@ -59,11 +75,7 @@ class Allcategories extends Component {
           {header(this.state.loginUser)}
           <h3>カテゴリ一覧</h3>
           {categoryList}
-          <Give_Item_List
-          axiosUrl="http://localhost:8000/api/"
-          h2title="カテゴリの投稿一覧"
-          category={this.state.pickedCategory}
-        />
+          {giveItemList}
         </>
       );
     }

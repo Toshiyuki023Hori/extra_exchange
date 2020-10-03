@@ -299,7 +299,7 @@ class Parent_Item(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.owner.username}'s {self.name}"
+        return f"{self.owner}'s {self.name}"
 
     class Meta:
         db_table = "parent_items"

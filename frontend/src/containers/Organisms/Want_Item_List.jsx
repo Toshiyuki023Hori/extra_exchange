@@ -64,16 +64,15 @@ class Want_Item_List extends Component {
                   // console.log(objectForState);
                 }
               } // for of closing
-            } // if res.data.length closing tag
+            } // if (res.data.length) closing tag
           }); // then closing tag
         }) // map closing tag
       ); // Promise all closing tag
-    } // if closing tag
+    } // if (this.state.parentItems != '') closing tag
 
     //
-    //
     //取得したWant_Itemからurlを抽出して、オブジェクトに代入する。
-    if (this.state.wantItems.length != 0) {
+    if (this.state.wantItems.length !== 0) {
       for (const want_item of this.state.wantItems) {
         for (const key in objectForState) {
           if (want_item.parentItem == key) {
@@ -90,6 +89,9 @@ class Want_Item_List extends Component {
         } // for in closing
       } // for of closing
     } // if closing
+    else {
+      objectForState = 'まだ登録されているものがありません。'
+    }
 
     this.setState({ itemObject: objectForState });
   }
@@ -133,37 +135,44 @@ class Want_Item_List extends Component {
     const { h2Title } = this.props;
     let itemList;
     if (wantItems.length !== 0) {
-      itemList = Object.keys(itemObject).map((key, idx) => {
-        return (
-          <>
-            <li key={idx}>
-              {/* URLを持っていたら、リンク先まで飛べるように条件分岐 */}
-              {itemObject[key]['url'] == '' ? (
-                itemObject[key]['name']
-              ) : (
-                <a key={idx} href={itemObject[key]['url']}>
-                  {itemObject[key]['name']}
-                </a>
+      itemList = 
+      <ol>
+        {
+        Object.keys(itemObject).map((key, idx) => {
+          return (
+            <>
+              <li key={idx}>
+                {/* URLを持っていたら、リンク先まで飛べるように条件分岐 */}
+                {itemObject[key]['url'] == '' ? (
+                  itemObject[key]['name']
+                ) : (
+                  <a key={idx} href={itemObject[key]['url']}>
+                    {itemObject[key]['name']}
+                  </a>
+                )}
+              </li>
+              {/* ログインユーザーがownerの場合、UpdataとDeleteを許可する */}
+              {owner == loginUser && (
+                <>
+                  <SmallButton
+                    btn_type="submit"
+                    btn_click={() => this.handleDelete(key)}
+                    btn_name="削除"
+                  />
+                  <SmallButton
+                    btn_type="submit"
+                    btn_click={() => this.jumpToEdit(key)}
+                    btn_name="編集"
+                  />
+                </>
               )}
-            </li>
-            {/* ログインユーザーがownerの場合、UpdataとDeleteを許可する */}
-            {owner == loginUser && (
-              <>
-                <SmallButton
-                  btn_type="submit"
-                  btn_click={() => this.handleDelete(key)}
-                  btn_name="削除"
-                />
-                <SmallButton
-                  btn_type="submit"
-                  btn_click={() => this.jumpToEdit(key)}
-                  btn_name="編集"
-                />
-              </>
-            )}
-          </>
-        );
-      });
+            </>
+          );
+        })
+        }
+      </ol>
+    } else {
+      itemList = <p>{itemObject}</p>
     }
 
     if (parentItems === '' || wantItems === [] || itemObject === '') {

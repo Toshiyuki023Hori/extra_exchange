@@ -49,11 +49,6 @@ class App extends Component {
         />
         <Route
           exact
-          path="/user/detail"
-          render={(routeProps) => <User_Detail {...routeProps} {...this.props} />}
-        />
-        <Route
-          exact
           path="/user/edit"
           render={(routeProps) => <User_Edit {...routeProps} {...this.props} />}
         />
@@ -66,6 +61,11 @@ class App extends Component {
           exact
           path="/user/pickup"
           render={(routeProps) => <User_PickUp_Add {...routeProps} {...this.props} />}
+        />
+        <Route
+          exact
+          path="/user/:uid"
+          render={(routeProps) => <User_Detail {...routeProps} {...this.props} />}
         />
         <Route exact path="/top" render={(routeProps) => <Top {...routeProps} {...this.props} />} />
           <Route
