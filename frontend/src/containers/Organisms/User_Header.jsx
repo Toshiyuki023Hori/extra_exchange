@@ -11,21 +11,21 @@ class User_Header extends Component {
   }
 
   render(){
-    const {loginUser} = this.props;
+    const {user} = this.props;
     return(
         <div>
             <Background 
-            background={loginUser.background}
+            background={user.background}
             bg_width="100%"
             bg_height="70px"
             />
             <Icon 
-            icon={loginUser.icon}
+            icon={user.icon}
             img_width="100px"
             img_height="100px"
             img_radius="50px"
             />
-            <h2>{loginUser.username}</h2>
+            <h2>{user.username}</h2>
         </div>
     )
   }

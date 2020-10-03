@@ -16,6 +16,19 @@ class ItemCard extends Component {
 
   render() {
     const { name, bland, image, pickups,parentId } = this.props;
+    let pickupsView;
+    if(pickups === "未登録"){
+      pickupsView = this.props.pickups;
+    } else {
+      pickupsView = 
+      pickups.map((pickupObj, index) => {
+        if (index != pickups.length - 1) {
+          return <span key={pickupObj.id}>{pickupObj.name} / </span>;
+        }
+        return <span key={pickupObj.id}>{pickupObj.name} </span>;
+      })
+    }
+
     if (image == '' || name == '') {
       return <CircularProgress />;
     } else {
@@ -25,12 +38,7 @@ class ItemCard extends Component {
           <ItemName>{name}</ItemName>
           <p>Bland : {bland}</p>
           <p>
-            {pickups.map((pickupObj, index) => {
-              if (index != pickups.length - 1) {
-                return <span key={pickupObj.id}>{pickupObj.name} / </span>;
-              }
-              return <span key={pickupObj.id}>{pickupObj.name} </span>;
-            })}
+            ピックアップ : {pickupsView}
           </p>
         </Card>
       );

@@ -19,6 +19,7 @@ import User_PickUp_Add from "./containers/Pages/User_PickUp_Add";
 import User_ChangePass from './containers/Pages/User_ChangePass';
 import User_Edit from './containers/Pages/User_Edit';
 import User_Detail from './containers/Pages/User_Detail';
+import Allcategories from "./containers/Pages/Allcategories";
 
 class App extends Component {
   componentDidMount() {
@@ -43,8 +44,8 @@ class App extends Component {
         />
         <Route
           exact
-          path="/user/detail"
-          render={(routeProps) => <User_Detail {...routeProps} {...this.props} />}
+          path="/category"
+          render={(routeProps) => <Allcategories {...routeProps} {...this.props} />}
         />
         <Route
           exact
@@ -60,6 +61,11 @@ class App extends Component {
           exact
           path="/user/pickup"
           render={(routeProps) => <User_PickUp_Add {...routeProps} {...this.props} />}
+        />
+        <Route
+          exact
+          path="/user/:uid"
+          render={(routeProps) => <User_Detail {...routeProps} {...this.props} />}
         />
         <Route exact path="/top" render={(routeProps) => <Top {...routeProps} {...this.props} />} />
           <Route

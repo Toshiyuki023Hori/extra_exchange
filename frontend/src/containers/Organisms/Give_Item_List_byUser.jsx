@@ -8,7 +8,7 @@ class Give_Item_List_byUser extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: false,
+      loading: true,
       user: '',
       items: '',
     };
@@ -22,8 +22,6 @@ class Give_Item_List_byUser extends Component {
 
     console.log('Owner is ' + owner);
 
-    this.setState({ loading: true });
-
     //ParentItemを全件取得してから一致するidでGive_Itemを絞り込む。
     await axios
       .all([
@@ -33,19 +31,30 @@ class Give_Item_List_byUser extends Component {
       ])
       .then(
         axios.spread((resParent, resUser, resPickup) => {
-          resParent.data.map((parentObj) => {
-            parentItems = { ...parentItems, [parentObj.id]: parentObj };
-          });
-          resPickup.data.map((pickupObj) => {
-            pickupList = [...pickupList, pickupObj];
-          });
+          if(resParent.data.length !== 0){
+            resParent.data.map((parentObj) => {
+              parentItems = { ...parentItems, [parentObj.id]: parentObj };
+            });
+            if(resPickup.data.length !== 0){
+              resPickup.data.map((pickupObj) => {
+                  pickupList = [...pickupList, pickupObj];
+                });
+            }else{
+              pickupList = "未登録"
+            }
+          }else {
+            itemsForState = "商品が投稿されていません"
+          }
           this.setState({ user: resUser.data });
         })
       );
-    console.log(parentItems);
+    // for(const key in parentItems){
+    //   console.log(parentItems[key])
+    // }
 
-    if (parentItems != '') {
+    if (parentItems != {}) {
       await Promise.all(
+        // UserのParent_ItemからGive_Itemのみを取得
         Object.keys(parentItems).map(async (parent_id) => {
           await axios.get(axiosUrl + 'giveitem/?parent_item=' + parent_id).then((res) => {
             if (res.data.length !== 0) {
@@ -57,10 +66,10 @@ class Give_Item_List_byUser extends Component {
                   pickups: pickupList,
                 },
               }; // itemForState(スプレッド) closing
-            } // if closing
-          }) // then closing
+            } //    if(res.data.length !== 0) closing
+          }) //     then closing
           .catch((err) => console.log(err)) 
-          // axios.get Fin
+          //  axios.get Fin
 
           if(parentItems[parent_id]['bland'] !== null){
               await axios.get(axiosUrl + 'bland/?item=' + parent_id)
@@ -72,7 +81,7 @@ class Give_Item_List_byUser extends Component {
                       bland:res.data[0].name
                     },
                   }; // itemForState(スプレッド) closing
-              })// then closing
+              })//      then closing
               .catch((err) => console.log(err))
           } else {
             parentItems = {
@@ -83,11 +92,8 @@ class Give_Item_List_byUser extends Component {
                 },
               }; // itemForState(スプレッド) closing
           }
-        }) // map closing
-      ); // Promise.all Closing
-    } else {
-      this.setState({ items: '商品が投稿されていません' });
-    } // else closing
+        }) //       map closing
+      ); //         Promise.all Closing
 
     // itemForStateからGiveItemのみを抽出
     for (const key in parentItems) {
@@ -95,27 +101,28 @@ class Give_Item_List_byUser extends Component {
         itemsForState = { ...itemsForState, [key]: parentItems[key] };
       }
     }
-    console.log(itemsForState);
 
-    await Promise.all(
-      Object.keys(itemsForState).map(async (parent_id) => {
-        await axios
-          .get(axiosUrl + 'image/?item=' + itemsForState[parent_id]['give_id'])
-          .then(
-            (res) =>
-              (itemsForState = {
-                ...itemsForState,
-                [parent_id]: { ...itemsForState[parent_id], image: res.data },
-              })  // itemsForState(スプレッド) closing
-          ) // then closing
-          .catch((err) => console.log(err));
-      }) // map closing
-    );// Promise all closing
+    if(itemsForState !== '商品が投稿されていません'){
+      await Promise.all(
+        Object.keys(itemsForState).map(async (parent_id) => {
+          await axios
+            .get(axiosUrl + 'image/?item=' + itemsForState[parent_id]['give_id'])
+            .then(
+              (res) =>
+                (itemsForState = {
+                  ...itemsForState,
+                  [parent_id]: { ...itemsForState[parent_id], image: res.data },
+                })  // itemsForState(スプレッド) closing
+            ) //       then closing
+            .catch((err) => console.log(err));
+        }) // map closing
+      );//    Promise all closing
+    }
 
-    this.setState({items : itemsForState});
-    console.log(this.state.items)
+    await this.setState({items : itemsForState});
     this.setState({loading : false})
   }
+}
 
   render() {
     const {user, items} = this.state;
