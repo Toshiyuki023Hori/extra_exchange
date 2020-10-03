@@ -120,6 +120,7 @@ class Give_Item_List_byUser extends Component {
   render() {
     const {user, items} = this.state;
     let itemCards;
+
     if(items === "商品が投稿されていません"){
       itemCards = <h3>{items}</h3>
     } else {

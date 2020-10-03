@@ -107,6 +107,7 @@ class Review(models.Model):
 class Notification(models.Model):
     message = models.CharField(null=True, blank=True, max_length=150)
     read = models.BooleanField(default=False)
+    url = models.CharField(null=True, blank= True, max_length=150)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="notification")
 
@@ -298,7 +299,7 @@ class Parent_Item(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.owner.username}'s {self.name}"
 
     class Meta:
         db_table = "parent_items"
