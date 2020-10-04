@@ -107,7 +107,7 @@ class Review(models.Model):
 class Notification(models.Model):
     message = models.CharField(null=True, blank=True, max_length=150)
     read = models.BooleanField(default=False)
-    url = models.CharField(null=True, blank= True, max_length=150)
+    url = models.CharField(null=True, blank=True, max_length=150)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="notification")
 
@@ -309,6 +309,7 @@ class Parent_Item(models.Model):
 
 class Request(models.Model):
     note = models.CharField(max_length=400, blank=True, null=True)
+    denied = models.BooleanField(default=False)
     accepted = models.BooleanField(default=False)
     request_deal = models.OneToOneField(
         "Request_Deal", on_delete=models.CASCADE, related_name="request")

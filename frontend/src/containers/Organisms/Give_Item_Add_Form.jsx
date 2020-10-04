@@ -295,8 +295,8 @@ class Give_Item_Add_Form extends Component {
         .catch((err) => console.log(err));
     });
 
-    history.push('/give/add');
-  };
+  history.push("/top")
+  }
 
   render() {
     const { info, message, allCategory, allBland, imgUrls } = this.state;

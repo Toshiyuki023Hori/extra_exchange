@@ -5,7 +5,7 @@ import axios from 'axios';
 import Header from '../Organisms/Header';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Item_Table from '../../presentational/shared/Item_Table';
-import Request_Form from "../Organisms/Request_Form";
+import Request_Form from '../Organisms/Request_Form';
 
 class Request_Send extends Component {
   constructor(props) {
@@ -14,6 +14,7 @@ class Request_Send extends Component {
       loading: true,
       loginUser: '',
       hostItem: {},
+      hostUser: '',
     };
   }
 
@@ -43,6 +44,8 @@ class Request_Send extends Component {
         axios.spread((resUser, resParent) => {
           this.setState({ loginUser: resUser.data });
           itemsForState = { [parent_id]: resParent.data };
+          // Request_FormでPropsとして渡す用(後にidからstringへ変換するため別個にvariableを用意。)。
+          this.setState({ hostUser: resParent.data.owner });
         })
       );
 
@@ -100,6 +103,7 @@ class Request_Send extends Component {
           <Item_Table item={this.state.hostItem} parent_id={this.props.match.params.parent_id} />
           <Request_Form
             joinUser={this.state.loginUser}
+            hostUser={this.state.hostUser}
             hostItem={this.props.match.params.parent_id}
           />
         </>

@@ -186,7 +186,7 @@ class User_Edit_Form extends Component {
       .then((res) => console.log(res))
       .catch((err) => console.log(err));
 
-    history.push('/user/edit');
+    history.push('/user/' + this.props.loginUser.id);
   };
 
   //            ===========           ===========           ===========

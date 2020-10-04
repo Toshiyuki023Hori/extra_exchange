@@ -48,9 +48,6 @@ class Give_Item_List_byUser extends Component {
           this.setState({ user: resUser.data });
         })
       );
-    // for(const key in parentItems){
-    //   console.log(parentItems[key])
-    // }
 
     if (parentItems != {}) {
       await Promise.all(
@@ -101,6 +98,7 @@ class Give_Item_List_byUser extends Component {
         itemsForState = { ...itemsForState, [key]: parentItems[key] };
       }
     }
+  }
 
     if(itemsForState !== '商品が投稿されていません'){
       await Promise.all(
@@ -121,7 +119,7 @@ class Give_Item_List_byUser extends Component {
 
     await this.setState({items : itemsForState});
     this.setState({loading : false})
-  }
+  
 }
 
   render() {

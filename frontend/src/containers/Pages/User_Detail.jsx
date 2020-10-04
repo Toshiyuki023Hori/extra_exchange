@@ -53,7 +53,7 @@ class User_Detail extends Component {
       <Give_Item_List_byUser owner={user.id} axiosUrl="http://localhost:8000/api/" />
     );
 
-    const userHeader = <User_Header user={user} />;
+  const userHeader = <User_Header user={user} />;
 
     if (!this.props.isAuthenticated && user == "") {
       return <CircularProgress/>
