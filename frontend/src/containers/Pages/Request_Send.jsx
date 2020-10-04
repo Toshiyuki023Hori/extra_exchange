@@ -1,16 +1,19 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
-import Header from '../Organisms/Header';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import styled from 'styled-components';
 import axios from 'axios';
+import Header from '../Organisms/Header';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Item_Table from '../../presentational/shared/Item_Table';
+import Request_Form from "../Organisms/Request_Form";
 
 class Request_Send extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading: true,
       loginUser: '',
-      hostItem:{}
+      hostItem: {},
     };
   }
 
@@ -61,6 +64,11 @@ class Request_Send extends Component {
       .catch((err) => console.log(err));
 
     await axios
+      .get(localhostUrl + 'user/' + itemsForState[parent_id].owner)
+      .then((res) => setValueToItems(parent_id, 'owner', res.data.username))
+      .catch((err) => console.log(err));
+
+    await axios
       .get(localhostUrl + 'category/' + itemsForState[parent_id].category)
       .then((res) => setValueToItems(parent_id, 'category', res.data.name))
       .catch((err) => console.log(err));
@@ -74,22 +82,28 @@ class Request_Send extends Component {
       setValueToItems(parent_id, 'bland', 'なし');
     }
 
-    this.setState({hostItem : itemsForState});
+    await this.setState({ hostItem: itemsForState });
+    this.setState({ loading: false });
   }
 
   render() {
+    const parent_id = this.props.match.params.parent_id;
     if (!this.props.isAuthenticated) {
       return <Redirect to="/login" />;
     }
-    if (this.state.loginUser === '' || this.state.hostItem === {}) {
+    if (this.state.loading === true) {
       return <CircularProgress />;
     } else {
       return (
-          <>
-            <Header loginUser={this.state.loginUser} />
-            <Item_Table item={this.state.hostItem}/>
-          </>
-      ) 
+        <>
+          <Header loginUser={this.state.loginUser} />
+          <Item_Table item={this.state.hostItem} parent_id={this.props.match.params.parent_id} />
+          <Request_Form
+            joinUser={this.state.loginUser}
+            hostItem={this.props.match.params.parent_id}
+          />
+        </>
+      );
     }
   }
 }

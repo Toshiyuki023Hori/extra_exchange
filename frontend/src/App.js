@@ -96,7 +96,7 @@ class App extends Component {
             render={(routeProps) => <Give_Item_Edit {...routeProps} {...this.props} />}
           />
           <Route
-            path="/request/send/:parent_id"
+            path="/give/request/:parent_id"
             render={(routeProps) => <Request_Send {...routeProps} {...this.props} />}
           />
           <Redirect to="/top" />
