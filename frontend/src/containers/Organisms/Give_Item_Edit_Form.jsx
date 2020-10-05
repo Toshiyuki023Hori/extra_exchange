@@ -34,11 +34,13 @@ class Give_Item_Edit_Form extends Component {
         images: '',
         detail: '',
       },
+      // setBland, setCategory, setStateは編集前のvalue表示用
       setBland: '',
       setCategory: '',
       setState: '',
       allCategory: null,
       allBland: null,
+      // 編集前のimageをoriginalImages, プレビューされるのがuploadedImage。
       originalImages: {},
       uploadedImage: [],
       parentItem: '',
@@ -222,14 +224,17 @@ class Give_Item_Edit_Form extends Component {
       },
     };
     
+    // 登録画像が1枚しか残っていない場合
     if(Object.keys(this.state.originalImages).length === 1){
       window.alert("この画像が削除されると、登録画像が0になるため削除できません。\n他の画像をアップロード後お試しください。")
+      // 削除可能な場合(登録画像が2枚以上残っている)
     }else{   
       let result = window.confirm(
         'この画像を削除しますか？(同じ画像を使う場合は、再アップロードが必要です。)'
       );
     if (result) {
       let storeFilteredImg = {};
+      // onClickと一致する画像URLを持つもののidを抽出して、arrayにいれる。
       const deleteImage = Object.keys(this.state.originalImages).filter(
         (key) => this.state.originalImages[key] == e.target.src
       );

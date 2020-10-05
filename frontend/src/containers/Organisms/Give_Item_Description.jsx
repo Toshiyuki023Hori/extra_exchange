@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import history from '../../history';
 import { CircularProgress, Chip } from '@material-ui/core';
 import Carousel from '../../presentational/shared/Carousel';
-import MiddleButton from "../../presentational/shared/MiddleButton";
+import MiddleButton from '../../presentational/shared/MiddleButton';
 
 class Give_Item_Description extends Component {
   constructor(props) {
@@ -15,6 +15,9 @@ class Give_Item_Description extends Component {
       pickups: [],
       images: [],
     };
+    this.jumpToEdit = this.jumpToEdit.bind(this);
+    this.jumpToRequest = this.jumpToRequest.bind(this)
+    this.handleDelete = this.handleDelete.bind(this);
   }
 
   setDataToState = (key, value) => {
@@ -42,7 +45,7 @@ class Give_Item_Description extends Component {
         axios.spread((resParent, resGive) => {
           this.setDataToState('parentItem', resParent.data);
           this.setDataToState('giveItem', resGive.data[0]);
-          setGiveItem(resGive.data[0].id)
+          setGiveItem(resGive.data[0].id);
         })
       )
       .catch((err) => console.log(err));
@@ -76,31 +79,54 @@ class Give_Item_Description extends Component {
       );
   }
 
+  jumpToEdit = () => {
+    history.push('/give/edit/' + this.props.parent_id);
+  };    // jumpToEdit Closing
+
+  jumpToRequest = () => {
+    history.push('/give/request/' + this.props.parent_id);
+  };
+
+  handleDelete = () => {
+    const { axiosUrl } = this.props;
+    const token = localStorage.getItem('token');
+    const authHeader = {
+      headers: {
+        Authorization: 'Token ' + token,
+      },
+    };
+
+    let result = window.confirm('この商品を削除しますか？');
+    if (result) {
+      axios
+        .delete(axiosUrl + 'parent/' + this.props.parent_id, authHeader)
+        .then((res) => history.push('/user/' + this.props.loginUser.id))
+        .catch((err) => {
+          console.log(err);
+          window.alert('削除に失敗しました');
+        });
+    }
+  }; //    handleDelete Closing
+
   render() {
     const { parentItem, giveItem, pickups, images } = this.state;
     let editButton;
-    let deleteButon;
+    let deleteButton;
+    let requestButton;
     let pickupView;
 
-    if(pickups.length !== 0){
-      pickupView = 
-        pickups.map((pickup) => {
-          return <li>{pickup}</li>;
-        })
-    } else{
-      pickupView = <li>未登録</li>
+    if (pickups.length !== 0) {
+      pickupView = pickups.map((pickup) => {
+        return <li>{pickup}</li>;
+      });
+    } else {
+      pickupView = <li>未登録</li>;
     }
-    if(parentItem.owner === this.props.loginUser.id){
-      editButton = 
-      <MiddleButton
-      btn_name="編集"
-      btn_click={this.jumpToEdit}
-      />
-      deleteButon =
-      <MiddleButton
-      btn_name="削除"
-      btn_click={this.handleDelete}
-      />
+    if (parentItem.owner === this.props.loginUser.id) {
+      editButton = <MiddleButton btn_name="編集" btn_click={this.jumpToEdit} />;
+      deleteButton = <MiddleButton btn_name="削除" btn_click={this.handleDelete} />;
+    } else {
+      requestButton = <MiddleButton btn_name="リクエストを送る" btn_click={this.jumpToRequest} />;
     }
     if (images === []) {
       return <CircularProgress />;
@@ -116,11 +142,10 @@ class Give_Item_Description extends Component {
           <p>{giveItem.detail}</p>
           <p>{giveItem.category}</p>
           <p>ピックアップ地点</p>
-          <ul>
-            {pickupView}
-          </ul>
+          <ul>{pickupView}</ul>
           {editButton}
-          {deleteButon}
+          {deleteButton}
+          {requestButton}
         </div>
       </DescriptionWrapper>
     );
