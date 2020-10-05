@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { CircularProgress } from '@material-ui/core';
+import MiddleButton from '../../presentational/shared/MiddleButton';
 
 class Request_Form extends Component {
   constructor(props) {
@@ -11,20 +12,20 @@ class Request_Form extends Component {
         joinItem: '',
         pickup: '',
         date1: '',
-        date2:"",
-        date3:"",
-        note:""
+        date2: '',
+        date3: '',
+        note: '',
       },
-        message: {
+      message: {
         joinItem: '',
         pickup: '',
         date1: '',
-        date2:"",
-        date3:"",
+        date2: '',
+        date3: '',
       },
-        loading: true,
-        allItems: {},
-        allPickup: [],
+      loading: true,
+      allItems: {},
+      allPickup: [],
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -131,7 +132,7 @@ class Request_Form extends Component {
     });
   };
 
-   //           ===========           ===========
+  //           ===========           ===========
   //           Validation            ===========
   //           ===========           ===========
 
@@ -146,7 +147,17 @@ class Request_Form extends Component {
     }
   }
 
-  handleSubmit = () => {};
+  handleSubmit = () => {
+    const setMessageToState = (key, value) => {
+      this.setState({ message: { ...this.state.message, [key]: value } });
+    };
+    if (this.state.info.joinItem == '') {
+      setMessageToState('joinItem', '交換する商品を選んでください。');
+    } else if (this.state.info.pickup == '') {
+      setMessageToState('pickup', 'ピックアップ場所を選んでください。');
+    } else {
+    }
+  };
 
   render() {
     let itemsView;
@@ -183,32 +194,35 @@ class Request_Form extends Component {
     } else {
       return (
         <div>
-            <div>
-              <h3>引き換える商品(あなたの出品リストより)</h3>
-              {itemsView}
-            </div>
-            <div>
-              <h3>ピックアップ地点(出品者のピックアップ地点より)</h3>
-              {pickupsView}
-            </div>
-            <div>
-              <h3>取引希望日時(第3希望まで選んでください)</h3>
-              <p>
-                <label>日程候補1</label>
-                <input name="date1" type="datetime-local" onChange={this.handleChange} />
-                <p>{this.state.message.date1}</p>
-              </p>
-              <p>
-                <label>日程候補2</label>
-                <input name="date2" type="datetime-local" onChange={this.handleChange} />
-                <p>{this.state.message.date2}</p>
-              </p>
-              <p>
-                <label>日程候補3</label>
-                <input name="date3" type="datetime-local" onChange={this.handleChange} />
-                <p>{this.state.message.date3}</p>
-              </p>
-            </div>
+          <div>
+            <h3>引き換える商品(あなたの出品リストより)</h3>
+            {itemsView}
+            <p>{this.state.message.joinItem}</p>
+          </div>
+          <div>
+            <h3>ピックアップ地点(出品者のピックアップ地点より)</h3>
+            {pickupsView}
+            <p>{this.state.message.pickup}</p>
+          </div>
+          <div>
+            <h3>取引希望日時(第3希望まで選んでください)</h3>
+            <p>
+              <label>日程候補1</label>
+              <input name="date1" type="datetime-local" onChange={this.handleChange} />
+              <p>{this.state.message.date1}</p>
+            </p>
+            <p>
+              <label>日程候補2</label>
+              <input name="date2" type="datetime-local" onChange={this.handleChange} />
+              <p>{this.state.message.date2}</p>
+            </p>
+            <p>
+              <label>日程候補3</label>
+              <input name="date3" type="datetime-local" onChange={this.handleChange} />
+              <p>{this.state.message.date3}</p>
+            </p>
+          </div>
+          <MiddleButton btn_name="リクエストを送る" btn_type="submit" btn_click={this.handleSubmit} />
         </div>
       );
     }
