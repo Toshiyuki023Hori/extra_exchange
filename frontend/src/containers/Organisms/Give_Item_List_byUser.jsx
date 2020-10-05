@@ -43,16 +43,14 @@ class Give_Item_List_byUser extends Component {
               pickupList = "未登録"
             }
           }else {
+            // Want_ItemもGive_Itemも登録していないパターン
             itemsForState = "商品が投稿されていません"
           }
           this.setState({ user: resUser.data });
         })
       );
-    // for(const key in parentItems){
-    //   console.log(parentItems[key])
-    // }
 
-    if (parentItems != {}) {
+    if (Object.keys(parentItems).length !== 0) {
       await Promise.all(
         // UserのParent_ItemからGive_Itemのみを取得
         Object.keys(parentItems).map(async (parent_id) => {
@@ -65,7 +63,7 @@ class Give_Item_List_byUser extends Component {
                   give_id: res.data[0].id,
                   pickups: pickupList,
                 },
-              }; // itemForState(スプレッド) closing
+              }; // parentItems(スプレッド) closing
             } //    if(res.data.length !== 0) closing
           }) //     then closing
           .catch((err) => console.log(err)) 
@@ -101,8 +99,11 @@ class Give_Item_List_byUser extends Component {
         itemsForState = { ...itemsForState, [key]: parentItems[key] };
       }
     }
+  }
 
-    if(itemsForState !== '商品が投稿されていません'){
+    
+    if(Object.keys(itemsForState).length !== 0){
+      console.log("Root1")
       await Promise.all(
         Object.keys(itemsForState).map(async (parent_id) => {
           await axios
@@ -117,11 +118,15 @@ class Give_Item_List_byUser extends Component {
             .catch((err) => console.log(err));
         }) // map closing
       );//    Promise all closing
+    } else {
+      // Want_Itemは登路しているが、Give_Itemは登録していないパターン。
+      // Userの全Parent_Itemを取得しているため、Give_Itemの抽出を待つ必要がある。
+      itemsForState = "商品が投稿されていません"
     }
 
     await this.setState({items : itemsForState});
     this.setState({loading : false})
-  }
+  
 }
 
   render() {

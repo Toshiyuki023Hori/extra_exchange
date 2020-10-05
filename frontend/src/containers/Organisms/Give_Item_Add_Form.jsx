@@ -295,8 +295,8 @@ class Give_Item_Add_Form extends Component {
         .catch((err) => console.log(err));
     });
 
-    history.push('/give/add');
-  };
+  history.push("/top")
+  }
 
   render() {
     const { info, message, allCategory, allBland, imgUrls } = this.state;
@@ -331,7 +331,7 @@ class Give_Item_Add_Form extends Component {
               <select onChange={this.handleChange} name="state">
                 <option value="新品">新品、未使用</option>
                 <option value="未使用">未使用に近い</option>
-                <option value="傷や汚れ無し">目立った傷や汚れなし</option>
+                <option value="傷や汚れなし">目立った傷や汚れなし</option>
                 <option value="やや傷や汚れあり">やや傷や汚れあり</option>
                 <option value="傷や汚れあり">傷や汚れあり</option>
                 <option value="状態が悪い">全体的に状態が悪い</option>
