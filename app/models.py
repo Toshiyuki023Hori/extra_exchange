@@ -329,7 +329,7 @@ class Request(models.Model):
 class Meeting_Time(models.Model):
     what_time = models.DateTimeField(unique=True)
     request = models.ManyToManyField(
-        Request, related_name="meeting_time")
+        Request, blank=True, null=True, related_name="meeting_time")
 
     def __str__(self):
         return self.what_time.strftime("%m/%d/%Y, %H:%M:%S")
@@ -407,14 +407,14 @@ class Request_Deal(models.Model):
     join_user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="join_request_deal")
     host_item = models.ForeignKey(
-        Give_Item, on_delete=models.CASCADE, related_name="as_host")
+        Parent_Item, on_delete=models.CASCADE, related_name="as_host")
     join_item = models.ForeignKey(
-        Give_Item, on_delete=models.CASCADE, related_name="as_join")
+        Parent_Item, on_delete=models.CASCADE, related_name="as_join")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.host_user.username
+        return self.host_item.name
 
     class Meta:
         db_table = "request_deal"

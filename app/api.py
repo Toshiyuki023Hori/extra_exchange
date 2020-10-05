@@ -224,6 +224,9 @@ class Meeting_TimeViewSet(viewsets.ModelViewSet):
     ]
     serializer_class = Meeting_TimeSerializer
 
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_fields = "__all__"
+
 # ======      =======      ======      ======     ======     ======      =======      =======
 
 
