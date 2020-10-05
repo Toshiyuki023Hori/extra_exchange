@@ -223,43 +223,44 @@ class Give_Item_Edit_Form extends Component {
         Authorization: 'Token ' + token,
       },
     };
-    
+
     // 登録画像が1枚しか残っていない場合
-    if(Object.keys(this.state.originalImages).length === 1){
-      window.alert("この画像が削除されると、登録画像が0になるため削除できません。\n他の画像をアップロード後お試しください。")
+    if (Object.keys(this.state.originalImages).length === 1) {
+      window.alert(
+        'この画像が削除されると、登録画像が0になるため削除できません。\n他の画像をアップロード後お試しください。'
+      );
       // 削除可能な場合(登録画像が2枚以上残っている)
-    }else{   
+    } else {
       let result = window.confirm(
         'この画像を削除しますか？(同じ画像を使う場合は、再アップロードが必要です。)'
       );
-    if (result) {
-      let storeFilteredImg = {};
-      // onClickと一致する画像URLを持つもののidを抽出して、arrayにいれる。
-      const deleteImage = Object.keys(this.state.originalImages).filter(
-        (key) => this.state.originalImages[key] == e.target.src
-      );
-      const delete_id = parseInt(deleteImage[0]);
-      // key = Give_Item.id, property = Item_Image.imageとなるオブジェクトのフィルター的役割
-      for (const key in this.state.originalImages) {
-        if (key != delete_id) {
-          storeFilteredImg = { ...storeFilteredImg, [key]: this.state.originalImages[key] };
-          console.log(storeFilteredImg);
+      if (result) {
+        let storeFilteredImg = {};
+        // onClickと一致する画像URLを持つもののidを抽出して、arrayにいれる。
+        const deleteImage = Object.keys(this.state.originalImages).filter(
+          (key) => this.state.originalImages[key] == e.target.src
+        );
+        const delete_id = parseInt(deleteImage[0]);
+        // key = Give_Item.id, property = Item_Image.imageとなるオブジェクトのフィルター的役割
+        for (const key in this.state.originalImages) {
+          if (key != delete_id) {
+            storeFilteredImg = { ...storeFilteredImg, [key]: this.state.originalImages[key] };
+            console.log(storeFilteredImg);
+          }
         }
+        // state.info.imagesから削除(レンダーさせるため)
+        let passToState = this.state.info.images.filter((imageUrl) => imageUrl !== e.target.src);
+        this.setState({ info: { ...this.state.info, images: passToState } });
+        this.setState({ originalImages: storeFilteredImg });
+        axios
+          .delete(this.props.axiosUrl + 'image/' + delete_id, authHeader)
+          .then((res) => console.log(res))
+          .catch((err) => {
+            console.log(err);
+            window.alert('削除に失敗しました');
+          });
       }
-      // state.info.imagesから削除(レンダーさせるため)
-      let passToState = this.state.info.images.filter((imageUrl) => imageUrl !== e.target.src);
-      this.setState({ info: { ...this.state.info, images: passToState } });
-      this.setState({ originalImages: storeFilteredImg });
-      axios
-        .delete(this.props.axiosUrl + 'image/' + delete_id, authHeader)
-        .then((res) => console.log(res))
-        .catch((err) => {
-          console.log(err);
-          window.alert('削除に失敗しました');
-        });
-  }
-  }
-
+    }
   };
   // delete Original 終わり
 

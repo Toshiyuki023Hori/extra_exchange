@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { CircularProgress } from '@material-ui/core';
@@ -7,10 +7,25 @@ class Request_Form extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        loading:true,
-        allItems:{},
-        allPickup:[]
-    }
+      info: {
+        joinItem: '',
+        pickup: '',
+        date1: '',
+        date2:"",
+        date3:"",
+        note:""
+      },
+        message: {
+        joinItem: '',
+        pickup: '',
+        date1: '',
+        date2:"",
+        date3:"",
+      },
+        loading: true,
+        allItems: {},
+        allPickup: [],
+    };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -20,7 +35,7 @@ class Request_Form extends Component {
     let itemsForState = {};
     let pickupForState = [];
     let parentItems = {};
-    
+
     await axios
       .all([
         axios.get(axiosUrl + 'parent/?owner=' + joinUser.id),
@@ -28,46 +43,48 @@ class Request_Form extends Component {
       ])
       .then(
         axios.spread((resParent, resPickup) => {
-          if(resParent.data.length !== 0){
+          if (resParent.data.length !== 0) {
             resParent.data.map((parentObj) => {
-              parentItems = { ...parentItems, [parentObj.id]: { name : parentObj.name } };
+              parentItems = { ...parentItems, [parentObj.id]: { name: parentObj.name } };
             });
-            if(resPickup.data.length !== 0){
+            if (resPickup.data.length !== 0) {
               resPickup.data.map((pickupObj) => {
-                  pickupForState = [...pickupForState, pickupObj];
-                });
-            }else{
-              pickupForState = "未登録"
+                pickupForState = [...pickupForState, pickupObj];
+              });
+            } else {
+              pickupForState = '未登録';
             }
-          }else {
-            itemsForState = "商品が投稿されていません"
+          } else {
+            itemsForState = '商品が投稿されていません';
           }
-        })  // axios.spread closing
+        }) // axios.spread closing
       ); //    then closing
 
-      console.log(pickupForState);
-      console.log(parentItems)
+    console.log(pickupForState);
+    console.log(parentItems);
 
-      if (Object.keys(parentItems).length !== 0) {
-        await Promise.all(
-          // UserのParent_ItemからGive_Itemのみを取得
-          Object.keys(parentItems).map(async (parent_id) => {
-            await axios.get(axiosUrl + 'giveitem/?parent_item=' + parent_id).then((res) => {
+    if (Object.keys(parentItems).length !== 0) {
+      await Promise.all(
+        // UserのParent_ItemからGive_Itemのみを取得
+        Object.keys(parentItems).map(async (parent_id) => {
+          await axios
+            .get(axiosUrl + 'giveitem/?parent_item=' + parent_id)
+            .then((res) => {
               if (res.data.length !== 0) {
                 parentItems = {
                   ...parentItems,
                   [parent_id]: {
                     ...parentItems[parent_id],
-                    give_id: res.data[0].id
+                    give_id: res.data[0].id,
                   },
                 }; // itemForState(スプレッド) closing
               } //    if(res.data.length !== 0) closing
             }) //     then closing
-            .catch((err) => console.log(err)) 
-            //  axios.get Fin
-          }) //       map closing
-        ); //         Promise.all Closing
-  
+            .catch((err) => console.log(err));
+          //  axios.get Fin
+        }) //       map closing
+      ); //         Promise.all Closing
+
       // itemForStateからGiveItemのみを抽出
       for (const key in parentItems) {
         if (parentItems[key]['give_id']) {
@@ -76,8 +93,8 @@ class Request_Form extends Component {
       }
     }
 
-    if(Object.keys(itemsForState).length !== 0 ){
-      console.log("Root1")
+    if (Object.keys(itemsForState).length !== 0) {
+      console.log('Root1');
       await Promise.all(
         Object.keys(itemsForState).map(async (parent_id) => {
           await axios
@@ -87,84 +104,113 @@ class Request_Form extends Component {
                 (itemsForState = {
                   ...itemsForState,
                   [parent_id]: { ...itemsForState[parent_id], image: res.data },
-                })  // itemsForState(スプレッド) closing
+                }) // itemsForState(スプレッド) closing
             ) //       then closing
             .catch((err) => console.log(err));
         }) // map closing
-      );//    Promise all closing
+      ); //    Promise all closing
     } else {
-      console.log("Root2")
-      itemsForState = "商品が投稿されていません"
+      console.log('Root2');
+      itemsForState = '商品が投稿されていません';
     }
 
-
-    await this.setState({allPickup : pickupForState})
-    await this.setState({allItems : itemsForState});
-    this.setState({loading : false})
+    await this.setState({ allPickup: pickupForState });
+    await this.setState({ allItems: itemsForState });
+    this.setState({ loading: false });
   }
   //
   //    /////    /////   ////    ComponentDidMound　終わり
-  
+
   handleChange = (e) => {
-  
+    const name = e.target.name;
+    const value = e.target.value;
+    const { info } = this.state;
+
+    this.setState({
+      info: { ...info, [name]: value },
+    });
   };
 
-  handleSubmit = () => {
-  
-  };
+   //           ===========           ===========
+  //           Validation            ===========
+  //           ===========           ===========
+
+  validator(name, value) {
+    switch (name) {
+      case 'date1':
+        return this.dateValidation(value);
+      case 'date2':
+        return this.dateValidation(value);
+      case 'date3':
+        return this.dateValidation(value);
+    }
+  }
+
+  handleSubmit = () => {};
 
   render() {
     let itemsView;
     let pickupsView;
 
-    if(this.state.allItems !== '商品が投稿されていません'){
-      itemsView = (
-        Object.keys(this.state.allItems).map((parent_id) => {
-          return (
-            <>
-              <input name="joinItem" value={parent_id} type="radio" />
-              <label>{this.state.allItems[parent_id].name}</label>
-            </>
-          )
-        })
-      )
-    } else{
-     itemsView = <p>{this.state.allItems}</p>
+    if (this.state.allItems !== '商品が投稿されていません') {
+      itemsView = Object.keys(this.state.allItems).map((parent_id) => {
+        return (
+          <>
+            <input name="joinItem" value={parent_id} type="radio" onChange={this.handleChange} />
+            <label>{this.state.allItems[parent_id].name}</label>
+          </>
+        );
+      });
+    } else {
+      itemsView = <p>{this.state.allItems}</p>;
     }
 
-    if(this.state.allPickup !== "未登録"){
-      pickupsView = (
-        this.state.allPickup.map((pickupObj) => {
-          return (
+    if (this.state.allPickup !== '未登録') {
+      pickupsView = this.state.allPickup.map((pickupObj) => {
+        return (
           <>
-            <input name="pickups" value={pickupObj.id} type="radio" />
+            <input name="pickup" value={pickupObj.id} type="radio" onChange={this.handleChange} />
             <label>{pickupObj.name}</label>
           </>
-          )
-        })
-      )
+        );
+      });
     } else {
-      pickupsView = <p>{this.state.allPickup}</p>
+      pickupsView = <p>{this.state.allPickup}</p>;
     }
 
-    if(this.state.loading === true){
-      return <CircularProgress/>
+    if (this.state.loading === true) {
+      return <CircularProgress />;
     } else {
       return (
-
-          <div>
-              <div>
-                  <div>
-                    <h3>引き換える商品(あなたの出品リストより)</h3>
-                    {itemsView}
-                  </div>
-                  <div>
-                    <h3>ピックアップ地点(出品者のピックアップ地点より)</h3>
-                    {pickupsView}
-                  </div>
-              </div>
-          </div>
-      )
+        <div>
+            <div>
+              <h3>引き換える商品(あなたの出品リストより)</h3>
+              {itemsView}
+            </div>
+            <div>
+              <h3>ピックアップ地点(出品者のピックアップ地点より)</h3>
+              {pickupsView}
+            </div>
+            <div>
+              <h3>取引希望日時(第3希望まで選んでください)</h3>
+              <p>
+                <label>日程候補1</label>
+                <input name="date1" type="datetime-local" onChange={this.handleChange} />
+                <p>{this.state.message.date1}</p>
+              </p>
+              <p>
+                <label>日程候補2</label>
+                <input name="date2" type="datetime-local" onChange={this.handleChange} />
+                <p>{this.state.message.date2}</p>
+              </p>
+              <p>
+                <label>日程候補3</label>
+                <input name="date3" type="datetime-local" onChange={this.handleChange} />
+                <p>{this.state.message.date3}</p>
+              </p>
+            </div>
+        </div>
+      );
     }
   }
 }
