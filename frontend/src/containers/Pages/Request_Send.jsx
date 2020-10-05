@@ -105,6 +105,7 @@ class Request_Send extends Component {
             joinUser={this.state.loginUser}
             hostUser={this.state.hostUser}
             hostItem={this.props.match.params.parent_id}
+            axiosUrl="http://localhost:8000/api/"
           />
         </>
       );
