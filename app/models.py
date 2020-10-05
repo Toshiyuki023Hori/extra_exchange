@@ -329,7 +329,7 @@ class Request(models.Model):
 class Meeting_Time(models.Model):
     what_time = models.DateTimeField(unique=True)
     request = models.ManyToManyField(
-        Request, related_name="meeting_time")
+        Request, blank=True, null=True, related_name="meeting_time")
 
     def __str__(self):
         return self.what_time.strftime("%m/%d/%Y, %H:%M:%S")

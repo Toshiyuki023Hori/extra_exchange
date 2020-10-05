@@ -133,12 +133,10 @@ class Want_Item_Add_Form extends Component {
             } else {
               newKeywords = [...newKeywords, keyword];
             }
-            console.log('keyword_id is ' + keyword_ids);
-            console.log('New words are' + newKeywords);
           })
           .catch((err) => console.log(err));
-      })
-    );
+      }) // map closing
+    ); //   Promise.all closing
 
     if (newKeywords.length !== 0) {
       await Promise.all(

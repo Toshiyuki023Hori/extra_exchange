@@ -95,7 +95,6 @@ class Request_Form extends Component {
     }
 
     if (Object.keys(itemsForState).length !== 0) {
-      console.log('Root1');
       await Promise.all(
         Object.keys(itemsForState).map(async (parent_id) => {
           await axios
@@ -111,7 +110,6 @@ class Request_Form extends Component {
         }) // map closing
       ); //    Promise all closing
     } else {
-      console.log('Root2');
       itemsForState = '商品が投稿されていません';
     }
 
@@ -147,18 +145,81 @@ class Request_Form extends Component {
     }
   }
 
-  handleSubmit = () => {
+  handleSubmit = async () => {
+    const { axiosUrl } = this.props;
+    const token = localStorage.getItem('token');
+    const authHeader = {
+      headers: {
+        Authorization: 'Token ' + token,
+      },
+    };
+    let meetingList = [];
+    let meeting_ids = [];
+    let newMeetings = [];
+
+    const hasValueInMeeting = (meeting) => {
+      if(meeting != ""){
+        meetingList = [...meetingList, meeting];
+      }else{}
+    };
+
+    hasValueInMeeting(this.state.info.date1);
+    hasValueInMeeting(this.state.info.date2);
+    hasValueInMeeting(this.state.info.date3);
+
     const setMessageToState = (key, value) => {
       this.setState({ message: { ...this.state.message, [key]: value } });
     };
+
+    // Validation(joinItem未入力)
     if (this.state.info.joinItem == '') {
       setMessageToState('joinItem', '交換する商品を選んでください。');
+    // Validation(pickup未入力)
     } else if (this.state.info.pickup == '') {
       setMessageToState('pickup', 'ピックアップ場所を選んでください。');
+    // Validation(date未入力)
+    } else if (this.state.info.date1 == "" && this.state.info.date2 == "" && this.state.info.date3 == ""){
+      setMessageToState('date1', '取引日時を決めてください。')
     } else {
+      // はじめに、既存のMeeting_TimeがDBに存在しているか確認
+      await Promise.all(
+        meetingList.map(async(meeting) => {
+          await axios.get(axiosUrl + "meeting/?what_time=" + meeting)
+          .then((res) => {
+            if(res.data.length !== 0){
+              meeting_ids = [...meeting_ids, res.data.id];
+            } else {
+              newMeetings = [...newMeetings, meeting]
+            }
+            console.log("Exists " + meeting_ids);
+            console.log("New " + newMeetings);
+          }) // then closing
+          .catch((err) => console.log(err));
+        }) //   map closing
+      ) //      Promise.all Closing
+
+      // 新規meetingだけ事前にモデル作成
+      // 先にモデルを作ることで、過去の日付のValidationも兼ねる
+      if(newMeetings.length !== 0){
+        await Promise.all(
+          newMeetings.map(async (meeting) => {
+            await axios.post(axiosUrl + 'meeting/', {whatTime:meeting}, authHeader)
+            .then((res) => {
+              meeting_ids = [...meeting_ids, res.data.id];
+          })
+            // 過去の日付ならErrorメッセージをstateにセット
+            .catch((err) => setMessageToState("date1", err.response.data.whatTime))
+          }) // map closing
+        ) //    Promise.all closing
+      } //      if(newMeetings.length !== 0) closing
+
+      console.log(meeting_ids);
     }
   };
 
+//////////
+/////////////     以下 render view      /////////
+/////////
   render() {
     let itemsView;
     let pickupsView;
@@ -180,7 +241,7 @@ class Request_Form extends Component {
       pickupsView = this.state.allPickup.map((pickupObj) => {
         return (
           <>
-            <input name="pickup" value={pickupObj.id} type="radio" onChange={this.handleChange} />
+            <input name="pickup" value={pickupObj.name} type="radio" onChange={this.handleChange} />
             <label>{pickupObj.name}</label>
           </>
         );
@@ -207,22 +268,26 @@ class Request_Form extends Component {
           <div>
             <h3>取引希望日時(第3希望まで選んでください)</h3>
             <p>
+              <p>{this.state.message.date1}</p>
               <label>日程候補1</label>
               <input name="date1" type="datetime-local" onChange={this.handleChange} />
-              <p>{this.state.message.date1}</p>
             </p>
             <p>
+              <p>{this.state.message.date2}</p>
               <label>日程候補2</label>
               <input name="date2" type="datetime-local" onChange={this.handleChange} />
-              <p>{this.state.message.date2}</p>
             </p>
             <p>
+              <p>{this.state.message.date3}</p>
               <label>日程候補3</label>
               <input name="date3" type="datetime-local" onChange={this.handleChange} />
-              <p>{this.state.message.date3}</p>
             </p>
           </div>
-          <MiddleButton btn_name="リクエストを送る" btn_type="submit" btn_click={this.handleSubmit} />
+          <MiddleButton
+            btn_name="リクエストを送る"
+            btn_type="submit"
+            btn_click={this.handleSubmit}
+          />
         </div>
       );
     }
