@@ -146,7 +146,7 @@ class Request_Form extends Component {
   }
 
   handleSubmit = async () => {
-    const { axiosUrl } = this.props;
+    const { axiosUrl, joinUser, hostUser, hostItem } = this.props;
     const token = localStorage.getItem('token');
     const authHeader = {
       headers: {
@@ -156,11 +156,15 @@ class Request_Form extends Component {
     let meetingList = [];
     let meeting_ids = [];
     let newMeetings = [];
+    let originalRequest = {};
+    let request_id;
+    let reqDeal_id;
 
     const hasValueInMeeting = (meeting) => {
-      if(meeting != ""){
+      if (meeting != '') {
         meetingList = [...meetingList, meeting];
-      }else{}
+      } else {
+      }
     };
 
     hasValueInMeeting(this.state.info.date1);
@@ -171,55 +175,137 @@ class Request_Form extends Component {
       this.setState({ message: { ...this.state.message, [key]: value } });
     };
 
+    // Validationに引っかかった後に、再送信をした後、前回のValidationの影響を消すため。
+    this.setState({
+      message: {
+        joinItem: '',
+        pickup: '',
+        date1: '',
+        date2: '',
+        date3: '',
+      },
+    });
+
     // Validation(joinItem未入力)
     if (this.state.info.joinItem == '') {
       setMessageToState('joinItem', '交換する商品を選んでください。');
-    // Validation(pickup未入力)
+      // Validation(pickup未入力)
     } else if (this.state.info.pickup == '') {
       setMessageToState('pickup', 'ピックアップ場所を選んでください。');
-    // Validation(date未入力)
-    } else if (this.state.info.date1 == "" && this.state.info.date2 == "" && this.state.info.date3 == ""){
-      setMessageToState('date1', '取引日時を決めてください。')
+      // Validation(date未入力)
+    } else if (
+      this.state.info.date1 == '' &&
+      this.state.info.date2 == '' &&
+      this.state.info.date3 == ''
+    ) {
+      setMessageToState('date1', '取引日時を決めてください。');
     } else {
       // はじめに、既存のMeeting_TimeがDBに存在しているか確認
       await Promise.all(
-        meetingList.map(async(meeting) => {
-          await axios.get(axiosUrl + "meeting/?what_time=" + meeting)
-          .then((res) => {
-            if(res.data.length !== 0){
-              meeting_ids = [...meeting_ids, res.data.id];
-            } else {
-              newMeetings = [...newMeetings, meeting]
-            }
-            console.log("Exists " + meeting_ids);
-            console.log("New " + newMeetings);
-          }) // then closing
-          .catch((err) => console.log(err));
-        }) //   map closing
-      ) //      Promise.all Closing
-
+        meetingList.map(async (meeting) => {
+          await axios
+            .get(axiosUrl + 'meeting/?what_time=' + meeting)
+            .then((res) => {
+              console.log("meeting")
+              console.log(res.data)
+              if (res.data.length !== 0) {
+                meeting_ids = [...meeting_ids, res.data[0].id];
+              } else {
+                newMeetings = [...newMeetings, meeting];
+              }
+            }) // then closing
+            .catch((err) => console.log(err));
+          }) //   map closing
+          ); //      Promise.all Closing
+          console.log('Exists ' + meeting_ids);
+          console.log('New ' + newMeetings);
+          
       // 新規meetingだけ事前にモデル作成
       // 先にモデルを作ることで、過去の日付のValidationも兼ねる
-      if(newMeetings.length !== 0){
+      if (newMeetings.length !== 0) {
         await Promise.all(
           newMeetings.map(async (meeting) => {
-            await axios.post(axiosUrl + 'meeting/', {whatTime:meeting}, authHeader)
-            .then((res) => {
-              meeting_ids = [...meeting_ids, res.data.id];
-          })
-            // 過去の日付ならErrorメッセージをstateにセット
-            .catch((err) => setMessageToState("date1", err.response.data.whatTime))
+            await axios
+              .post(axiosUrl + 'meeting/', { whatTime: meeting }, authHeader)
+              .then((res) => {
+                meeting_ids = [...meeting_ids, res.data.id];
+              })
+              // 過去の日付ならErrorメッセージをstateにセット
+              .catch((err) => setMessageToState('date1', err.response.data.whatTime));
           }) // map closing
-        ) //    Promise.all closing
+        ); //    Promise.all closing
       } //      if(newMeetings.length !== 0) closing
+      console.log("meeting_ids is " + meeting_ids);
 
-      console.log(meeting_ids);
+      // if内が全てのValidationをクリアしてからの処理。
+      // 親モデル Request_Deal => 子モデル Request作成
+      if (this.state.message.date1 == '') {
+        await axios
+          .post(
+            axiosUrl + 'requestdeal/',
+            {
+              pickups: this.state.info.pickup,
+              joinUser: joinUser.id,
+              hostUser: hostUser,
+              joinItem: this.state.info.joinItem,
+              hostItem: hostItem,
+            },
+            authHeader
+          )
+          .then((res) => {
+            console.log(res);
+            reqDeal_id = res.data.id;
+          })
+          .catch((err) => console.log(err.responsee))
+
+        console.log("reqDeal_id is " + reqDeal_id);
+
+        await axios.post(axiosUrl + 'request/', {
+          note: this.state.info.note,
+          requestDeal: reqDeal_id,
+        }, authHeader)
+        .then((res) => {
+          console.log(res);
+          request_id = res.data.id;
+        })
+        .catch((err) => console.log(err.responsee))
+
+        console.log("reqest_id is " + request_id);
+
+        await Promise.all(
+          meeting_ids.map(async (meeting) => {
+            await axios
+              .get(axiosUrl + 'meeting/' + meeting)
+              .then((res) => {
+                originalRequest = { ...originalRequest, [res.data.id]: res.data.request };
+              })
+              .catch((err) => console.log(err));
+          })
+        );
+
+        for (const key in originalRequest) {
+          originalRequest[key].push(request_id);
+        }
+
+        for (const key in originalRequest) {
+          axios
+            .patch(
+              axiosUrl + 'meeting/' + key + '/',
+              {
+                request: originalRequest[key],
+              },
+              authHeader
+            )
+            .then((res) => console.log('You did it ! \n' + res.data))
+            .catch((err) => console.log(err));
+        }
+      } //if (this.state.message.date1 == '') end
     }
   };
 
-//////////
-/////////////     以下 render view      /////////
-/////////
+  //////////
+  /////////////     以下 render view      /////////
+  /////////
   render() {
     let itemsView;
     let pickupsView;
@@ -282,6 +368,10 @@ class Request_Form extends Component {
               <label>日程候補3</label>
               <input name="date3" type="datetime-local" onChange={this.handleChange} />
             </p>
+          </div>
+          <div>
+            <h3>補足</h3>
+            <textarea name="note" id="" cols="30" rows="10"></textarea>
           </div>
           <MiddleButton
             btn_name="リクエストを送る"
