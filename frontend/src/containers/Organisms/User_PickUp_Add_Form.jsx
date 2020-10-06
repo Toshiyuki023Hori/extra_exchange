@@ -104,7 +104,7 @@ class User_PickUp_Add_Form extends Component {
           },
           authHeader
         )
-        .then((res) => history.push("/user/pickup"))
+        .then((res) => this.props.checkOwnPickUps())
         .catch((err) => window.alert('ピックアップ地点追加の登録に失敗しました。'));
     }
   };
