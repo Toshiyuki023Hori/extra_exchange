@@ -20,6 +20,8 @@ import Give_Item_Add from './containers/Pages/Give_Item_Add';
 import Give_Item_Detail from './containers/Pages/Give_Item_Detail';
 import Give_Item_Edit from './containers/Pages/Give_Item_Edit';
 import Request_Send from './containers/Pages/Request_Send';
+import Request_Detail from "./containers/Pages/Request_Detail";
+import Request_Waiting from "./containers/Pages/Request_Waiting";
 import Allcategories from './containers/Pages/Allcategories';
 
 class App extends Component {
@@ -98,6 +100,14 @@ class App extends Component {
           <Route
             path="/give/request/:parent_id"
             render={(routeProps) => <Request_Send {...routeProps} {...this.props} />}
+          />
+          <Route
+            path="/request/check"
+            render={(routeProps) => <Request_Waiting {...routeProps} {...this.props} />}
+          />
+          <Route
+            path="/request/requestDeal_id"
+            render={(routeProps) => <Request_Detail {...routeProps} {...this.props} />}
           />
           <Redirect to="/top" />
           {/* <Route

@@ -44,6 +44,9 @@ class ReviewViewSet(viewsets.ModelViewSet):
     ]
     serializer_class = RequestSerializer
 
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_fields = "__all__"
+
 # ======      =======      ======      ======     ======     ======      =======      =======
 
 
@@ -53,6 +56,9 @@ class NotificationViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = NotificationSerializer
+
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_fields = "__all__"
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
@@ -111,6 +117,9 @@ class FavoriteViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = FavoriteSerializer
+
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_fields = "__all__"
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
@@ -214,6 +223,9 @@ class RequestViewSet(viewsets.ModelViewSet):
     ]
     serializer_class = RequestSerializer
 
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_fields = "__all__"
+
 # ======      =======      ======      ======     ======     ======      =======      =======
 
 
@@ -236,6 +248,9 @@ class DealViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = DealSerializer
+
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_fields = "__all__"
 
 # ======      =======      ======      ======     ======     ======      =======      =======
 
@@ -269,3 +284,6 @@ class Request_DealViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = Request_DealSerializer
+
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_fields = "__all__"
