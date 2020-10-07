@@ -211,8 +211,8 @@ class Give_Item_Edit_Form extends Component {
   cancelUploadedImage = () => {
     // 削除されたアップロード画像がSubmitされないために、filterを用いて削除
     // アップロードされた画像は、BlobObject
-    const filteredImages = this.state.info.images.filter((image) => typeof image != 'object');
-    this.setState({ info: { ...this.state.info, images: filteredImages } });
+    const selectedImages = this.state.info.images.filter((image) => typeof image != 'object');
+    this.setState({ info: { ...this.state.info, images: selectedImages } });
     this.setState({ uploadedImage: [] });
   };
 
@@ -235,23 +235,25 @@ class Give_Item_Edit_Form extends Component {
         'この画像を削除しますか？(同じ画像を使う場合は、再アップロードが必要です。)'
       );
       if (result) {
-        let storeFilteredImg = {};
+        let selectedImgObj = {};
         // onClickと一致する画像URLを持つもののidを抽出して、arrayにいれる。
         const deleteImage = Object.keys(this.state.originalImages).filter(
           (key) => this.state.originalImages[key] == e.target.src
         );
         const delete_id = parseInt(deleteImage[0]);
+        //
+        //
         // key = Give_Item.id, property = Item_Image.imageとなるオブジェクトのフィルター的役割
         for (const key in this.state.originalImages) {
           if (key != delete_id) {
-            storeFilteredImg = { ...storeFilteredImg, [key]: this.state.originalImages[key] };
-            console.log(storeFilteredImg);
+            selectedImgObj = { ...selectedImgObj, [key]: this.state.originalImages[key] };
+            console.log(selectedImgObj);
           }
         }
         // state.info.imagesから削除(レンダーさせるため)
-        let passToState = this.state.info.images.filter((imageUrl) => imageUrl !== e.target.src);
-        this.setState({ info: { ...this.state.info, images: passToState } });
-        this.setState({ originalImages: storeFilteredImg });
+        let imagesForState = this.state.info.images.filter((imageUrl) => imageUrl !== e.target.src);
+        this.setState({ info: { ...this.state.info, images: imagesForState } });
+        this.setState({ originalImages: selectedImgObj });
         axios
           .delete(this.props.axiosUrl + 'image/' + delete_id, authHeader)
           .then((res) => console.log(res))
@@ -400,7 +402,7 @@ class Give_Item_Edit_Form extends Component {
         console.log(res.data);
       })
       .catch((err) => {
-        console.log(err);
+        window.alert(err.response.data);
       });
 
     await axios
@@ -418,7 +420,7 @@ class Give_Item_Edit_Form extends Component {
         console.log(res.data);
       })
       .catch((err) => {
-        console.log(err);
+        window.alert(err.response.data);
       });
 
     this.state.info.images
@@ -432,7 +434,7 @@ class Give_Item_Edit_Form extends Component {
         axios
           .post(this.props.axiosUrl + 'image/', data, authHeader)
           .then((res) => console.log('You made it ! \n \n' + res.data))
-          .catch((err) => console.log(err));
+          .catch((err) => window.alert(err.response.data));
       });
   };
 

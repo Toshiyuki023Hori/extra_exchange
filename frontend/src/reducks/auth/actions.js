@@ -147,7 +147,6 @@ export const authCheckState = () => {
         dispatch(logout());
       } else {
         const uid = localStorage.getItem('uid');
-        console.log('Fire');
         if (uid) {
           dispatch(authSuccess(token, uid));
         }

@@ -1,10 +1,16 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import history from "../../history";
 
 class Request_Deal_Table extends Component {
   constructor(props) {
     super(props);
+    this.jumpToUniquePage = this.jumpToUniquePage.bind(this);
   }
+
+  jumpToUniquePage = (requestDeal_id) => {
+    history.push(this.props.jumpUrl + requestDeal_id)
+  };
 
   render() {
     const { allRequests } = this.props;
@@ -24,7 +30,7 @@ class Request_Deal_Table extends Component {
     tableDate = Object.keys(allRequests).map((id, idx) => {
         return (
           <>
-            <tr>
+            <tr onClick={() => this.jumpToUniquePage(id)}>
                 <TableData>{idx+1}</TableData>
                 <TableData>{allRequests[id]['hostItem']}</TableData>
                 <TableData>{allRequests[id]['hostUser']}</TableData>

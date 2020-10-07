@@ -62,8 +62,8 @@ class Request_Form extends Component {
         }) // axios.spread closing
       ); //    then closing
 
-    console.log(pickupForState);
-    console.log(parentItems);
+    // console.log(pickupForState);
+    // console.log(parentItems);
 
     if (Object.keys(parentItems).length !== 0) {
       await Promise.all(

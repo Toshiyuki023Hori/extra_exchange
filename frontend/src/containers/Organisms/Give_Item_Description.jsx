@@ -175,6 +175,7 @@ class Give_Item_Description extends Component {
       // ownerじゃないなら編集・削除はできない
       if(sentRequest === false){
         requestButton = <MiddleButton btn_name="リクエストを送る" btn_click={this.jumpToRequest} />;
+        // sentRequestがtrueなら送信済なので、二重で送信させない。
       } else{
         requestButton = <MiddleButton btn_name="リクエスト送信済" btn_click={this.jumpToRequest} btn_disable={sentRequest} />;
       }

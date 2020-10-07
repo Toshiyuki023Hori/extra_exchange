@@ -61,7 +61,7 @@ class Chat_Place extends Component {
         authHeader
       )
       .then((res) => console.log(res.data))
-      .catch((err) => console.log(err));
+      .catch((err) => window.alert(err.response.data));
 
     this.setComments();
     this.setState({ comment: '' });
