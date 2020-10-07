@@ -104,11 +104,11 @@ class App extends Component {
           />
           <Route
             exact
-            path="/request/check"
+            path="/request/waiting"
             render={(routeProps) => <Request_Waiting {...routeProps} {...this.props} />}
           />
           <Route
-            path="/request/check/:requestDeal_id"
+            path="/request/confirm/:requestDeal_id"
             render={(routeProps) => <Request_Confirm {...routeProps} {...this.props} />}
           />
           <Route
