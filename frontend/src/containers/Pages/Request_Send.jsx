@@ -22,14 +22,11 @@ class Request_Send extends Component {
     const localhostUrl = 'http://localhost:8000/api/';
     let itemsForState = {};
     const parent_id = this.props.match.params.parent_id;
-    const setValueToItems = (id, key1, value1, key2, value2, key3, value3, key4, value4) => {
+    const setValueToItems = (id, key, value) => {
       itemsForState = {
         [id]: {
           ...itemsForState[id],
-          [key1]: value1,
-          [key2]: value2,
-          [key3]: value3,
-          [key4]: value4,
+          [key]: value
         },
       };
     };
@@ -51,18 +48,12 @@ class Request_Send extends Component {
 
     await axios
       .get(localhostUrl + 'giveitem/?parent_item=' + parent_id)
-      .then((res) =>
-        setValueToItems(
-          parent_id,
-          'give_id',
-          res.data[0].id,
-          'state',
-          res.data[0].state,
-          'category',
-          res.data[0].category,
-          'detail',
-          res.data[0].detail
-        )
+      .then((res) =>{
+        setValueToItems(parent_id, "give_id", res.data[0].id)
+        setValueToItems(parent_id, 'state', res.data[0].state,)
+        setValueToItems(parent_id, 'category', res.data[0].category,)
+        setValueToItems(parent_id, 'detail', res.data[0].detail)
+      }
       )
       .catch((err) => console.log(err));
 
