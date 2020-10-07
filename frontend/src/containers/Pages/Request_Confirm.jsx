@@ -5,18 +5,19 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import styled from 'styled-components';
 import history from '../../history';
 import Header from '../Organisms/Header';
-import Item_Table from '../../presentational/shared/Item_Table';
-import Carousel from '../../presentational/shared/Carousel';
+import Request_Description from "../Organisms/Request_Description";
 import MiddleButton from '../../presentational/shared/MiddleButton';
 
 class Request_Confirm extends Component {
   constructor(props) {
     super(props);
     this.state = {
+    // Deal作成時の必要なvalue
       info: {
         meetingTime: '',
         denied_reason: '',
       },
+    // Deal送信前のvalidation用
       message: {
         meetingTime: '',
       },
@@ -37,7 +38,6 @@ class Request_Confirm extends Component {
   async componentDidMount() {
     const localhostUrl = 'http://localhost:8000/api/';
     const requestDeal_id = this.props.match.params.requestDeal_id;
-    let requestDeal;
     let joinItem_id;
     let request_id;
     let itemsForState = {};
@@ -56,7 +56,6 @@ class Request_Confirm extends Component {
       ])
       .then(
         axios.spread(async (resUser, resReqDeal) => {
-          console.log(resReqDeal.data);
           this.setState({ loginUser: resUser.data });
           this.setState({ requestDeal: resReqDeal.data });
           joinItem_id = resReqDeal.data.joinItem;
@@ -70,6 +69,7 @@ class Request_Confirm extends Component {
     }
 
     // Item_Tableに代入するためにjoinItemを取得
+    // hostItemは名前表示のために、ParentItemからnameだけ取得
     await axios
       .all([
         axios.get(localhostUrl + 'parent/' + joinItem_id),
@@ -88,7 +88,6 @@ class Request_Confirm extends Component {
       )
       .catch((err) => console.log(err));
     // axios.all Closing
-    console.log(this.state.hostItem);
 
     // idから表示用にnameを取得、置換。
     await axios
@@ -107,23 +106,25 @@ class Request_Confirm extends Component {
       .catch((err) => console.log(err));
     // axios.all Closing
 
+    // joinItemの持つ画像を全件取得. State => Item_Tableへ
     axios.get(localhostUrl + 'image/?item=' + itemsForState[joinItem_id]['give_id']).then((res) => {
       res.data.map((imgObject) => {
         this.setState({ itemImages: [...this.state.itemImages, imgObject.image] });
       });
     });
 
-    // Meeting取得のために、requestを取得、idを代入
+    // Meeting取得のために、requestを取得、requestのidを代入
     await axios
       .get(localhostUrl + 'request/?request_deal=' + this.state.requestDeal.id)
       .then((res) => {
         if (res.data.length !== 0) {
           request_id = res.data[0].id;
-          this.setState({ request_id: res.data[0].id });
+          this.setState({ request: res.data[0] });
         }
       })
       .catch((err) => console.log(err));
 
+    // request_idとリレーションを持つMeeting_Timeを取得
     axios.get(localhostUrl + 'meeting/?request=' + request_id).then((res) => {
       if (res.data.length !== 0) {
         console.log(res);
@@ -177,15 +178,16 @@ class Request_Confirm extends Component {
           authHeader
         )
         .then((res) => console.log(res.data))
+        // meeting_timeが過去のものとなっている場合は、validationがかかる。そして、メッセージに表示させる。
         .catch((err) => {
-          console.log(err.response);
           setMessageToState('meetingTime', err.response.data.meetingTime);
         });
 
+      // Dealが作成されたら、requestを承認済の表示に更新。
       if (this.state.message.meetingTime == '') {
         axios
           .patch(
-            localhostUrl + 'request/' + this.state.request_id + '/',
+            localhostUrl + 'request/' + this.state.request.id + '/',
             {
               accepted: true,
             },
@@ -198,7 +200,28 @@ class Request_Confirm extends Component {
   };
 
   denyRequest = () => {
-    console.log('yes');
+    const localhostUrl = 'http://localhost:8000/api/';
+    const authHeader = {
+      headers: {
+    Authorization: 'Token ' + localStorage.getItem('token'),
+      },
+    };
+
+
+    let result = window.confirm('リクエストを拒否しますか?');
+    if(result){
+        axios
+          .patch(
+            localhostUrl + 'request/' + this.state.request.id + '/',
+            {
+              denied: true,
+              deniedReason:this.state.info.denied_reason
+            },
+            authHeader
+          )
+          .then((res) => console.log(res.data))
+          .catch((err) => console.log(err));
+    }
   };
 
   render() {
@@ -211,8 +234,32 @@ class Request_Confirm extends Component {
       requestDeal,
       itemImages,
       allMeeting,
+      request
     } = this.state;
     let meetingList;
+
+    const doneSubmitButton = (
+        <MiddleButton
+        btn_name="リクエスト処理済"
+        btn_disable="true"
+        />
+    )
+
+    const submitButton = (
+        <MiddleButton
+              btn_name="リクエストを承諾する"
+              btn_type="submit"
+              btn_click={this.handleSubmit}
+            />
+    )
+
+    const denyButton = (
+        <MiddleButton
+              btn_name="リクエストを拒否する"
+              btn_type="submit"
+              btn_click={this.denyRequest}
+            />
+    )
 
     const convertData = (dataTime) => {
       const year = dataTime.slice(0, 4);
@@ -228,6 +275,7 @@ class Request_Confirm extends Component {
         return (
           <>
             <input
+              key={meetingObject.id}
               name="meetingTime"
               value={meetingObject.whatTime}
               type="radio"
@@ -249,31 +297,27 @@ class Request_Confirm extends Component {
         <div>
           <Header loginUser={loginUser} />
           <div>
-            <h1>リクエスト確認</h1>
-            <div>
-              <h2>リクエスト商品</h2>
-              <p>{hostItem.name}</p>
-            </div>
-            <div>
-              <h2>引き換え商品</h2>
-              <Item_Table item={joinItem} parent_id={requestDeal.joinItem} />
-              <Carousel images={itemImages} />
-            </div>
-            <div>
-              <h2>希望場所</h2>
-              <p>{requestDeal.pickups}</p>
-            </div>
+            <Request_Description
+            h1Title="リクエスト確認"
+            firstPartTitle="リクエスト商品"
+            firstPart={hostItem.name}
+            secondPartTitle="あいてからの引き換え商品"
+            tableItem={joinItem}
+            tableKey={requestDeal.joinItem}
+            swiperImages={itemImages}
+            pickup={requestDeal.pickups}
+            />
             <div>
               <h2>希望時間</h2>
               {meetingList}
               <p>{this.state.message.meetingTime}</p>
             </div>
-
-            <MiddleButton
-              btn_name="リクエストを承諾する"
-              btn_type="submit"
-              btn_click={this.handleSubmit}
-            />
+           {/* すでにリクエストへ反応していたらボタンを押せないように */}
+           {
+             request.accepted === true || request.denied === true 
+             ? doneSubmitButton
+             : submitButton
+           }
           </div>
 
           <div>
@@ -286,11 +330,12 @@ class Request_Confirm extends Component {
                 rows="10"
               ></textarea>
             </div>
-            <MiddleButton
-              btn_name="リクエストを拒否する"
-              btn_type="submit"
-              btn_click={this.denyRequest}
-            />
+            {/* すでにリクエストへ反応していたらボタンを押せないように */}
+            {
+             request.accepted === true || request.denied === true 
+             ? doneSubmitButton
+             : denyButton
+            }
           </div>
         </div>
       );

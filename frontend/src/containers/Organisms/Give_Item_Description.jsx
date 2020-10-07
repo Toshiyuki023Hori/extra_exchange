@@ -15,6 +15,7 @@ class Give_Item_Description extends Component {
       giveItem: '',
       pickups: [],
       images: [],
+      sentRequest:false,
     };
     this.jumpToEdit = this.jumpToEdit.bind(this);
     this.jumpToRequest = this.jumpToRequest.bind(this)
@@ -36,7 +37,9 @@ class Give_Item_Description extends Component {
   async componentDidMount() {
     const { axiosUrl, loginUser, setGiveItem } = this.props;
     const parent_id = parseInt(this.props.parent_id);
+    let requestDealsOfUser;
 
+    // 
     await axios
       .all([
         axios.get(axiosUrl + 'parent/' + parent_id),
@@ -51,10 +54,12 @@ class Give_Item_Description extends Component {
       )
       .catch((err) => console.log(err));
 
+    // giveItem内のcategoryをidからnameへ
     axios.get(axiosUrl + 'category/' + this.state.giveItem.category).then((res) => {
       this.spreadDataToObject('giveItem', 'category', res.data.name);
     });
 
+    // giveItem内のblandをidからnameへ
     if (this.state.parentItem.bland !== null) {
       axios.get(axiosUrl + 'bland/' + this.state.parentItem.bland).then((res) => {
         this.spreadDataToObject('parentItem', 'bland', res.data.name);
@@ -63,6 +68,7 @@ class Give_Item_Description extends Component {
       this.spreadDataToObject('parentItem', 'bland', '無し');
     }
 
+    // imageとpickupをarrayで取得
     await axios
       .all([
         axios.get(axiosUrl + 'image/?item=' + this.state.giveItem.id),
@@ -78,6 +84,25 @@ class Give_Item_Description extends Component {
           });
         })
       );
+
+    // loginUserの持つrequest_dealを全件取得
+    await axios.get(axiosUrl + 'requestdeal/?join_user=' + loginUser.id)
+    .then((res) => {
+      if(res.data.length !== 0){
+        requestDealsOfUser = res.data;
+        console.log(requestDealsOfUser)
+      }
+    })
+    .catch((err) => console.log(err));
+
+    // 取得したrequest_dealの中で、host_itemと一致してるか確認
+    // hostItem = parent_id => リクエスト送信済
+    for(const reqDealObj of requestDealsOfUser){
+      console.log(reqDealObj.hostItem)
+      if(reqDealObj.hostItem === parent_id){
+        this.setState({sentRequest : true})
+      }
+    }
 
     this.setState({loading : false});
   }
@@ -115,12 +140,13 @@ class Give_Item_Description extends Component {
   }; //    handleDelete Closing
 
   render() {
-    const { parentItem, giveItem, pickups, images, loading } = this.state;
+    const { parentItem, giveItem, pickups, images, loading, sentRequest } = this.state;
     let editButton;
     let deleteButton;
     let requestButton;
     let pickupView;
 
+    // dateTimeを表示用にフォーマット。
     const convertData = (dataTime) => {
       console.log(dataTime);
       const year = dataTime.slice(0,4);
@@ -132,6 +158,7 @@ class Give_Item_Description extends Component {
     };
 
 
+    // ピックアップの表示分岐
     if (pickups.length !== 0) {
       pickupView = pickups.map((pickup) => {
         return <li>{pickup}</li>;
@@ -139,11 +166,18 @@ class Give_Item_Description extends Component {
     } else {
       pickupView = <li>未登録</li>;
     }
+
+    // 訪問者がownerか否かで表示を変える。
     if (parentItem.owner === this.props.loginUser.id) {
       editButton = <MiddleButton btn_name="編集" btn_click={this.jumpToEdit} />;
       deleteButton = <MiddleButton btn_name="削除" btn_click={this.handleDelete} />;
     } else {
-      requestButton = <MiddleButton btn_name="リクエストを送る" btn_click={this.jumpToRequest} />;
+      // ownerじゃないなら編集・削除はできない
+      if(sentRequest === false){
+        requestButton = <MiddleButton btn_name="リクエストを送る" btn_click={this.jumpToRequest} />;
+      } else{
+        requestButton = <MiddleButton btn_name="リクエスト送信済" btn_click={this.jumpToRequest} btn_disable={sentRequest} />;
+      }
     }
     if (loading === true) {
       return <CircularProgress />;

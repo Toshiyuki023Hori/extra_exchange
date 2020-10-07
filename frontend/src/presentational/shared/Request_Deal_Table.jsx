@@ -15,7 +15,7 @@ class Request_Deal_Table extends Component {
       if(allRequests[id]["denied"] === true){
         return "拒否"
       } else if(allRequests[id]["accepted"] === true){
-        return "承認済"
+        return "承認"
       } else if(allRequests[id]["accepted"] === false){
         return "未承認"
       }
@@ -27,8 +27,8 @@ class Request_Deal_Table extends Component {
             <tr>
                 <TableData>{idx+1}</TableData>
                 <TableData>{allRequests[id]['hostItem']}</TableData>
-                <TableData>{allRequests[id]['joinItem']}</TableData>
                 <TableData>{allRequests[id]['hostUser']}</TableData>
+                <TableData>{allRequests[id]['joinItem']}</TableData>
                 <TableData>{checkStatus(id)}</TableData>
             </tr>
           </>
@@ -49,8 +49,8 @@ class Request_Deal_Table extends Component {
                         <tr>
                             <TableHead>番号</TableHead>
                             <TableHead>商品(ホスト側)</TableHead>
-                            <TableHead>商品(ジョイン側)</TableHead>
                             <TableHead>ホストユーザー</TableHead>
+                            <TableHead>商品(ジョイン側)</TableHead>
                             <TableHead>承認</TableHead>
                         </tr>
                     </thead>
