@@ -131,21 +131,6 @@ class Request_Form extends Component {
     });
   };
 
-  //           ===========           ===========
-  //           Validation            ===========
-  //           ===========           ===========
-
-  validator(name, value) {
-    switch (name) {
-      case 'date1':
-        return this.dateValidation(value);
-      case 'date2':
-        return this.dateValidation(value);
-      case 'date3':
-        return this.dateValidation(value);
-    }
-  }
-
   // // //  //                          //  //
   //  //  //  //  handleSubmit  //  //  //  //
   // // //  //                          //  //
@@ -315,7 +300,7 @@ class Request_Form extends Component {
               .catch((err) => console.log(err));
           }
 
-          history.push("request/check")
+          history.push("/request/check")
         } //if (this.state.message.date1 == '') end
       } //  else closing
     } //    if(result) closing

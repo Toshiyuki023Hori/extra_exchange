@@ -20,6 +20,7 @@ class User_PickUp_Add extends Component {
     };
     this.switchPermission = this.switchPermission.bind(this);
     this.updateNum = this.updateNum.bind(this);
+    this.checkOwnPickUps = this.checkOwnPickUps.bind(this);
   }
   componentDidMount() {
     const localhostUrl = 'http://localhost:8000/api/';
@@ -34,7 +35,7 @@ class User_PickUp_Add extends Component {
 
   componentDidUpdate(prevProps, prevState){
     if(prevState.numOwnPickUps != this.state.numOwnPickUps){
-      this.switchPermission()
+      this.switchPermission();
     }
   }
 
@@ -48,6 +49,21 @@ class User_PickUp_Add extends Component {
 
   updateNum = (value) => {
     this.setState({numOwnPickUps:value})
+  };
+
+  // User_Pickup_Add_FormでSubmit完了後に発火
+  // 追加後に新しいnumOwnPickUpsを取得
+  // これによりswitchPermission発火
+  checkOwnPickUps = async () => {
+    console.log("now is " + this.state.numOwnPickUps);
+    const localhostUrl = 'http://localhost:8000/api/';
+    await axios
+    .get(localhostUrl + 'pickup/?choosingUser=' + this.state.loginUser.id)
+    .then((res) => {
+      this.setState({ numOwnPickUps: res.data.length });
+    })
+    .catch((err) => console.log(err));
+    console.log("After " + this.state.numOwnPickUps)
   };
 
   render() {
@@ -65,13 +81,15 @@ class User_PickUp_Add extends Component {
             loginUser={this.state.loginUser}
             axiosUrl="http://localhost:8000/api/"
             permission={this.state.permissionAdd}
+            checkOwnPickUps={this.checkOwnPickUps}
           />
           <User_PickUp_List
             loginUser={this.state.loginUser}
             axiosUrl="http://localhost:8000/api/"
             permission={this.state.permissionAdd}
-            length={this.state.numOwnPickUps}
+            len={this.state.numOwnPickUps}
             updateNum={this.updateNum}
+            checkOwnPickUps={this.checkOwnPickUps}
           />
         </>
       );

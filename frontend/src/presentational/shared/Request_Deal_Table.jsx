@@ -25,11 +25,11 @@ class Request_Deal_Table extends Component {
         return (
           <>
             <tr>
-                <td>{idx+1}</td>
-                <td>{allRequests[id]['hostItem']}</td>
-                <td>{allRequests[id]['joinItem']}</td>
-                <td>{allRequests[id]['hostUser']}</td>
-                <td>{checkStatus(id)}</td>
+                <TableData>{idx+1}</TableData>
+                <TableData>{allRequests[id]['hostItem']}</TableData>
+                <TableData>{allRequests[id]['joinItem']}</TableData>
+                <TableData>{allRequests[id]['hostUser']}</TableData>
+                <TableData>{checkStatus(id)}</TableData>
             </tr>
           </>
         );
@@ -44,21 +44,21 @@ class Request_Deal_Table extends Component {
         } else {
             return (
                 <div>
-                <table>
+                <TableSelf>
                     <thead>
                         <tr>
-                            <th>番号</th>
-                            <th>商品(ホスト側)</th>
-                            <th>商品(ジョイン側)</th>
-                            <th>ホストユーザー</th>
-                            <th>承認</th>
+                            <TableHead>番号</TableHead>
+                            <TableHead>商品(ホスト側)</TableHead>
+                            <TableHead>商品(ジョイン側)</TableHead>
+                            <TableHead>ホストユーザー</TableHead>
+                            <TableHead>承認</TableHead>
                         </tr>
                     </thead>
 
                     <tbody>
                         {tableDate}
                     </tbody>
-                </table>
+                </TableSelf>
                 </div>
             );
         }
@@ -66,3 +66,24 @@ class Request_Deal_Table extends Component {
 }
 
 export default Request_Deal_Table;
+
+const TableSelf = styled.table`
+  width : 70%;
+  border: solid 2px;
+  border-collapse: collapse;
+`;
+
+const TableHead = styled.th`
+  background: aliceblue;
+  color: black;
+  font-weight: bold;
+  padding:24px 21px;
+  border: 2px solid;
+`;
+
+const TableData = styled.td`
+  padding: 10px;
+  padding:24px 21px;
+  border: solid 2px;
+  text-align:center;
+`;

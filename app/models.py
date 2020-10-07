@@ -309,6 +309,7 @@ class Parent_Item(models.Model):
 
 class Request(models.Model):
     note = models.CharField(max_length=400, blank=True, null=True)
+    denied_reason = models.CharField(max_length=1000, blank=True, null=True)
     denied = models.BooleanField(default=False)
     accepted = models.BooleanField(default=False)
     request_deal = models.OneToOneField(

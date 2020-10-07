@@ -22,6 +22,7 @@ import Give_Item_Edit from './containers/Pages/Give_Item_Edit';
 import Request_Send from './containers/Pages/Request_Send';
 import Request_Detail from "./containers/Pages/Request_Detail";
 import Request_Waiting from "./containers/Pages/Request_Waiting";
+import Request_Confirm from "./containers/Pages/Request_Confirm";
 import Allcategories from './containers/Pages/Allcategories';
 
 class App extends Component {
@@ -102,11 +103,16 @@ class App extends Component {
             render={(routeProps) => <Request_Send {...routeProps} {...this.props} />}
           />
           <Route
+            exact
             path="/request/check"
             render={(routeProps) => <Request_Waiting {...routeProps} {...this.props} />}
           />
           <Route
-            path="/request/requestDeal_id"
+            path="/request/check/:requestDeal_id"
+            render={(routeProps) => <Request_Confirm {...routeProps} {...this.props} />}
+          />
+          <Route
+            path="/request/:requestDeal_id"
             render={(routeProps) => <Request_Detail {...routeProps} {...this.props} />}
           />
           <Redirect to="/top" />

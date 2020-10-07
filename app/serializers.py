@@ -210,6 +210,11 @@ class DealSerializer(serializers.ModelSerializer):
         model = Deal
         fields = "__all__"
 
+    def validate_meeting_time(self, value):
+        if value < timezone.now():
+            raise serializers.ValidationError("過去の日付を選択することはできません。")
+        return value
+
 # ======      =======      ======      ======     ======     ======      =======      =======
 
 

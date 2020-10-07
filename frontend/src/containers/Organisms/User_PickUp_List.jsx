@@ -27,6 +27,21 @@ class User_PickUp_List extends Component {
     updateNum(this.state.pickupList.length);
   }
 
+  //  checkOwnNumが発火した時に起動
+  // 再度pickupを挿入する(新規追加時と削除時)。
+  async componentDidUpdate(prevProps, prevState) {
+    const { len, axiosUrl, loginUser } = this.props;
+    if (prevProps.len != len) {
+      await axios
+        .get(axiosUrl + 'pickup/?choosingUser=' + loginUser.id)
+        .then((res) => {
+          this.setState({ pickupList: res.data });
+        })
+        .catch((err) => console.log(err));
+    }
+    console.log(this.state.pickupList);
+  }
+
   handleDelete = async (pickup_id, choosingUser) => {
     const { axiosUrl, updateNum } = this.props;
     const token = localStorage.getItem('token');
@@ -48,14 +63,9 @@ class User_PickUp_List extends Component {
         authHeader
       )
       .then((res) => {
-        filteredPickUps = this.state.pickupList.filter((pickupObj) => {
-          return pickupObj.id != pickup_id;
-        });
-        this.setState({ pickupList: filteredPickUps });
+        this.props.checkOwnPickUps();
       })
       .catch((err) => console.log(err));
-
-    updateNum(this.state.pickupList.length);
   };
 
   render() {

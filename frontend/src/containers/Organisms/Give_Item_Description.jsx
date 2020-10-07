@@ -10,6 +10,7 @@ class Give_Item_Description extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading:true,
       parentItem: '',
       giveItem: '',
       pickups: [],
@@ -77,7 +78,12 @@ class Give_Item_Description extends Component {
           });
         })
       );
+
+    this.setState({loading : false});
   }
+  //
+  //  //  //  // componentDidMount Fin
+  //
 
   jumpToEdit = () => {
     history.push('/give/edit/' + this.props.parent_id);
@@ -109,11 +115,22 @@ class Give_Item_Description extends Component {
   }; //    handleDelete Closing
 
   render() {
-    const { parentItem, giveItem, pickups, images } = this.state;
+    const { parentItem, giveItem, pickups, images, loading } = this.state;
     let editButton;
     let deleteButton;
     let requestButton;
     let pickupView;
+
+    const convertData = (dataTime) => {
+      console.log(dataTime);
+      const year = dataTime.slice(0,4);
+      const month = dataTime.slice(5,7);
+      const day = dataTime.slice(8,10);
+      const hour = dataTime.slice(11,13);
+      const min = dataTime.slice(14,16);
+      return `${year}年${month}月${day}日${hour}時${min}分`
+    };
+
 
     if (pickups.length !== 0) {
       pickupView = pickups.map((pickup) => {
@@ -128,7 +145,7 @@ class Give_Item_Description extends Component {
     } else {
       requestButton = <MiddleButton btn_name="リクエストを送る" btn_click={this.jumpToRequest} />;
     }
-    if (images === []) {
+    if (loading === true) {
       return <CircularProgress />;
     }
     return (
@@ -136,7 +153,7 @@ class Give_Item_Description extends Component {
         <Carousel images={images} />
         <div>
           <h1>{parentItem.name}</h1>
-          <p>{giveItem.createdAt}に投稿</p>
+          <p>{convertData(giveItem.createdAt)}に投稿</p>
           <p>状態 : {giveItem.state}</p>
           <p>ブランド : {parentItem.bland}</p>
           <p>{giveItem.detail}</p>
