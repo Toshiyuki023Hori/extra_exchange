@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import axios from 'axios';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Request_Deal_Table from '../../presentational/shared/Request_Deal_Table';
-import Header from "../Organisms/Header";
+import Header from '../Organisms/Header';
 
 class Request_Waiting extends Component {
   constructor(props) {
@@ -47,6 +47,7 @@ class Request_Waiting extends Component {
       requestsForState = { ...requestsForState, [requestDealObj.id]: requestDealObj };
     }
 
+    // requestsForStateのidを表示用にnameに置換する関数
     const replaceIdWithName = async (url, key, value) => {
       await Promise.all(
         Object.keys(requestsForState).map(async (id) => {
@@ -63,7 +64,8 @@ class Request_Waiting extends Component {
       ); //   Promise.all closing
     }; //          replaceIdWithName closing
 
-    const setRequestValue = async (url, key) => {
+    // request_deal_id = request.idのRequestを取得し、dataをrequestsForStateへセットする関数
+    const fetchRequestAndSetData = async (url, key) => {
       await Promise.all(
         Object.keys(requestsForState).map(async (id) => {
           await axios
@@ -78,14 +80,7 @@ class Request_Waiting extends Component {
             .catch((err) => console.log(err));
         }) // map closing
       ); //   Promise.all closing
-    }; //          setRequestValue closing
-
-    Object.keys(requestsForState).map((id) => {
-      requestsForState = {
-        ...requestsForState,
-        [id]: { ...requestsForState[id], joinUser: this.state.loginUser.username },
-      };
-    });
+    }; //          fetchRequestAndSetData closing
 
     // Idから表示用に名前を取得。
     await replaceIdWithName('parent/', 'joinItem', 'name');
@@ -93,8 +88,8 @@ class Request_Waiting extends Component {
     await replaceIdWithName('user/', 'hostUser', 'username');
 
     // requestの状態を取引状況を取得(tableで状況によって表示を変えるため)
-    await setRequestValue('request/?request_deal=', 'denied');
-    await setRequestValue('request/?request_deal=', 'accepted');
+    await fetchRequestAndSetData('request/?request_deal=', 'denied');
+    await fetchRequestAndSetData('request/?request_deal=', 'accepted');
 
     await this.setState({ allRequests: requestsForState });
     this.setState({ loading: false });
@@ -114,7 +109,13 @@ class Request_Waiting extends Component {
         <div>
           <Header loginUser={this.state.loginUser} />
           <h1>送信したリクエスト一覧</h1>
-          <Request_Deal_Table allRequests={this.state.allRequests} loginUser={this.state.loginUser} jumpUrl="/request/"/>
+          <Request_Deal_Table
+            allRequests={this.state.allRequests}
+            loginUser={this.state.loginUser}
+            jumpUrl="/request/"
+            parentType="join"
+            requestOrDeal="request"
+          />
         </div>
       );
     }
