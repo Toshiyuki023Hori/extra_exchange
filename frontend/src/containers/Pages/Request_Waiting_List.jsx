@@ -110,7 +110,7 @@ class Request_Waiting extends Component {
           <Header loginUser={this.state.loginUser} />
           <h1>送信したリクエスト一覧</h1>
           <Request_Deal_Table
-            allRequests={this.state.allRequests}
+            requestDeal={this.state.allRequests}
             loginUser={this.state.loginUser}
             jumpUrl="/request/"
             parentType="join"
