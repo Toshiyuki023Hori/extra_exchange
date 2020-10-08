@@ -13,17 +13,17 @@ class Request_Deal_Table extends Component {
   };
 
   render() {
-    const { allRequests,parentType,requestOrDeal } = this.props;
+    const { requestDeal,parentType,requestOrDeal } = this.props;
     let tableHead;
     let tableData;
     let approveColumn;
 
     const checkStatus = (id) => {
-      if(allRequests[id]["denied"] === true){
+      if(requestDeal[id]["denied"] === true){
         return "拒否"
-      } else if(allRequests[id]["accepted"] === true){
+      } else if(requestDeal[id]["accepted"] === true){
         return "承認"
-      } else if(allRequests[id]["accepted"] === false){
+      } else if(requestDeal[id]["accepted"] === false){
         return "未承認"
       }
     };
@@ -40,14 +40,14 @@ class Request_Deal_Table extends Component {
         </>
       )
 
-      tableData = Object.keys(allRequests).map((id, idx) => {
+      tableData = Object.keys(requestDeal).map((id, idx) => {
         return (
           <>
             <tr onClick={() => this.jumpToUniquePage(id)}>
                 <TableData>{idx+1}</TableData>
-                <TableData>{allRequests[id]['hostItem']}</TableData>
-                <TableData>{allRequests[id]['hostUser']}</TableData>
-                <TableData>{allRequests[id]['joinItem']}</TableData>
+                <TableData>{requestDeal[id]['hostItem']}</TableData>
+                <TableData>{requestDeal[id]['hostUser']}</TableData>
+                <TableData>{requestDeal[id]['joinItem']}</TableData>
                 <TableData>{checkStatus(id)}</TableData>
             </tr>
           </>
@@ -64,14 +64,14 @@ class Request_Deal_Table extends Component {
         </>
       )
 
-      tableData = Object.keys(allRequests).map((id, idx) => {
+      tableData = Object.keys(requestDeal).map((id, idx) => {
         return (
           <>
             <tr onClick={() => this.jumpToUniquePage(id)}>
                 <TableData>{idx+1}</TableData>
-                <TableData>{allRequests[id]['joinItem']}</TableData>
-                <TableData>{allRequests[id]['joinUser']}</TableData>
-                <TableData>{allRequests[id]['hostItem']}</TableData>
+                <TableData>{requestDeal[id]['joinItem']}</TableData>
+                <TableData>{requestDeal[id]['joinUser']}</TableData>
+                <TableData>{requestDeal[id]['hostItem']}</TableData>
                 <TableData>{checkStatus(id)}</TableData>
             </tr>
           </>
@@ -79,10 +79,10 @@ class Request_Deal_Table extends Component {
       });
     }
 
-      if(allRequests === "送信された取引リクエストはありません。"){
+      if(requestDeal === "送信された取引リクエストはありません。"){
         return(
             <div>
-                <h3>{allRequests}</h3>;
+                <h3>{requestDeal}</h3>;
             </div>
         )
         } else {

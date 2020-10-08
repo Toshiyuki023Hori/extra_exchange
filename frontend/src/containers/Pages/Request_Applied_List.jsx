@@ -108,7 +108,7 @@ class Request_Applied_List extends Component {
           <Header loginUser={this.state.loginUser} />
           <h1>申請されたリクエスト一覧</h1>
           <Request_Deal_Table
-            allRequests={this.state.allRequests}
+            requestDeal={this.state.allRequests}
             loginUser={this.state.loginUser}
             jumpUrl="/request/confirm/"
             parentType="host"
