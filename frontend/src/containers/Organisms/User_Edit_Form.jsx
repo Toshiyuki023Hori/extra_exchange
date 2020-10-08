@@ -34,8 +34,8 @@ class User_Edit_Form extends Component {
   }
 
   async componentDidMount() {
-    const spreadAssign = (spreadKey, key, value) => {
-      this.setState({ [spreadKey]: { ...this.state[spreadKey], [key]: value } });
+    const spreadAssign = (spreadKey, name, value) => {
+      this.setState({ [spreadKey]: { ...this.state[spreadKey], [name]: value } });
     };
 
     if (this.state.info.icon != null) {
@@ -64,14 +64,14 @@ class User_Edit_Form extends Component {
   handleImageSelect = async (e) => {
     const name = e.target.name;
     const file = e.target.files[0];
-    // Submit用のオブジェクトにアップロードされたファイルを格納
     const { info } = this.state;
+    // Submit用のinfoオブジェクトにアップロードされたファイルを格納
     this.setState({
       info: { ...info, [name]: file },
     });
     console.log(this.state.info.icon);
     // console.log(this.state.info[name]);
-    // 画像プレビュー機能用のオブジェクトにDataURLに返還された画像URLを格納
+    // 画像プレビュー機能用のimgUrlsオブジェクトにDataURLに返還された画像URLを格納
     let reader = new FileReader();
     reader.onload = () => {
       this.setState({ imgUrls: { ...this.state.imgUrls, [name]: reader.result } });
@@ -97,12 +97,12 @@ class User_Edit_Form extends Component {
         await this.setState({ imgUrls: { ...this.state.imgUrls, [target]: null } });
         history.push('/user/edit');
       })
-      .catch((err) => console.log(err));
+      .catch((err) => window.alert(err.response.data));
   };
 
-  cancelUploadedImage = async (target) => {
-    await this.setState({ info: { ...this.state.info, [target]: this.props.loginUser.icon } });
-    await this.setState({ imgUrls: { ...this.state.imgUrls, [target]: null } });
+  cancelUploadedImage = async (clickedImage) => {
+    await this.setState({ info: { ...this.state.info, [clickedImage]: this.props.loginUser.[clickedImage] } });
+    await this.setState({ imgUrls: { ...this.state.imgUrls, [clickedImage]: null } });
   };
 
   //           ===========           ===========

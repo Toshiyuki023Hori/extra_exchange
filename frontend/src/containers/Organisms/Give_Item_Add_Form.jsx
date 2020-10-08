@@ -261,7 +261,7 @@ class Give_Item_Add_Form extends Component {
         console.log('Parent is ' + parentItem_id);
       })
       .catch((err) => {
-        console.log(err);
+        window.alert(err.response.data);
       });
 
     await axios
@@ -280,7 +280,7 @@ class Give_Item_Add_Form extends Component {
         console.log('giveItem is ' + giveItem_id);
       })
       .catch((err) => {
-        console.log(err);
+        window.alert(err.response.data)
       });
 
     this.state.info.images.map(async (image) => {
@@ -292,7 +292,7 @@ class Give_Item_Add_Form extends Component {
       axios
         .post(axiosUrl + 'image/', data, authHeader)
         .then((res) => console.log('You made it ! \n \n' + res.data))
-        .catch((err) => console.log(err));
+        .catch((err) => window.alert(err.response.data));
     });
 
   history.push("/top")

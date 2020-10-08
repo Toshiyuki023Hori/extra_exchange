@@ -53,73 +53,73 @@ class Request_Detail extends Component {
     // 閲覧者がjointUser以外ならリダイレクト
     if (this.state.requestDeal.joinUser != localStorage.getItem('uid')) {
       history.push('/top');
-    }
-
-    // Item_Tableに代入するためにhostItemを取得
-    // joinItemは名前表示のために、ParentItemからnameだけ取得
-    await axios
-      .all([
-        axios.get(localhostUrl + 'parent/' + hostItem_id),
-        axios.get(localhostUrl + 'parent/' + this.state.requestDeal.joinItem),
-        axios.get(localhostUrl + 'giveitem/?parent_item=' + hostItem_id),
-      ])
-      .then(
-        axios.spread((resHost, resJoin, resGive) => {
-          itemsForState = { [resHost.data.id]: resHost.data };
-          setItemsForState(hostItem_id, 'give_id', resGive.data[0].id);
-          setItemsForState(hostItem_id, 'state', resGive.data[0].state);
-          setItemsForState(hostItem_id, 'category', resGive.data[0].category);
-          setItemsForState(hostItem_id, 'detail', resGive.data[0].detail);
-          this.setState({ joinItem: resJoin.data });
-        })
-      )
-      .catch((err) => console.log(err)); // axios.all Closing
-
-    // idから表示用にnameを取得、置換。
-    await axios
-      .all([
-        axios.get(localhostUrl + 'bland/' + itemsForState[hostItem_id].bland),
-        axios.get(localhostUrl + 'category/' + itemsForState[hostItem_id].category),
-        axios.get(localhostUrl + 'user/' + itemsForState[hostItem_id].owner),
-      ])
-      .then(
-        axios.spread((resBland, resCategory, resUser) => {
-          setItemsForState(hostItem_id, 'bland', resBland.data.name);
-          setItemsForState(hostItem_id, 'category', resCategory.data.name);
-          setItemsForState(hostItem_id, 'owner', resUser.data.username);
-        })
-      )
-      .catch((err) => console.log(err));
-    // axios.all Closing
-
-    // hostItemの持つ画像を全件取得. State => Item_Tableへ
-    axios.get(localhostUrl + 'image/?item=' + itemsForState[hostItem_id]['give_id']).then((res) => {
-      res.data.map((imgObject) => {
-        this.setState({ itemImages: [...this.state.itemImages, imgObject.image] });
+    } else {
+      // Item_Tableに代入するためにhostItemを取得
+      // joinItemは名前表示のために、ParentItemからnameだけ取得
+      await axios
+        .all([
+          axios.get(localhostUrl + 'parent/' + hostItem_id),
+          axios.get(localhostUrl + 'parent/' + this.state.requestDeal.joinItem),
+          axios.get(localhostUrl + 'giveitem/?parent_item=' + hostItem_id),
+        ])
+        .then(
+          axios.spread((resHost, resJoin, resGive) => {
+            itemsForState = { [resHost.data.id]: resHost.data };
+            setItemsForState(hostItem_id, 'give_id', resGive.data[0].id);
+            setItemsForState(hostItem_id, 'state', resGive.data[0].state);
+            setItemsForState(hostItem_id, 'category', resGive.data[0].category);
+            setItemsForState(hostItem_id, 'detail', resGive.data[0].detail);
+            this.setState({ joinItem: resJoin.data });
+          })
+        )
+        .catch((err) => console.log(err)); // axios.all Closing
+  
+      // idから表示用にnameを取得、置換。
+      await axios
+        .all([
+          axios.get(localhostUrl + 'bland/' + itemsForState[hostItem_id].bland),
+          axios.get(localhostUrl + 'category/' + itemsForState[hostItem_id].category),
+          axios.get(localhostUrl + 'user/' + itemsForState[hostItem_id].owner),
+        ])
+        .then(
+          axios.spread((resBland, resCategory, resUser) => {
+            setItemsForState(hostItem_id, 'bland', resBland.data.name);
+            setItemsForState(hostItem_id, 'category', resCategory.data.name);
+            setItemsForState(hostItem_id, 'owner', resUser.data.username);
+          })
+        )
+        .catch((err) => console.log(err));
+      // axios.all Closing
+  
+      // hostItemの持つ画像を全件取得. State => Item_Tableへ
+      axios.get(localhostUrl + 'image/?item=' + itemsForState[hostItem_id]['give_id']).then((res) => {
+        res.data.map((imgObject) => {
+          this.setState({ itemImages: [...this.state.itemImages, imgObject.image] });
+        });
       });
-    });
-
-    // Meeting取得のために、requestを取得、requestのidを代入
-    await axios
-      .get(localhostUrl + 'request/?request_deal=' + this.state.requestDeal.id)
-      .then((res) => {
+  
+      // Meeting取得のために、requestを取得、requestのidを代入
+      await axios
+        .get(localhostUrl + 'request/?request_deal=' + this.state.requestDeal.id)
+        .then((res) => {
+          if (res.data.length !== 0) {
+            request_id = res.data[0].id;
+            this.setState({ request: res.data[0] });
+          }
+        })
+        .catch((err) => console.log(err));
+  
+      // request_idとリレーションを持つMeeting_Timeを取得
+      axios.get(localhostUrl + 'meeting/?request=' + request_id).then((res) => {
         if (res.data.length !== 0) {
-          request_id = res.data[0].id;
-          this.setState({ request: res.data[0] });
+          console.log(res);
+          this.setState({ allMeeting: res.data });
         }
-      })
-      .catch((err) => console.log(err));
-
-    // request_idとリレーションを持つMeeting_Timeを取得
-    axios.get(localhostUrl + 'meeting/?request=' + request_id).then((res) => {
-      if (res.data.length !== 0) {
-        console.log(res);
-        this.setState({ allMeeting: res.data });
-      }
-    });
-
-    await this.setState({ hostItem: itemsForState });
-    this.setState({ loading: false });
+      });
+  
+      await this.setState({ hostItem: itemsForState });
+      this.setState({ loading: false });
+    } // else closing
   }
 
   render() {

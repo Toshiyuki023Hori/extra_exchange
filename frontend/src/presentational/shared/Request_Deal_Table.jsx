@@ -1,16 +1,23 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import history from "../../history";
 
 class Request_Deal_Table extends Component {
   constructor(props) {
     super(props);
+    this.jumpToUniquePage = this.jumpToUniquePage.bind(this);
   }
 
+  jumpToUniquePage = (requestDeal_id) => {
+    history.push(this.props.jumpUrl + requestDeal_id)
+  };
+
   render() {
-    const { allRequests } = this.props;
-    let tableDate;
-    let status;
-    
+    const { allRequests,parentType,requestOrDeal } = this.props;
+    let tableHead;
+    let tableData;
+    let approveColumn;
+
     const checkStatus = (id) => {
       if(allRequests[id]["denied"] === true){
         return "拒否"
@@ -21,10 +28,22 @@ class Request_Deal_Table extends Component {
       }
     };
 
-    tableDate = Object.keys(allRequests).map((id, idx) => {
+    // hostUserとjoinUserでTableの並び順を変更
+    if(parentType === "join") {
+      tableHead = (
+        <>
+          <TableHead>番号</TableHead>
+          <TableHead>商品(ホスト側)</TableHead>
+          <TableHead>ホストユーザー</TableHead>
+          <TableHead>商品(ジョイン側)</TableHead>
+          <TableHead>承認</TableHead>
+        </>
+      )
+
+      tableData = Object.keys(allRequests).map((id, idx) => {
         return (
           <>
-            <tr>
+            <tr onClick={() => this.jumpToUniquePage(id)}>
                 <TableData>{idx+1}</TableData>
                 <TableData>{allRequests[id]['hostItem']}</TableData>
                 <TableData>{allRequests[id]['hostUser']}</TableData>
@@ -34,6 +53,31 @@ class Request_Deal_Table extends Component {
           </>
         );
       });
+    } else if(parentType === "host"){
+      tableHead = (
+        <>
+          <TableHead>番号</TableHead>
+          <TableHead>商品(ジョイン側)</TableHead>
+          <TableHead>ジョインユーザー</TableHead>
+          <TableHead>商品(ホスト側)</TableHead>
+          <TableHead>承認</TableHead>
+        </>
+      )
+
+      tableData = Object.keys(allRequests).map((id, idx) => {
+        return (
+          <>
+            <tr onClick={() => this.jumpToUniquePage(id)}>
+                <TableData>{idx+1}</TableData>
+                <TableData>{allRequests[id]['joinItem']}</TableData>
+                <TableData>{allRequests[id]['joinUser']}</TableData>
+                <TableData>{allRequests[id]['hostItem']}</TableData>
+                <TableData>{checkStatus(id)}</TableData>
+            </tr>
+          </>
+        );
+      });
+    }
 
       if(allRequests === "送信された取引リクエストはありません。"){
         return(
@@ -47,16 +91,12 @@ class Request_Deal_Table extends Component {
                 <TableSelf>
                     <thead>
                         <tr>
-                            <TableHead>番号</TableHead>
-                            <TableHead>商品(ホスト側)</TableHead>
-                            <TableHead>ホストユーザー</TableHead>
-                            <TableHead>商品(ジョイン側)</TableHead>
-                            <TableHead>承認</TableHead>
+                            {tableHead}
                         </tr>
                     </thead>
 
                     <tbody>
-                        {tableDate}
+                          {tableData}
                     </tbody>
                 </TableSelf>
                 </div>
