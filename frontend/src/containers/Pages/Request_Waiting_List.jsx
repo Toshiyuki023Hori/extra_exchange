@@ -50,13 +50,13 @@ class Request_Waiting extends Component {
     // requestsForStateのidを表示用にnameに置換する関数
     const replaceIdWithName = async (url, key, value) => {
       await Promise.all(
-        Object.keys(requestsForState).map(async (id) => {
+        Object.keys(requestsForState).map(async (requestDeal_id) => {
           await axios
-            .get(localhostUrl + url + requestsForState[id][key])
+            .get(localhostUrl + url + requestsForState[requestDeal_id][key])
             .then((res) => {
               requestsForState = {
                 ...requestsForState,
-                [id]: { ...requestsForState[id], [key]: res.data[value] },
+                [requestDeal_id]: { ...requestsForState[requestDeal_id], [key]: res.data[value] },
               };
             })
             .catch((err) => console.log(err));
@@ -67,14 +67,16 @@ class Request_Waiting extends Component {
     // request_deal_id = request.idのRequestを取得し、dataをrequestsForStateへセットする関数
     const fetchRequestAndSetData = async (url, key) => {
       await Promise.all(
-        Object.keys(requestsForState).map(async (id) => {
+        Object.keys(requestsForState).map(async (requestDeal_id) => {
           await axios
-            .get(localhostUrl + url + id)
+            .get(localhostUrl + url + requestDeal_id)
             .then((res) => {
+              // RequestはRequest_Dealが存在する際は必ず存在
+              //　したがって条件分岐でres.data.length === 0とデータが無い場合を考慮する必要なし。
               console.log(res.data);
               requestsForState = {
                 ...requestsForState,
-                [id]: { ...requestsForState[id], [key]: res.data[0][key] },
+                [requestDeal_id]: { ...requestsForState[requestDeal_id], [key]: res.data[0][key] },
               };
             })
             .catch((err) => console.log(err));

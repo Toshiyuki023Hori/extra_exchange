@@ -347,6 +347,8 @@ class Deal(models.Model):
     meeting_time = models.DateTimeField()
     completed = models.BooleanField(default=False)
     join_user_accept = models.BooleanField(default=False)
+    # 一つの取引から複数の購入履歴には結びつかない。
+    # => 無効に修正。
     # history = models.ForeignKey(
     #     "History", on_delete=models.CASCADE, null=True, related_name="done_deal")
     request_deal = models.OneToOneField(
