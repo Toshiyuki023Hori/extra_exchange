@@ -5,6 +5,7 @@ import axios from 'axios';
 class Deal_Proceeding_List extends Component {
   constructor(props) {
     super(props);
+    this.state
   }
 }
 
