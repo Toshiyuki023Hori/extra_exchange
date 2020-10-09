@@ -24,6 +24,7 @@ import Request_Detail from "./containers/Pages/Request_Detail";
 import Request_Waiting_List from "./containers/Pages/Request_Waiting_List";
 import Request_Applied_List from "./containers/Pages/Request_Applied_List";
 import Request_Confirm from "./containers/Pages/Request_Confirm";
+import Deal_Proceeding_List from "./containers/Pages/Deal_Proceeding_List";
 import Allcategories from './containers/Pages/Allcategories';
 
 class App extends Component {
@@ -120,6 +121,10 @@ class App extends Component {
           <Route
             path="/request/:requestDeal_id"
             render={(routeProps) => <Request_Detail {...routeProps} {...this.props} />}
+          />
+          <Route
+            path="/deal/proceeding"
+            render={(routeProps) => <Deal_Proceeding_List {...routeProps} {...this.props} />}
           />
           <Redirect to="/top" />
           {/* <Route

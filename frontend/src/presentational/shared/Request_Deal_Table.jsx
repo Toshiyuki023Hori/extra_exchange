@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import history from "../../history";
+import history from '../../history';
 
 class Request_Deal_Table extends Component {
   constructor(props) {
@@ -9,27 +9,31 @@ class Request_Deal_Table extends Component {
   }
 
   jumpToUniquePage = (requestDeal_id) => {
-    history.push(this.props.jumpUrl + requestDeal_id)
+    history.push(this.props.jumpUrl + requestDeal_id);
   };
 
   render() {
-    const { requestDeal,parentType,requestOrDeal } = this.props;
+    const { requestDeal, parentType, requestOrDeal } = this.props;
     let tableHead;
     let tableData;
     let approveColumn;
 
     const checkStatus = (id) => {
-      if(requestDeal[id]["denied"] === true){
-        return "拒否"
-      } else if(requestDeal[id]["accepted"] === true){
-        return "承認"
-      } else if(requestDeal[id]["accepted"] === false){
-        return "未承認"
+      if (requestDeal[id]['denied'] === true) {
+        return '拒否';
+      } else if (requestDeal[id]['accepted'] === true) {
+        return '承認';
+      } else if (requestDeal[id]['accepted'] === false) {
+        return '未承認';
+      } else if (requestDeal[id]['joinUserAccept'] === true) {
+        return '済';
+      } else if (requestDeal[id]['joinUserAccept'] === false) {
+        return '未';
       }
     };
 
     // hostUserとjoinUserでTableの並び順を変更
-    if(parentType === "join") {
+    if (parentType === 'join') {
       tableHead = (
         <>
           <TableHead>番号</TableHead>
@@ -38,22 +42,22 @@ class Request_Deal_Table extends Component {
           <TableHead>商品(ジョイン側)</TableHead>
           <TableHead>承認</TableHead>
         </>
-      )
+      );
 
       tableData = Object.keys(requestDeal).map((id, idx) => {
         return (
           <>
             <tr onClick={() => this.jumpToUniquePage(id)}>
-                <TableData>{idx+1}</TableData>
-                <TableData>{requestDeal[id]['hostItem']}</TableData>
-                <TableData>{requestDeal[id]['hostUser']}</TableData>
-                <TableData>{requestDeal[id]['joinItem']}</TableData>
-                <TableData>{checkStatus(id)}</TableData>
+              <TableData>{idx + 1}</TableData>
+              <TableData>{requestDeal[id]['hostItem']}</TableData>
+              <TableData>{requestDeal[id]['hostUser']}</TableData>
+              <TableData>{requestDeal[id]['joinItem']}</TableData>
+              <TableData>{checkStatus(id)}</TableData>
             </tr>
           </>
         );
       });
-    } else if(parentType === "host"){
+    } else if (parentType === 'host') {
       tableHead = (
         <>
           <TableHead>番号</TableHead>
@@ -62,53 +66,79 @@ class Request_Deal_Table extends Component {
           <TableHead>商品(ホスト側)</TableHead>
           <TableHead>承認</TableHead>
         </>
-      )
+      );
 
       tableData = Object.keys(requestDeal).map((id, idx) => {
         return (
           <>
             <tr onClick={() => this.jumpToUniquePage(id)}>
-                <TableData>{idx+1}</TableData>
-                <TableData>{requestDeal[id]['joinItem']}</TableData>
-                <TableData>{requestDeal[id]['joinUser']}</TableData>
-                <TableData>{requestDeal[id]['hostItem']}</TableData>
-                <TableData>{checkStatus(id)}</TableData>
+              <TableData>{idx + 1}</TableData>
+              <TableData>{requestDeal[id]['joinItem']}</TableData>
+              <TableData>{requestDeal[id]['joinUser']}</TableData>
+              <TableData>{requestDeal[id]['hostItem']}</TableData>
+              <TableData>{checkStatus(id)}</TableData>
+            </tr>
+          </>
+        );
+      });
+    } else if (requestOrDeal === 'deal') {
+      tableHead = (
+        <>
+          <TableHead>番号</TableHead>
+          <TableHead>商品(ホスト側)</TableHead>
+          <TableHead>ホストユーザー</TableHead>
+          <TableHead>商品(ジョイン側)</TableHead>
+          <TableHead>ジョインユーザー</TableHead>
+          <TableHead>受取確認(ジョイン)</TableHead>
+        </>
+      );
+
+      tableData = Object.keys(requestDeal).map((id, idx) => {
+        return (
+          <>
+            <tr onClick={() => this.jumpToUniquePage(id)}>
+              <TableData>{idx + 1}</TableData>
+              <TableData>{requestDeal[id]['hostItem']}</TableData>
+              <TableData>{requestDeal[id]['hostUser']}</TableData>
+              <TableData>{requestDeal[id]['joinItem']}</TableData>
+              <TableData>{requestDeal[id]['joinUser']}</TableData>
+              <TableData>{checkStatus(id)}</TableData>
             </tr>
           </>
         );
       });
     }
 
-      if(requestDeal === "送信された取引リクエストはありません。"){
-        return(
-            <div>
-                <h3>{requestDeal}</h3>;
-            </div>
-        )
-        } else {
-            return (
-                <div>
-                <TableSelf>
-                    <thead>
-                        <tr>
-                            {tableHead}
-                        </tr>
-                    </thead>
+    if (
+      requestDeal === '送信された取引リクエストはありません。' ||
+      requestDeal === '申請されているリクエストはありません。' ||
+      requestDeal === '進行中の取引はありません。'
+    ) {
+      return (
+        <div>
+          <h3>{requestDeal}</h3>
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <TableSelf>
+            <thead>
+              <tr>{tableHead}</tr>
+            </thead>
 
-                    <tbody>
-                          {tableData}
-                    </tbody>
-                </TableSelf>
-                </div>
-            );
-        }
+            <tbody>{tableData}</tbody>
+          </TableSelf>
+        </div>
+      );
+    }
   }
 }
 
 export default Request_Deal_Table;
 
 const TableSelf = styled.table`
-  width : 70%;
+  width: 70%;
   border: solid 2px;
   border-collapse: collapse;
 `;
@@ -117,13 +147,13 @@ const TableHead = styled.th`
   background: aliceblue;
   color: black;
   font-weight: bold;
-  padding:24px 21px;
+  padding: 24px 21px;
   border: 2px solid;
 `;
 
 const TableData = styled.td`
   padding: 10px;
-  padding:24px 21px;
+  padding: 24px 21px;
   border: solid 2px;
-  text-align:center;
+  text-align: center;
 `;
