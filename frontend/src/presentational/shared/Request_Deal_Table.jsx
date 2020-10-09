@@ -8,8 +8,22 @@ class Request_Deal_Table extends Component {
     this.jumpToUniquePage = this.jumpToUniquePage.bind(this);
   }
 
-  jumpToUniquePage = (requestDeal_id) => {
-    history.push(this.props.jumpUrl + requestDeal_id);
+  jumpToUniquePage = (reqDealObj, requestDeal_id) => {
+    // propsでloginUserを持つのはDeal_Proceedingのみ
+    // join,hostそれぞれのページにジャンプさせる。
+    if (
+      reqDealObj[requestDeal_id]['joinUser'] === this.props.loginUser.username &&
+      this.props.requestOrDeal === 'deal'
+    ) {
+      history.push(this.props.joinUserUrl + requestDeal_id);
+    } else if (
+      reqDealObj[requestDeal_id]['hostUser'] === this.props.loginUser.username &&
+      this.props.requestOrDeal === 'deal'
+    ) {
+      history.push(this.props.hostUserUrl + requestDeal_id);
+    } else {
+      history.push(this.props.jumpUrl + requestDeal_id);
+    }
   };
 
   render() {
@@ -47,7 +61,7 @@ class Request_Deal_Table extends Component {
       tableData = Object.keys(requestDeal).map((id, idx) => {
         return (
           <>
-            <tr onClick={() => this.jumpToUniquePage(id)}>
+            <tr onClick={() => this.jumpToUniquePage(requestDeal, id)}>
               <TableData>{idx + 1}</TableData>
               <TableData>{requestDeal[id]['hostItem']}</TableData>
               <TableData>{requestDeal[id]['hostUser']}</TableData>
@@ -71,7 +85,7 @@ class Request_Deal_Table extends Component {
       tableData = Object.keys(requestDeal).map((id, idx) => {
         return (
           <>
-            <tr onClick={() => this.jumpToUniquePage(id)}>
+            <tr onClick={() => this.jumpToUniquePage(requestDeal, id)}>
               <TableData>{idx + 1}</TableData>
               <TableData>{requestDeal[id]['joinItem']}</TableData>
               <TableData>{requestDeal[id]['joinUser']}</TableData>
@@ -96,7 +110,7 @@ class Request_Deal_Table extends Component {
       tableData = Object.keys(requestDeal).map((id, idx) => {
         return (
           <>
-            <tr onClick={() => this.jumpToUniquePage(id)}>
+            <tr onClick={() => this.jumpToUniquePage(requestDeal, id)}>
               <TableData>{idx + 1}</TableData>
               <TableData>{requestDeal[id]['hostItem']}</TableData>
               <TableData>{requestDeal[id]['hostUser']}</TableData>

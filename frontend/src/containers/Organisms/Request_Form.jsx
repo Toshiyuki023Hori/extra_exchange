@@ -300,7 +300,7 @@ class Request_Form extends Component {
               .catch((err) => console.log(err));
           }
 
-          history.push("/request/check")
+          history.push("/request/waiting")
         } //if (this.state.message.date1 == '') end
       } //  else closing
     } //    if(result) closing

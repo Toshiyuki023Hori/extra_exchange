@@ -20,11 +20,13 @@ import Give_Item_Add from './containers/Pages/Give_Item_Add';
 import Give_Item_Detail from './containers/Pages/Give_Item_Detail';
 import Give_Item_Edit from './containers/Pages/Give_Item_Edit';
 import Request_Send from './containers/Pages/Request_Send';
-import Request_Detail from "./containers/Pages/Request_Detail";
-import Request_Waiting_List from "./containers/Pages/Request_Waiting_List";
-import Request_Applied_List from "./containers/Pages/Request_Applied_List";
-import Request_Confirm from "./containers/Pages/Request_Confirm";
-import Deal_Proceeding_List from "./containers/Pages/Deal_Proceeding_List";
+import Request_Detail from './containers/Pages/Request_Detail';
+import Request_Waiting_List from './containers/Pages/Request_Waiting_List';
+import Request_Applied_List from './containers/Pages/Request_Applied_List';
+import Request_Confirm from './containers/Pages/Request_Confirm';
+import Deal_Proceeding_JoinUser from './containers/Pages/Deal_Proceeding_JoinUser';
+import Deal_Proceeding_HostUser from './containers/Pages/Deal_Proceeding_HostUser';
+import Deal_Detail_JoinUser from './containers/Pages/Deal_Detail_JoinUser';
 import Allcategories from './containers/Pages/Allcategories';
 
 class App extends Component {
@@ -123,8 +125,18 @@ class App extends Component {
             render={(routeProps) => <Request_Detail {...routeProps} {...this.props} />}
           />
           <Route
-            path="/deal/proceeding"
-            render={(routeProps) => <Deal_Proceeding_List {...routeProps} {...this.props} />}
+            exact
+            path="/deal/proceeding/host"
+            render={(routeProps) => <Deal_Proceeding_HostUser {...routeProps} {...this.props} />}
+          />
+          <Route
+            exact
+            path="/deal/proceeding/join"
+            render={(routeProps) => <Deal_Proceeding_JoinUser {...routeProps} {...this.props} />}
+          />
+          <Route
+            path="/deal/join/:requestDeal_id"
+            render={(routeProps) => <Deal_Detail_JoinUser {...routeProps} {...this.props} />}
           />
           <Redirect to="/top" />
           {/* <Route

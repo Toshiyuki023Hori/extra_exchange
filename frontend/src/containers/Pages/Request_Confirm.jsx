@@ -193,7 +193,7 @@ class Request_Confirm extends Component {
             },
             authHeader
           )
-          .then((res) => console.log(res.data))
+          .then((res) => history.push("/deal/proceeding/host"))
           .catch((err) => console.log(err));
       }
     }

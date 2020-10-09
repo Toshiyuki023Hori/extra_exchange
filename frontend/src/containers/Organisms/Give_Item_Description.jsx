@@ -91,16 +91,21 @@ class Give_Item_Description extends Component {
       if(res.data.length !== 0){
         requestDealsOfUser = res.data;
         console.log(requestDealsOfUser)
+      }else {
+        requestDealsOfUser = "リクエスト送信なし"
       }
     })
     .catch((err) => console.log(err));
 
+    // loginUserが一件でもリクエストを送っていたら
     // 取得したrequest_dealの中で、host_itemと一致してるか確認
     // hostItem = parent_id => リクエスト送信済
-    for(const reqDealObj of requestDealsOfUser){
-      console.log(reqDealObj.hostItem)
-      if(reqDealObj.hostItem === parent_id){
-        this.setState({sentRequest : true})
+    if(requestDealsOfUser !== 'リクエスト送信なし'){
+      for(const reqDealObj of requestDealsOfUser){
+        console.log(reqDealObj.hostItem)
+        if(reqDealObj.hostItem === parent_id){
+          this.setState({sentRequest : true})
+        }
       }
     }
 
