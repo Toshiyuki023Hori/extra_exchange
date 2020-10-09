@@ -36,58 +36,60 @@ class Request_Applied_List extends Component {
         if (res.data.length !== 0) {
           allRequestDeal = res.data;
         } else {
-          allRequestDeal = '申請されているリクエストはありません。';
+          requestsForState = '申請されているリクエストはありません。';
         }
       })
       .catch((err) => console.log(err));
 
-    // 各情報をrequest_deal毎にまとめるためにkeyがrequest_deal_idのオブジェクトを作成。
-    for (const requestDealObj of allRequestDeal) {
-      requestsForState = { ...requestsForState, [requestDealObj.id]: requestDealObj };
-    }
-
-    // requestsForStateのidを表示用にnameに置換する関数
-    const replaceIdWithName = async (url, key, value) => {
-      await Promise.all(
-        Object.keys(requestsForState).map(async (id) => {
-          await axios
-            .get(localhostUrl + url + requestsForState[id][key])
-            .then((res) => {
-              requestsForState = {
-                ...requestsForState,
-                [id]: { ...requestsForState[id], [key]: res.data[value] },
-              };
-            })
-            .catch((err) => console.log(err));
-        }) // map closing
-      ); //   Promise.all closing
-    }; //          replaceIdWithName closing
-
-    // request_deal_id = request.idのRequestを取得し、dataをrequestsForStateへセットする関数
-    const fetchRequestAndSetData = async (url, key) => {
-      await Promise.all(
-        Object.keys(requestsForState).map(async (id) => {
-          await axios
-            .get(localhostUrl + url + id)
-            .then((res) => {
-              requestsForState = {
-                ...requestsForState,
-                [id]: { ...requestsForState[id], [key]: res.data[0][key] },
-              };
-            })
-            .catch((err) => console.log(err));
-        }) // map closing
-      ); //   Promise.all closing
-    }; //          fetchRequestAndSetData closing
-
-    // Idから表示用に名前を取得。
-    await replaceIdWithName('parent/', 'joinItem', 'name');
-    await replaceIdWithName('parent/', 'hostItem', 'name');
-    await replaceIdWithName('user/', 'joinUser', 'username');
-
-    // requestの状態を取引状況を取得(tableで状況によって表示を変えるため)
-    await fetchRequestAndSetData('request/?request_deal=', 'denied');
-    await fetchRequestAndSetData('request/?request_deal=', 'accepted');
+    if(requestsForState !== "申請されているリクエストはありません。"){
+      // 各情報をrequest_deal毎にまとめるためにkeyがrequest_deal_idのオブジェクトを作成。
+      for (const requestDealObj of allRequestDeal) {
+        requestsForState = { ...requestsForState, [requestDealObj.id]: requestDealObj };
+      }
+  
+      // requestsForStateのidを表示用にnameに置換する関数
+      const replaceIdWithName = async (url, key, value) => {
+        await Promise.all(
+          Object.keys(requestsForState).map(async (id) => {
+            await axios
+              .get(localhostUrl + url + requestsForState[id][key])
+              .then((res) => {
+                requestsForState = {
+                  ...requestsForState,
+                  [id]: { ...requestsForState[id], [key]: res.data[value] },
+                };
+              })
+              .catch((err) => console.log(err));
+          }) // map closing
+        ); //   Promise.all closing
+      }; //          replaceIdWithName closing
+  
+      // request_deal_id = request.idのRequestを取得し、dataをrequestsForStateへセットする関数
+      const fetchRequestAndSetData = async (url, key) => {
+        await Promise.all(
+          Object.keys(requestsForState).map(async (id) => {
+            await axios
+              .get(localhostUrl + url + id)
+              .then((res) => {
+                requestsForState = {
+                  ...requestsForState,
+                  [id]: { ...requestsForState[id], [key]: res.data[0][key] },
+                };
+              })
+              .catch((err) => console.log(err));
+          }) // map closing
+        ); //   Promise.all closing
+      }; //          fetchRequestAndSetData closing
+  
+      // Idから表示用に名前を取得。
+      await replaceIdWithName('parent/', 'joinItem', 'name');
+      await replaceIdWithName('parent/', 'hostItem', 'name');
+      await replaceIdWithName('user/', 'joinUser', 'username');
+  
+      // requestの状態を取引状況を取得(tableで状況によって表示を変えるため)
+      await fetchRequestAndSetData('request/?request_deal=', 'denied');
+      await fetchRequestAndSetData('request/?request_deal=', 'accepted');
+    } // if(allRequestDeal.length > 0) closing
 
     await this.setState({ allRequests: requestsForState });
     this.setState({ loading: false });

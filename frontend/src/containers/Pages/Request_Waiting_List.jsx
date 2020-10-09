@@ -37,61 +37,66 @@ class Request_Waiting extends Component {
         if (res.data.length !== 0) {
           allRequestDeal = res.data;
         } else {
-          allRequestDeal = '送信された取引リクエストはありません。';
+          requestsForState = '送信された取引リクエストはありません。';
         }
       })
       .catch((err) => console.log(err));
 
-    // 各情報をrequest_deal毎にまとめるためにkeyがrequest_deal_idのオブジェクトを作成。
-    for (const requestDealObj of allRequestDeal) {
-      requestsForState = { ...requestsForState, [requestDealObj.id]: requestDealObj };
-    }
+    if (requestsForState !== '送信された取引リクエストはありません。') {
+      // 各情報をrequest_deal毎にまとめるためにkeyがrequest_deal_idのオブジェクトを作成。
+      for (const requestDealObj of allRequestDeal) {
+        requestsForState = { ...requestsForState, [requestDealObj.id]: requestDealObj };
+      }
 
-    // requestsForStateのidを表示用にnameに置換する関数
-    const replaceIdWithName = async (url, key, value) => {
-      await Promise.all(
-        Object.keys(requestsForState).map(async (requestDeal_id) => {
-          await axios
-            .get(localhostUrl + url + requestsForState[requestDeal_id][key])
-            .then((res) => {
-              requestsForState = {
-                ...requestsForState,
-                [requestDeal_id]: { ...requestsForState[requestDeal_id], [key]: res.data[value] },
-              };
-            })
-            .catch((err) => console.log(err));
-        }) // map closing
-      ); //   Promise.all closing
-    }; //          replaceIdWithName closing
+      // requestsForStateのidを表示用にnameに置換する関数
+      const replaceIdWithName = async (url, key, value) => {
+        await Promise.all(
+          Object.keys(requestsForState).map(async (requestDeal_id) => {
+            await axios
+              .get(localhostUrl + url + requestsForState[requestDeal_id][key])
+              .then((res) => {
+                requestsForState = {
+                  ...requestsForState,
+                  [requestDeal_id]: { ...requestsForState[requestDeal_id], [key]: res.data[value] },
+                };
+              })
+              .catch((err) => console.log(err));
+          }) // map closing
+        ); //   Promise.all closing
+      }; //          replaceIdWithName closing
 
-    // request_deal_id = request.idのRequestを取得し、dataをrequestsForStateへセットする関数
-    const fetchRequestAndSetData = async (url, key) => {
-      await Promise.all(
-        Object.keys(requestsForState).map(async (requestDeal_id) => {
-          await axios
-            .get(localhostUrl + url + requestDeal_id)
-            .then((res) => {
-              // RequestはRequest_Dealが存在する際は必ず存在
-              //　したがって条件分岐でres.data.length === 0とデータが無い場合を考慮する必要なし。
-              console.log(res.data);
-              requestsForState = {
-                ...requestsForState,
-                [requestDeal_id]: { ...requestsForState[requestDeal_id], [key]: res.data[0][key] },
-              };
-            })
-            .catch((err) => console.log(err));
-        }) // map closing
-      ); //   Promise.all closing
-    }; //          fetchRequestAndSetData closing
+      // request_deal_id = request.idのRequestを取得し、dataをrequestsForStateへセットする関数
+      const fetchRequestAndSetData = async (url, key) => {
+        await Promise.all(
+          Object.keys(requestsForState).map(async (requestDeal_id) => {
+            await axios
+              .get(localhostUrl + url + requestDeal_id)
+              .then((res) => {
+                // RequestはRequest_Dealが存在する際は必ず存在
+                //　したがって条件分岐でres.data.length === 0とデータが無い場合を考慮する必要なし。
+                console.log(res.data);
+                requestsForState = {
+                  ...requestsForState,
+                  [requestDeal_id]: {
+                    ...requestsForState[requestDeal_id],
+                    [key]: res.data[0][key],
+                  },
+                };
+              })
+              .catch((err) => console.log(err));
+          }) // map closing
+        ); //   Promise.all closing
+      }; //          fetchRequestAndSetData closing
 
-    // Idから表示用に名前を取得。
-    await replaceIdWithName('parent/', 'joinItem', 'name');
-    await replaceIdWithName('parent/', 'hostItem', 'name');
-    await replaceIdWithName('user/', 'hostUser', 'username');
+      // Idから表示用に名前を取得。
+      await replaceIdWithName('parent/', 'joinItem', 'name');
+      await replaceIdWithName('parent/', 'hostItem', 'name');
+      await replaceIdWithName('user/', 'hostUser', 'username');
 
-    // requestの状態を取引状況を取得(tableで状況によって表示を変えるため)
-    await fetchRequestAndSetData('request/?request_deal=', 'denied');
-    await fetchRequestAndSetData('request/?request_deal=', 'accepted');
+      // requestの状態を取引状況を取得(tableで状況によって表示を変えるため)
+      await fetchRequestAndSetData('request/?request_deal=', 'denied');
+      await fetchRequestAndSetData('request/?request_deal=', 'accepted');
+    } // if(requestsForState.length > 0) closing
 
     await this.setState({ allRequests: requestsForState });
     this.setState({ loading: false });
