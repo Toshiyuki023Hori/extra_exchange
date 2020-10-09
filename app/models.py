@@ -166,6 +166,7 @@ class Give_Item(models.Model):
     )
     state = models.CharField(max_length=20, choices=ITEM_STATE)
     detail = models.TextField(max_length=800, blank=True, null=True)
+done_deal = models.BooleanField(default=False)
     # Give_Itemが削除された時、Categoryも同時に削除されてはいけないためnull = True
     category = models.ForeignKey(
         "Category", on_delete=models.SET_NULL, null=True, related_name="give_item")
