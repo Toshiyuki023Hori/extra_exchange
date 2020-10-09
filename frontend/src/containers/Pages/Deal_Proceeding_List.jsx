@@ -4,6 +4,7 @@ import { Redirect } from 'react-router-dom';
 import Header from '../Organisms/Header';
 import axios from 'axios';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Request_Deal_Table from "../../presentational/shared/Request_Deal_Table";
 
 class Deal_Proceeding_List extends Component {
   constructor(props) {
@@ -85,6 +86,17 @@ class Deal_Proceeding_List extends Component {
     }; // fetchDealAndSetData closing
 
     // Request_Deal_Tableに渡すために、idからnameへ置換
+    await Promise.all(
+      Object.keys(requestDeals).map((requestDeal_id) => {
+        requestDeals = {
+          ...requestDeals,
+          [requestDeal_id]: {
+            ...requestDeals[requestDeal_id],
+            hostUser: this.state.loginUser.username,
+          },
+        };
+      })
+    );
     await replaceIdWithName('user/', 'joinUser', 'username');
     await replaceIdWithName('parent/', 'hostItem', 'name');
     await replaceIdWithName('parent/', 'joinItem', 'name');
@@ -95,7 +107,7 @@ class Deal_Proceeding_List extends Component {
 
     // dealしか持っていないPropertyを用いて、dealのみを抽出
     for (const requestDeal_id in requestDeals) {
-      console.log(requestDeals[requestDeal_id]['meetingTime'])
+      console.log(requestDeals[requestDeal_id]['meetingTime']);
       if (requestDeals[requestDeal_id]['meetingTime']) {
         dealsForState = { ...dealsForState, [requestDeal_id]: requestDeals[requestDeal_id] };
       }
@@ -106,7 +118,7 @@ class Deal_Proceeding_List extends Component {
       dealsForState = '進行中の取引はありません。';
     }
 
-    console.log(dealsForState)
+    console.log(dealsForState);
 
     await this.setState({ allDeals: dealsForState });
     this.setState({ loading: false });
@@ -123,6 +135,12 @@ class Deal_Proceeding_List extends Component {
         <div>
           <Header loginUser={this.state.loginUser} />
           <h1>進行中の取引一覧</h1>
+          <Request_Deal_Table
+            requestDeal={this.state.allDeals}
+            loginUser={this.state.loginUser}
+            jumpUrl="/deal/"
+            requestOrDeal="deal"
+          />
         </div>
       );
     }

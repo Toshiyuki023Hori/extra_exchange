@@ -25,6 +25,10 @@ class Request_Deal_Table extends Component {
         return "承認"
       } else if(requestDeal[id]["accepted"] === false){
         return "未承認"
+      } else if(requestDeal[id]["joinUserAccept"] === true){
+        return "済"
+      } else if(requestDeal[id]["joinUserAccept"] === false){
+        return "未"
       }
     };
 
@@ -72,6 +76,32 @@ class Request_Deal_Table extends Component {
                 <TableData>{requestDeal[id]['joinItem']}</TableData>
                 <TableData>{requestDeal[id]['joinUser']}</TableData>
                 <TableData>{requestDeal[id]['hostItem']}</TableData>
+                <TableData>{checkStatus(id)}</TableData>
+            </tr>
+          </>
+        );
+      });
+    } else if (requestOrDeal === "deal"){
+      tableHead = (
+        <>
+          <TableHead>番号</TableHead>
+          <TableHead>商品(ホスト側)</TableHead>
+          <TableHead>ホストユーザー</TableHead>
+          <TableHead>商品(ジョイン側)</TableHead>
+          <TableHead>ジョインユーザー</TableHead>
+          <TableHead>受取確認(ジョイン)</TableHead>
+        </>
+      )
+
+      tableData = Object.keys(requestDeal).map((id, idx) => {
+        return (
+          <>
+            <tr onClick={() => this.jumpToUniquePage(id)}>
+                <TableData>{idx+1}</TableData>
+                <TableData>{requestDeal[id]['hostItem']}</TableData>
+                <TableData>{requestDeal[id]['hostUser']}</TableData>
+                <TableData>{requestDeal[id]['joinItem']}</TableData>
+                <TableData>{requestDeal[id]['joinUser']}</TableData>
                 <TableData>{checkStatus(id)}</TableData>
             </tr>
           </>
