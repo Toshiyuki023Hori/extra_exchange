@@ -73,31 +73,43 @@ class Request_Detail extends Component {
           })
         )
         .catch((err) => console.log(err)); // axios.all Closing
-  
+
+      console.log(itemsForState);
+
+      // blandは任意fieldで対応が異なる。axios.allに同居できない。
+      if (itemsForState[hostItem_id]['bland'] !== null) {
+        await axios
+          .get(localhostUrl + 'bland/' + itemsForState[hostItem_id].bland)
+          .then((res) => setItemsForState(hostItem_id, 'bland', res.data.name))
+          .catch((err) => console.log(err));
+      } else {
+        setItemsForState(hostItem_id, 'bland', 'なし');
+      }
       // idから表示用にnameを取得、置換。
       await axios
         .all([
-          axios.get(localhostUrl + 'bland/' + itemsForState[hostItem_id].bland),
           axios.get(localhostUrl + 'category/' + itemsForState[hostItem_id].category),
           axios.get(localhostUrl + 'user/' + itemsForState[hostItem_id].owner),
         ])
         .then(
-          axios.spread((resBland, resCategory, resUser) => {
-            setItemsForState(hostItem_id, 'bland', resBland.data.name);
+          axios.spread((resCategory, resUser) => {
             setItemsForState(hostItem_id, 'category', resCategory.data.name);
+            console.log(itemsForState);
             setItemsForState(hostItem_id, 'owner', resUser.data.username);
           })
         )
         .catch((err) => console.log(err));
       // axios.all Closing
-  
+
       // hostItemの持つ画像を全件取得. State => Item_Tableへ
-      axios.get(localhostUrl + 'image/?item=' + itemsForState[hostItem_id]['give_id']).then((res) => {
-        res.data.map((imgObject) => {
-          this.setState({ itemImages: [...this.state.itemImages, imgObject.image] });
+      axios
+        .get(localhostUrl + 'image/?item=' + itemsForState[hostItem_id]['give_id'])
+        .then((res) => {
+          res.data.map((imgObject) => {
+            this.setState({ itemImages: [...this.state.itemImages, imgObject.image] });
+          });
         });
-      });
-  
+
       // Meeting取得のために、requestを取得、requestのidを代入
       await axios
         .get(localhostUrl + 'request/?request_deal=' + this.state.requestDeal.id)
@@ -108,7 +120,7 @@ class Request_Detail extends Component {
           }
         })
         .catch((err) => console.log(err));
-  
+
       // request_idとリレーションを持つMeeting_Timeを取得
       axios.get(localhostUrl + 'meeting/?request=' + request_id).then((res) => {
         if (res.data.length !== 0) {
@@ -116,7 +128,7 @@ class Request_Detail extends Component {
           this.setState({ allMeeting: res.data });
         }
       });
-  
+
       await this.setState({ hostItem: itemsForState });
       this.setState({ loading: false });
     } // else closing
@@ -147,16 +159,16 @@ class Request_Detail extends Component {
     };
 
     if (request.denied === true) {
-        requestStatusView = (
-            <>
-              <p>拒否</p>
-              <p>{request.deniedReason}</p>
-            </>
-          );
+      requestStatusView = (
+        <>
+          <p>拒否</p>
+          <p>{request.deniedReason}</p>
+        </>
+      );
     } else if (request.accepted === true) {
       requestStatusView = <p>承認</p>;
     } else if (request.accepted === false) {
-        requestStatusView = <p>未承認</p>;
+      requestStatusView = <p>未承認</p>;
     }
 
     if (allMeeting.length > 0) {

@@ -91,16 +91,21 @@ class Give_Item_Description extends Component {
       if(res.data.length !== 0){
         requestDealsOfUser = res.data;
         console.log(requestDealsOfUser)
+      }else {
+        requestDealsOfUser = "リクエスト送信なし"
       }
     })
     .catch((err) => console.log(err));
 
+    // loginUserが一件でもリクエストを送っていたら
     // 取得したrequest_dealの中で、host_itemと一致してるか確認
     // hostItem = parent_id => リクエスト送信済
-    for(const reqDealObj of requestDealsOfUser){
-      console.log(reqDealObj.hostItem)
-      if(reqDealObj.hostItem === parent_id){
-        this.setState({sentRequest : true})
+    if(requestDealsOfUser !== 'リクエスト送信なし'){
+      for(const reqDealObj of requestDealsOfUser){
+        console.log(reqDealObj.hostItem)
+        if(reqDealObj.hostItem === parent_id){
+          this.setState({sentRequest : true})
+        }
       }
     }
 
@@ -147,14 +152,12 @@ class Give_Item_Description extends Component {
     let pickupView;
 
     // dateTimeを表示用にフォーマット。
-    const convertData = (dataTime) => {
+    const formatDataForDisplay = (dataTime) => {
       console.log(dataTime);
       const year = dataTime.slice(0,4);
       const month = dataTime.slice(5,7);
       const day = dataTime.slice(8,10);
-      const hour = dataTime.slice(11,13);
-      const min = dataTime.slice(14,16);
-      return `${year}年${month}月${day}日${hour}時${min}分`
+      return `${year}年${month}月${day}日`
     };
 
 
@@ -188,7 +191,7 @@ class Give_Item_Description extends Component {
         <Carousel images={images} />
         <div>
           <h1>{parentItem.name}</h1>
-          <p>{convertData(giveItem.createdAt)}に投稿</p>
+          <p>{formatDataForDisplay(giveItem.createdAt)}に投稿</p>
           <p>状態 : {giveItem.state}</p>
           <p>ブランド : {parentItem.bland}</p>
           <p>{giveItem.detail}</p>

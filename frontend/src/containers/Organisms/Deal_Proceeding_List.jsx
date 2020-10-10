@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom';
 import Header from '../Organisms/Header';
 import axios from 'axios';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Request_Deal_Table from "../../presentational/shared/Request_Deal_Table";
+import Request_Deal_Table from '../../presentational/shared/Request_Deal_Table';
 
 class Deal_Proceeding_List extends Component {
   constructor(props) {
@@ -17,20 +17,19 @@ class Deal_Proceeding_List extends Component {
   }
 
   async componentDidMount() {
-    const localhostUrl = 'http://localhost:8000/api/';
-    const requestDeal_id = this.props.match.params.requestDeal_id;
+    const { axiosUrl,hostOrJoinUrl, loginUserKey, notLoginUserKey, } = this.props;
     let requestDeals = {};
     let requestDealData = '';
     let dealsForState = {};
 
     await axios
-      .get(localhostUrl + 'user/' + localStorage.getItem('uid'))
+      .get(axiosUrl + 'user/' + localStorage.getItem('uid'))
       .then((res) => this.setState({ loginUser: res.data }))
       .catch((err) => console.log(err));
 
     // loginUser = hostUserのRequest_Dealを全件取得
     await axios
-      .get(localhostUrl + 'requestdeal/?host_user=' + this.state.loginUser.id)
+      .get(axiosUrl + 'requestdeal/?' +  hostOrJoinUrl  + '=' + this.state.loginUser.id)
       .then((res) => {
         if (res.data.length > 0) {
           requestDealData = res.data;
@@ -49,7 +48,7 @@ class Deal_Proceeding_List extends Component {
       await Promise.all(
         Object.keys(requestDeals).map(async (requestDeal_id) => {
           await axios
-            .get(localhostUrl + url + requestDeals[requestDeal_id][key])
+            .get(axiosUrl + url + requestDeals[requestDeal_id][key])
             .then(
               (res) =>
                 (requestDeals = {
@@ -66,7 +65,7 @@ class Deal_Proceeding_List extends Component {
       await Promise.all(
         Object.keys(requestDeals).map(async (requestDeal_id) => {
           await axios
-            .get(localhostUrl + 'deal/?request_deal=' + requestDeal_id)
+            .get(axiosUrl + 'deal/?request_deal=' + requestDeal_id)
             .then((res) => {
               if (res.data.length !== 0) {
                 requestDeals = {
@@ -92,12 +91,12 @@ class Deal_Proceeding_List extends Component {
           ...requestDeals,
           [requestDeal_id]: {
             ...requestDeals[requestDeal_id],
-            hostUser: this.state.loginUser.username,
+            [loginUserKey]: this.state.loginUser.username,
           },
         };
       })
     );
-    await replaceIdWithName('user/', 'joinUser', 'username');
+    await replaceIdWithName('user/', notLoginUserKey, 'username');
     await replaceIdWithName('parent/', 'hostItem', 'name');
     await replaceIdWithName('parent/', 'joinItem', 'name');
 
@@ -125,23 +124,19 @@ class Deal_Proceeding_List extends Component {
   }
 
   render() {
-    if (!this.props.isAuthenticated) {
-      return <Redirect to="/login" />;
-    }
     if (this.state.loading === true) {
       return <CircularProgress />;
     } else {
       return (
-        <div>
-          <Header loginUser={this.state.loginUser} />
-          <h1>進行中の取引一覧</h1>
-          <Request_Deal_Table
-            requestDeal={this.state.allDeals}
-            loginUser={this.state.loginUser}
-            jumpUrl="/deal/"
-            requestOrDeal="deal"
-          />
-        </div>
+          <div>
+              <Request_Deal_Table
+                requestDeal={this.state.allDeals}
+                loginUser={this.state.loginUser}
+                joinUserUrl="/deal/join/"
+                hostUserUrl="/deal/host/"
+                requestOrDeal="deal"
+              />
+          </div>
       );
     }
   }
