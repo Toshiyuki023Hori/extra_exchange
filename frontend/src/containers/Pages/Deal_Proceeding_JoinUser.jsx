@@ -33,7 +33,7 @@ class Deal_Proceeding_JoinUser extends Component {
       return (
         <div>
           <Header loginUser={this.state.loginUser} />
-          <h1>進行中の取引一覧(ジョインユーザー側)</h1>
+          <h1>あなたがジョインユーザーの進行中の取引</h1>
           <Deal_Proceeding_List
             loginUser={this.state.loginUser}
             axiosUrl="http://localhost:8000/api/"

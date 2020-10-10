@@ -7,6 +7,7 @@ import Header from '../Organisms/Header';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Deal_Info_Table from '../../presentational/shared/Deal_Info_Table';
 import Message_Zone from "../Organisms/Message_Zone"
+import MiddleButton from "../../presentational/shared/MiddleButton";
 
 class Deal_Detail_JoinUser extends Component {
   constructor(props) {
@@ -18,6 +19,8 @@ class Deal_Detail_JoinUser extends Component {
       deal: '',
       dealForTable: '',
     };
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.deleteDeal = this.deleteDeal.bind(this);
   }
 
   async componentDidMount() {
@@ -54,7 +57,7 @@ class Deal_Detail_JoinUser extends Component {
             console.log(requestDeal);
           })
           .catch((err) => console.log(err));
-      };
+    }; // replaceWithName  Closing
   
       await replaceIdWithName('parent/', 'joinItem', 'name');
       await replaceIdWithName('parent/', 'hostItem', 'name');
@@ -69,8 +72,36 @@ class Deal_Detail_JoinUser extends Component {
       await this.setState({ requestDeal: requestDeal });
       this.setState({ loading: false });
     }
-
   }
+  // compoentDidMount closing
+
+
+  handleSubmit = () => {
+    const localhostUrl = 'http://localhost:8000/api/';
+    const token = localStorage.getItem('token');
+    const authHeader = {
+      headers: {
+        Authorization: 'Token ' + token,
+      },
+    };
+
+    axios.patch(localhostUrl + "deal/" + this.state.deal.id + '/', {
+      joinUserAccept: true
+    },authHeader)
+    .then((res) => {
+      history.push("/deal/proceeding/join");
+      window.alert("取引成立の報告が送信されました。");
+    })
+    .catch((err) => {
+      console.log(err.response)
+      window.alert(err.response.data);
+    })
+  };
+
+  deleteDeal = () => {
+  
+  };
+
 
   render() {
     if (!this.props.isAuthenticated) {
@@ -89,6 +120,22 @@ class Deal_Detail_JoinUser extends Component {
           deal_id={this.state.deal.id}
           axiosUrl="http://localhost:8000/api/"
           />
+          <div>
+            <h3>取引完了までの流れ</h3>
+            <p>
+              ジョインユーザーの取引成立の報告 → ホストユーザーの取引完了の報告 → 終了
+            </p>
+            <MiddleButton
+            btn_name="取引成立"
+            btn_type="submit"
+            btn_click={this.handleSubmit}
+            />
+            <MiddleButton
+            btn_name="取引をキャンセルする"
+            btn_type="submit"
+            btn_click={this.deleteDeal}
+            />
+          </div>
         </div>
       );
     }
