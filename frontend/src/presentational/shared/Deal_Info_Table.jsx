@@ -7,7 +7,8 @@ class Deal_Info_Table extends Component {
   }
 
   render() {
-    const { item } = this.props;
+    const { item, joinOrHost } = this.props;
+    let tableView;
 
     const formatDataForDisplay = (dataTime) => {
         const year = dataTime.slice(0, 4);
@@ -17,33 +18,68 @@ class Deal_Info_Table extends Component {
         const min = dataTime.slice(14, 16);
         return `${year}年${month}月${day}日${hour}時${min}分`;
     };
+
+    if(joinOrHost === "join"){
+        tableView = (
+        <TableSelf>
+          <tr>
+            <TableHead>ホスト</TableHead>
+            <TableData>{item.hostUser}</TableData>
+          </tr>
+  
+          <tr>
+            <TableHead>ホストの出品</TableHead>
+            <TableData>{item.hostItem}</TableData>
+          </tr>
+  
+          <tr>
+            <TableHead>あなたの引換え品</TableHead>
+            <TableData>{item.joinItem}</TableData>
+          </tr>
+          <tr>
+            <TableHead>受取場所</TableHead>
+            <TableData>{item.pickups}</TableData>
+          </tr>
+  
+          <tr>
+            <TableHead>受取日時</TableHead>
+            <TableData>{formatDataForDisplay(item.meetingTime)}</TableData>
+          </tr>
+        </TableSelf>
+        )
+      } else if(joinOrHost === "host") {
+        tableView = (
+        <TableSelf>
+          <tr>
+            <TableHead>ジョインユーザー</TableHead>
+            <TableData>{item.joinUser}</TableData>
+          </tr>
+  
+          <tr>
+            <TableHead>あいての引換え品</TableHead>
+            <TableData>{item.joinItem}</TableData>
+          </tr>
+  
+          <tr>
+            <TableHead>あなたの出品</TableHead>
+            <TableData>{item.hostItem}</TableData>
+          </tr>
+          <tr>
+            <TableHead>受取場所</TableHead>
+            <TableData>{item.pickups}</TableData>
+          </tr>
+  
+          <tr>
+            <TableHead>受取日時</TableHead>
+            <TableData>{formatDataForDisplay(item.meetingTime)}</TableData>
+          </tr>
+        </TableSelf>
+        )
+      };
     return (
-      <TableSelf>
-        <tr>
-          <TableHead>ホスト</TableHead>
-          <TableData>{item.hostUser}</TableData>
-        </tr>
-
-        <tr>
-          <TableHead>ホストの出品</TableHead>
-          <TableData>{item.hostItem}</TableData>
-        </tr>
-
-        <tr>
-          <TableHead>あなたの引換え品</TableHead>
-          <TableData>{item.joinItem}</TableData>
-        </tr>
-        <tr>
-          <TableHead>受取場所</TableHead>
-          <TableData>{item.pickups}</TableData>
-        </tr>
-
-        <tr>
-          <TableHead>受取日時</TableHead>
-          <TableData>{formatDataForDisplay(item.meetingTime)}</TableData>
-        </tr>
-
-      </TableSelf>
+      <div>
+          {tableView}
+      </div>
     );
   }
 }
