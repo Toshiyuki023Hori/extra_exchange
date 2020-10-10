@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import history from '../../history';
 import Header from '../Organisms/Header';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Deal_Info_Table from '../../presentational/shared/Deal_Info_Table';
 
 class Deal_Detail_JoinUser extends Component {
   constructor(props) {
@@ -35,6 +36,7 @@ class Deal_Detail_JoinUser extends Component {
           this.setState({ loginUser: resUser.data });
           requestDeal = resReqDeal.data;
           this.setState({ deal: resDeal.data[0] });
+          console.log(resDeal.data[0]);
         })
       )
       .catch((err) => console.log(err));
@@ -46,7 +48,28 @@ class Deal_Detail_JoinUser extends Component {
       console.log(requestDeal);
     }
 
-    this.setState({loading : false})
+    const replaceIdWithName = async (url, target, value) => {
+      await axios
+        .get(localhostUrl + url + requestDeal[target])
+        .then((res) => {
+          requestDeal = { ...requestDeal, [target]: res.data[value] };
+          console.log(requestDeal);
+        })
+        .catch((err) => console.log(err));
+    };
+
+    await replaceIdWithName('parent/', 'joinItem', 'name');
+    await replaceIdWithName('parent/', 'hostItem', 'name');
+    await replaceIdWithName('user/', 'hostUser', 'username');
+
+    requestDeal = {
+      ...requestDeal,
+      meetingTime: this.state.deal.meetingTime,
+      joinUserAccept: this.state.deal.joinUserAccept,
+    };
+    
+    await this.setState({ requestDeal: requestDeal });
+    this.setState({ loading: false });
   }
 
   render() {
@@ -60,6 +83,7 @@ class Deal_Detail_JoinUser extends Component {
         <div>
           <Header loginUser={this.state.loginUser} />
           <h1>取引詳細</h1>
+          <Deal_Info_Table item={this.state.requestDeal} />
         </div>
       );
     }

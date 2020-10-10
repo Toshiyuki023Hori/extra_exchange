@@ -76,6 +76,7 @@ class Request_Detail extends Component {
 
       console.log(itemsForState);
 
+      // blandは任意fieldで対応が異なる。axios.allに同居できない。
       if (itemsForState[hostItem_id]['bland'] !== null) {
         await axios
           .get(localhostUrl + 'bland/' + itemsForState[hostItem_id].bland)

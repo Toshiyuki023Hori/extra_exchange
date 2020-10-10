@@ -261,7 +261,7 @@ class Request_Confirm extends Component {
             />
     )
 
-    const convertData = (dataTime) => {
+    const formatDataForDisplay = (dataTime) => {
       const year = dataTime.slice(0, 4);
       const month = dataTime.slice(5, 7);
       const day = dataTime.slice(8, 10);
@@ -281,7 +281,7 @@ class Request_Confirm extends Component {
               type="radio"
               onChange={this.handleChange}
             />
-            <label>{convertData(meetingObject.whatTime)}</label>
+            <label>{formatDataForDisplay(meetingObject.whatTime)}</label>
           </>
         );
       });
