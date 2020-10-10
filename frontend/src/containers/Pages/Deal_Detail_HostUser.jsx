@@ -7,6 +7,7 @@ import Header from '../Organisms/Header';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Deal_Info_Table from '../../presentational/shared/Deal_Info_Table';
 import Message_Zone from "../Organisms/Message_Zone";
+import MiddleButton from "../../presentational/shared/MiddleButton";
 
 class Deal_Detail_HostUser extends Component {
   constructor(props) {
@@ -74,6 +75,12 @@ class Deal_Detail_HostUser extends Component {
   }
 
   render() {
+    let alertMessage;
+
+    // ボタンのdisabledと同時にメッセージも表示。
+    if(!this.state.deal.joinUserAccept){
+      alertMessage = <p>ジョインユーザーからの取引成立報告がまだありません。</p>
+    }
     if (!this.props.isAuthenticated) {
       return <Redirect to="/login" />;
     }
@@ -90,6 +97,24 @@ class Deal_Detail_HostUser extends Component {
           deal_id={this.state.deal.id}
           axiosUrl="http://localhost:8000/api/"
           />
+          <div>
+            <h3>取引完了までの流れ</h3>
+            <p>
+              ジョインユーザーの取引成立の報告 → ホストユーザーの取引完了の報告 → 終了
+            </p>
+            {alertMessage}
+            <MiddleButton
+            btn_name="取引成立"
+            btn_type="submit"
+            btn_click={this.handleSubmit}
+            btn_disable={!this.state.deal.joinUserAccept}
+            />
+            <MiddleButton
+            btn_name="取引をキャンセルする"
+            btn_type="submit"
+            btn_click={this.deleteDeal}
+            />
+          </div>
         </div>
       );
     }

@@ -99,7 +99,27 @@ class Deal_Detail_JoinUser extends Component {
   };
 
   deleteDeal = () => {
-  
+    const localhostUrl = 'http://localhost:8000/api/';
+    const token = localStorage.getItem('token');
+    const authHeader = {
+      headers: {
+        Authorization: 'Token ' + token,
+      },
+    };
+
+    let result = window.confirm("取引を削除しますか?\n削除した場合、リクエストも同時に削除されるため、同じ商品の取引にはもう一度リクエストを送り直す必要があります。")
+
+    if(result){
+      axios.delete(localhostUrl + "deal/" + this.state.deal.id,authHeader)
+      .then((res) => {
+        window.alert("削除に成功しました。")
+        history.push("/deal/proceeding/join");
+      })
+      .catch((err) => {
+        window.alert("申し訳ありません。削除に失敗しました。\n後ほど再びお試しください。")
+      })
+    }
+
   };
 
 

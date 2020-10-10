@@ -86,18 +86,22 @@ class User_Edit_Form extends Component {
         Authorization: 'Token ' + token,
       },
     };
-    axios
-      .delete(
-        this.props.axiosUrl + 'user/' + this.props.loginUser.id + '/delete-' + target + '/',
-        authHeader
-      )
-      // 画像削除はaxios.deleteで完了。Submitされたくないので、handleSubmitでfilterされるように加工。
-      .then(async (res) => {
-        await this.setState({ info: { ...this.state.info, [target]: 'notNeedSubmit' } });
-        await this.setState({ imgUrls: { ...this.state.imgUrls, [target]: null } });
-        history.push('/user/edit');
-      })
-      .catch((err) => window.alert(err.response.data));
+
+    let result = window.confirm("本当にこの画像を削除し、未設定に変更しますか?")
+    if(result){
+      axios
+        .delete(
+          this.props.axiosUrl + 'user/' + this.props.loginUser.id + '/delete-' + target + '/',
+          authHeader
+        )
+        // 画像削除はaxios.deleteで完了。Submitされたくないので、handleSubmitでfilterされるように加工。
+        .then(async (res) => {
+          await this.setState({ info: { ...this.state.info, [target]: 'notNeedSubmit' } });
+          await this.setState({ imgUrls: { ...this.state.imgUrls, [target]: null } });
+          history.push('/user/edit');
+        })
+        .catch((err) => window.alert(err.response.data));
+    }
   };
 
   cancelUploadedImage = async (clickedImage) => {
