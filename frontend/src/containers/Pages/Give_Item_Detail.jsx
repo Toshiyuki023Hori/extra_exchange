@@ -5,7 +5,7 @@ import history from '../../history';
 import Give_Item_Description from '../Organisms/Give_Item_Description';
 import Header from '../Organisms/Header';
 import User_Description from '../Organisms/User_Description';
-import Chat_Place from '../Organisms/Chat_Place';
+import Comment_Zone from '../Organisms/Comment_Zone';
 import Give_Item_List_byUser from '../Organisms/Give_Item_List_byUser';
 import { CircularProgress } from '@material-ui/core';
 
@@ -81,7 +81,7 @@ class Give_Item_Detail extends Component {
             setGiveItem={this.setGiveItem}
           />
           {userDescription}
-          <Chat_Place
+          <Comment_Zone
             owner={parentItem.owner}
             giveItem={giveItem}
             loginUser={loginUser}

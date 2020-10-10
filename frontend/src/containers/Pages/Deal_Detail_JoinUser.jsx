@@ -6,6 +6,7 @@ import history from '../../history';
 import Header from '../Organisms/Header';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Deal_Info_Table from '../../presentational/shared/Deal_Info_Table';
+import Message_Zone from "../Organisms/Message_Zone"
 
 class Deal_Detail_JoinUser extends Component {
   constructor(props) {
@@ -83,6 +84,11 @@ class Deal_Detail_JoinUser extends Component {
           <Header loginUser={this.state.loginUser} />
           <h1>取引詳細</h1>
           <Deal_Info_Table item={this.state.requestDeal} joinOrHost="join" />
+          <Message_Zone
+          loginUser={this.state.loginUser}
+          deal_id={this.state.deal.id}
+          axiosUrl="http://localhost:8000/api/"
+          />
         </div>
       );
     }
