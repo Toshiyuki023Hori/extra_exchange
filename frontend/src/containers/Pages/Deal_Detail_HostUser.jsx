@@ -6,9 +6,9 @@ import history from '../../history';
 import Header from '../Organisms/Header';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Deal_Info_Table from '../../presentational/shared/Deal_Info_Table';
-import Message_Zone from "../Organisms/Message_Zone"
+import Message_Zone from "../Organisms/Message_Zone";
 
-class Deal_Detail_JoinUser extends Component {
+class Deal_Detail_HostUser extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -42,8 +42,8 @@ class Deal_Detail_JoinUser extends Component {
       )
       .catch((err) => console.log(err));
 
-    // Request_Deal.joinUser !== loginUserならリダイレクト
-    if (requestDeal.joinUser !== this.state.loginUser.id) {
+    // Request_Deal.hostUser !== loginUserならリダイレクト
+    if (requestDeal.hostUser !== this.state.loginUser.id) {
       history.push('/top');
     } else {
       const replaceIdWithName = async (url, target, value) => {
@@ -55,21 +55,22 @@ class Deal_Detail_JoinUser extends Component {
           })
           .catch((err) => console.log(err));
       };
-  
+
       await replaceIdWithName('parent/', 'joinItem', 'name');
       await replaceIdWithName('parent/', 'hostItem', 'name');
-      await replaceIdWithName('user/', 'hostUser', 'username');
-  
+      await replaceIdWithName('user/', 'joinUser', 'username');
+
+      console.log('Deal is ');
+      console.log(this.state.deal);
       requestDeal = {
         ...requestDeal,
         meetingTime: this.state.deal.meetingTime,
         joinUserAccept: this.state.deal.joinUserAccept,
       };
-  
+
       await this.setState({ requestDeal: requestDeal });
       this.setState({ loading: false });
     }
-
   }
 
   render() {
@@ -83,7 +84,7 @@ class Deal_Detail_JoinUser extends Component {
         <div>
           <Header loginUser={this.state.loginUser} />
           <h1>取引詳細</h1>
-          <Deal_Info_Table item={this.state.requestDeal} joinOrHost="join" />
+          <Deal_Info_Table item={this.state.requestDeal} joinOrHost="host" />
           <Message_Zone
           loginUser={this.state.loginUser}
           deal_id={this.state.deal.id}
@@ -95,4 +96,4 @@ class Deal_Detail_JoinUser extends Component {
   }
 }
 
-export default Deal_Detail_JoinUser;
+export default Deal_Detail_HostUser;

@@ -24,8 +24,9 @@ import Request_Detail from './containers/Pages/Request_Detail';
 import Request_Waiting_List from './containers/Pages/Request_Waiting_List';
 import Request_Applied_List from './containers/Pages/Request_Applied_List';
 import Request_Confirm from './containers/Pages/Request_Confirm';
-import Deal_Proceeding_JoinUser from './containers/Pages/Deal_Proceeding_JoinUser';
 import Deal_Proceeding_HostUser from './containers/Pages/Deal_Proceeding_HostUser';
+import Deal_Proceeding_JoinUser from './containers/Pages/Deal_Proceeding_JoinUser';
+import Deal_Detail_HostUser from './containers/Pages/Deal_Detail_HostUser';
 import Deal_Detail_JoinUser from './containers/Pages/Deal_Detail_JoinUser';
 import Allcategories from './containers/Pages/Allcategories';
 
@@ -133,6 +134,10 @@ class App extends Component {
             exact
             path="/deal/proceeding/join"
             render={(routeProps) => <Deal_Proceeding_JoinUser {...routeProps} {...this.props} />}
+          />
+          <Route
+            path="/deal/host/:requestDeal_id"
+            render={(routeProps) => <Deal_Detail_HostUser {...routeProps} {...this.props} />}
           />
           <Route
             path="/deal/join/:requestDeal_id"

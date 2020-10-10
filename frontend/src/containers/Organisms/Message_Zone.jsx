@@ -5,34 +5,35 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Word_Bubble from '../../presentational/shared/Word_Bubble';
 import { Colors } from '../../presentational/shared/static/CSSvariables';
 
-class Chat_Place extends Component {
+class Message_Zone extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      allComments: '',
-      comment: '',
+      allMessages: '',
+      message: '',
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  setComments = () => {
+  setMessages = () => {
+    const { axiosUrl, deal_id } = this.props;
     axios
-      .get(this.props.axiosUrl + 'comment/?item=' + this.props.giveItem)
+      .get(axiosUrl + 'private/?deal=' + deal_id)
       .then((res) => {
         if (res.data.length > 0) {
-          this.setState({ allComments: res.data });
+          this.setState({ allMessages: res.data });
         } else {
-          this.setState({ allComments: 'まだ投稿がありません' });
+          this.setState({ allMessages: 'メッセージはありません' });
         }
       })
       .catch((err) => console.log(err));
   };
 
-  // クエリにGiveItem.idを入れるためにDidUpdate使用
-  componentDidUpdate(prevProps) {
-    if (prevProps.giveItem != this.props.giveItem) this.setComments();
+  componentDidMount() {
+    this.setMessages();
   }
+  
 
   handleChange = (e) => {
     const name = e.target.name;
@@ -42,7 +43,7 @@ class Chat_Place extends Component {
   };
 
   handleSubmit = async () => {
-    const { giveItem, loginUser, axiosUrl } = this.props;
+    const { deal_id, loginUser, axiosUrl } = this.props;
     const token = localStorage.getItem('token');
     const authHeader = {
       headers: {
@@ -52,56 +53,54 @@ class Chat_Place extends Component {
 
     await axios
       .post(
-        axiosUrl + 'comment/',
+        axiosUrl + 'private/',
         {
-          comment: this.state.comment,
+          message: this.state.message,
           owner: loginUser.id,
-          item: giveItem,
+          deal: deal_id,
         },
         authHeader
       )
       .then((res) => console.log(res.data))
       .catch((err) => window.alert(err.response.data));
 
-    this.setComments();
-    this.setState({ comment: '' });
+    this.setMessages();
+    this.setState({ message: '' });
   };
 
   render() {
-    const { loginUser } = this.props;
-    const { allComments, comment } = this.state;
-    let commentsView;
+    const { allMessages, message } = this.state;
+    let messagesView;
     //
-    if (allComments === 'まだ投稿がありません') {
-      commentsView = <p>{allComments}</p>;
-    } else if (allComments.length > 0) {
-      commentsView = allComments.map((commentObj) => {
+    if (allMessages === 'メッセージはありません') {
+      messagesView = <p>{allMessages}</p>;
+    } else if (allMessages.length > 0) {
+      messagesView = allMessages.map((messageObj) => {
         return (
           <Word_Bubble
             axiosUrl="http://localhost:8000/api/"
-            key={commentObj.id}
+            key={messageObj.id}
             background={Colors.accent2}
-            text={commentObj.comment}
-            commenter={commentObj.owner}
+            text={messageObj.message}
+            commenter={messageObj.owner}
           />
         );
       });
     }
 
-    if (this.state.allComments == '') {
+    if (this.state.allMessages == '') {
       return null;
     } else {
       return (
         <CommentWrapper>
-          <h3>コメント</h3>
-          {commentsView}
+          <h3>メッセージ</h3>
+          {messagesView}
           <input
-            value={comment}
+            value={message}
             type="text"
-            name="comment"
+            name="message"
             onChange={this.handleChange}
-            placeholder="コメントを入力してください"
-            disabled={this.props.loginUser === "なし"}
+            placeholder="メッセージを入力してください"
           />
           <button type="submit" onClick={this.handleSubmit}>
             送信
@@ -112,7 +111,7 @@ class Chat_Place extends Component {
   }
 }
 
-export default Chat_Place;
+export default Message_Zone;
 
 const CommentWrapper = styled.div`
   width: 77%;

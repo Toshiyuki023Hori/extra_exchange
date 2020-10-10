@@ -262,6 +262,9 @@ class Private_MessageViewSet(viewsets.ModelViewSet):
     ]
     serializer_class = Private_MessageSerializer
 
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_fields = "__all__"
+
 # ======      =======      ======      ======     ======     ======      =======      =======
 
 
