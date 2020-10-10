@@ -36,9 +36,11 @@ class Deal_Detail_HostUser extends Component {
       .then(
         axios.spread((resUser, resReqDeal, resDeal) => {
           this.setState({ loginUser: resUser.data });
+          // handleSubmit時にhostItem,joinItemのidを参照できるようにstate保持
+          this.setState({requestDeal : resReqDeal.data});
+          // Deal_Info_Tableに伝達用 = idがnameに置換される
           requestDeal = resReqDeal.data;
           this.setState({ deal: resDeal.data[0] });
-          console.log(resDeal.data[0]);
         })
       )
       .catch((err) => console.log(err));
@@ -69,10 +71,82 @@ class Deal_Detail_HostUser extends Component {
         joinUserAccept: this.state.deal.joinUserAccept,
       };
 
-      await this.setState({ requestDeal: requestDeal });
+      await this.setState({ dealForTable: requestDeal });
       this.setState({ loading: false });
     }
   }
+  // componentDidMount  Closing
+
+  handleSubmit = async () => {
+    const localhostUrl = 'http://localhost:8000/api/';
+    const token = localStorage.getItem('token');
+    const authHeader = {
+      headers: {
+        Authorization: 'Token ' + token,
+      },
+    };
+    const deal_id = this.state.deal.id;
+    let doneCompleted;
+    let doneHost_give;
+    let doneJoin_give;
+    let hostItem_give_id;
+    let joinItem_give_id;
+
+    // patchリクエスト送信用function
+    await axios.patch(localhostUrl + "deal/" + deal_id + '/', {
+      completed:true
+    }, authHeader)
+    .then((res) => {
+      console.log(res.data);
+      doneCompleted = res.data.completed;
+    })
+    .catch((err) => console.log('Error happened when sending completed'))
+    // completedに更新されているのが確認されたら
+    if(doneCompleted === true){
+      console.log("Stage2")
+　　　　await axios.all([
+              axios.get(localhostUrl + "giveitem/?parent_item=" + this.state.requestDeal.hostItem),
+              axios.get(localhostUrl + "giveitem/?parent_item=" + this.state.requestDeal.joinItem),
+            ])
+            .then(axios.spread((resHost,resJoin) => {
+              hostItem_give_id = resHost.data[0].id;
+              joinItem_give_id = resJoin.data[0].id;
+              console.log(hostItem_give_id);
+              console.log(joinItem_give_id);
+            }))
+            .catch((err) => console.log(err));
+      
+      await axios.patch(localhostUrl + "giveitem/" + hostItem_give_id + '/', {
+        doneDeal:true
+      }, authHeader)
+      .then((res) => {
+        console.log(res.data);
+        doneHost_give = res.data.doneDeal;
+      })
+      .catch((err) => console.log('Error happened when sending doneHostGive'))
+
+      if(doneHost_give === true){
+        await axios.patch(localhostUrl + "giveitem/" + joinItem_give_id + '/', {
+          doneDeal:true
+        }, authHeader)
+        .then((res) => {
+          console.log(res.data);
+          doneJoin_give = res.data.doneDeal;
+        })
+        .catch((err) => console.log('Error happened when sending doneJoinGive'))
+
+        if(doneJoin_give === true){
+            axios.post(localhostUrl + 'history/', {
+              asHost:this.state.requestDeal.hostUser,
+              asJoin:this.state.requestDeal.joinUser,
+              deal : deal_id
+            }, authHeader)
+          .then((res) => history.push("/deal/complete/" + this.props.match.params.requestDeal_id))
+          .catch((err) => console.log("Error happened when sending hisory"))
+        } //  if(doneJoin_give === true) closing
+      }   //  if(doneHost_give === true) closing
+    }    //   if(doneCompleted === true) closing
+  };
 
   render() {
     let alertMessage;
@@ -91,7 +165,7 @@ class Deal_Detail_HostUser extends Component {
         <div>
           <Header loginUser={this.state.loginUser} />
           <h1>取引詳細</h1>
-          <Deal_Info_Table item={this.state.requestDeal} joinOrHost="host" />
+          <Deal_Info_Table item={this.state.dealForTable} joinOrHost="host" />
           <Message_Zone
           loginUser={this.state.loginUser}
           deal_id={this.state.deal.id}

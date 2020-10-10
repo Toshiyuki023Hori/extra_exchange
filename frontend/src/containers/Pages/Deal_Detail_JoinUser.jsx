@@ -38,9 +38,11 @@ class Deal_Detail_JoinUser extends Component {
       .then(
         axios.spread((resUser, resReqDeal, resDeal) => {
           this.setState({ loginUser: resUser.data });
+          // handleSubmit時にhostItem,joinItemのidを参照できるようにstate保持
+          this.setState({requestDeal : resReqDeal.data});
+          // Deal_Info_Tableに伝達用 = idがnameに置換される
           requestDeal = resReqDeal.data;
           this.setState({ deal: resDeal.data[0] });
-          console.log(resDeal.data[0]);
         })
       )
       .catch((err) => console.log(err));
@@ -69,7 +71,7 @@ class Deal_Detail_JoinUser extends Component {
         joinUserAccept: this.state.deal.joinUserAccept,
       };
   
-      await this.setState({ requestDeal: requestDeal });
+      await this.setState({ dealForTable: requestDeal });
       this.setState({ loading: false });
     }
   }
@@ -134,7 +136,7 @@ class Deal_Detail_JoinUser extends Component {
         <div>
           <Header loginUser={this.state.loginUser} />
           <h1>取引詳細</h1>
-          <Deal_Info_Table item={this.state.requestDeal} joinOrHost="join" />
+          <Deal_Info_Table item={this.state.dealForTable} joinOrHost="join" />
           <Message_Zone
           loginUser={this.state.loginUser}
           deal_id={this.state.deal.id}

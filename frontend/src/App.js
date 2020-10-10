@@ -28,6 +28,7 @@ import Deal_Proceeding_HostUser from './containers/Pages/Deal_Proceeding_HostUse
 import Deal_Proceeding_JoinUser from './containers/Pages/Deal_Proceeding_JoinUser';
 import Deal_Detail_HostUser from './containers/Pages/Deal_Detail_HostUser';
 import Deal_Detail_JoinUser from './containers/Pages/Deal_Detail_JoinUser';
+import Deal_Complete from "./containers/Pages/Deal_Complete";
 import Allcategories from './containers/Pages/Allcategories';
 
 class App extends Component {
@@ -141,6 +142,10 @@ class App extends Component {
           />
           <Route
             path="/deal/join/:requestDeal_id"
+            render={(routeProps) => <Deal_Detail_JoinUser {...routeProps} {...this.props} />}
+          />
+          <Route
+            path="/deal/complete/:requestDeal_id"
             render={(routeProps) => <Deal_Detail_JoinUser {...routeProps} {...this.props} />}
           />
           <Redirect to="/top" />
