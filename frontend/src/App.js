@@ -146,7 +146,7 @@ class App extends Component {
           />
           <Route
             path="/deal/complete/:requestDeal_id"
-            render={(routeProps) => <Deal_Detail_JoinUser {...routeProps} {...this.props} />}
+            render={(routeProps) => <Deal_Complete {...routeProps} {...this.props} />}
           />
           <Redirect to="/top" />
           {/* <Route

@@ -20,7 +20,7 @@ class Deal_Complete extends Component {
     let request_deal;
     let deal;
     // ParentItemのownerが外部キーなので、レンダー時にログインユーザーをセット
-    axios
+    await axios
       .get(localhostUrl + 'user/' + localStorage.getItem('uid'))
       .then((res) => {
         this.setState({ loginUser: res.data });
@@ -33,12 +33,13 @@ class Deal_Complete extends Component {
     ])
     .then(axios.spread((resReqDeal, resDeal) => {
         request_deal = resReqDeal.data;
-        deal = resDeal.data[0].data;
+        deal = resDeal.data[0];
     }))
     .catch((err) => console.log(err));
 
+    console.log(deal)
     if(deal.completed === false || 
-       request_deal.joinUser !== this.state.loginUser.id ||
+      request_deal.joinUser !== this.state.loginUser.id &&
        request_deal.hostUser !== this.state.loginUser.id){
         history.push("/top");
     }

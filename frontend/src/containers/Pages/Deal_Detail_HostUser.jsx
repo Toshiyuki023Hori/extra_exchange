@@ -142,7 +142,7 @@ class Deal_Detail_HostUser extends Component {
               deal : deal_id
             }, authHeader)
           .then((res) => history.push("/deal/complete/" + this.props.match.params.requestDeal_id))
-          .catch((err) => console.log("Error happened when sending hisory"))
+          .catch((err) => console.log("Error happened when sending history"))
         } //  if(doneJoin_give === true) closing
       }   //  if(doneHost_give === true) closing
     }    //   if(doneCompleted === true) closing

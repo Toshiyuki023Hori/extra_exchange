@@ -395,7 +395,7 @@ class History(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.owner.username
+        return self.deal.request_deal.host_user.username
 
     class Meta:
         db_table = "histories"
