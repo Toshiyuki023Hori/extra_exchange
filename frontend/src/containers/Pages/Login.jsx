@@ -1,15 +1,17 @@
 import React, { useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
 import Login_Form from '../Organisms/Login_Form';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import * as actions from '../../reducks/auth/actions';
-import Header from "../Organisms/Header"
+import Header_LogReg from "../Organisms/Header_LogReg";
 
-function Login({ isAuthenticated,uid,onTryAutoSignup,error }) {
+function Login() {
   return (
     <>
-      {isAuthenticated ? <h1>You succeeded in Loging in</h1> : <h1>Don't give up!!</h1>}
-        <Login_Form />
+      <div>
+          <Header_LogReg loginOrRegister="ログイン"/>
+          <Login_Form/>
+      </div>
     </>
   );
 }
