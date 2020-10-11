@@ -82,7 +82,7 @@ export const getUserId = (username) => {
         const uid = currentUser.id;
         localStorage.setItem('uid', uid);
         dispatch(authSuccess(localStorage.getItem('token'), uid));
-        history.push('/top');
+        history.push('/user/' + uid);
       })
       .catch((err) => {
         localStorage.removeItem('uid');

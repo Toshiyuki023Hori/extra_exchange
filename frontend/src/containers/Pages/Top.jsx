@@ -15,8 +15,8 @@ class Top extends Component {
   }
   async componentDidMount() {
     const localhostUrl = 'http://localhost:8000/api/';
-    const topCategoryList = ['メンズ服', 'レディース服','ゲーム・書籍'];
-    let passCategoryToState = [];
+    const topCategoryList = ['メンズ服', 'レディース服','カバン'];
+    let categoriesList = [];
     // ParentItemのownerが外部キーなので、レンダー時にログインユーザーをセット
     await axios
       .get(localhostUrl + 'user/' + localStorage.getItem('uid'))
@@ -25,16 +25,20 @@ class Top extends Component {
       })
       .catch((err) => console.log(err));
 
+    const mapCategoryName = (value) => {
+      categoriesList = [...categoriesList, value];
+    };
+      
     await Promise.all(
       topCategoryList.map(async (category) => {
-        await axios.get(localhostUrl + 'category/?name=' + category).then((res) => {
-          passCategoryToState = [...passCategoryToState, res.data[0]];
-          console.log(passCategoryToState);
+        await axios.get(localhostUrl + 'category/?name=' + category).then(async (res) => {
+          await mapCategoryName(res.data[0]);
+          console.log(categoriesList);
         });
       })
     );
 
-    this.setState({ categories: passCategoryToState });
+    this.setState({ categories: categoriesList });
   }
 
   render() {

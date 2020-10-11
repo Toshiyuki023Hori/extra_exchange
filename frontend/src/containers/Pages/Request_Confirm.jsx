@@ -28,7 +28,7 @@ class Request_Confirm extends Component {
       joinItem: '',
       itemImages: [],
       allMeeting: '',
-      request_id: '',
+      request: '',
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -89,16 +89,25 @@ class Request_Confirm extends Component {
       .catch((err) => console.log(err));
     // axios.all Closing
 
+    // blandは任意フィールドのため、bland !== nullで条件分岐
+    // 故にaxios.allには含めない。
+    if(itemsForState[joinItem_id].bland !== null){
+      await axios.get(localhostUrl + 'bland/' + itemsForState[joinItem_id].bland)
+      .then((res) => {
+        setItemsForState(joinItem_id, "bland", res.data.name)
+      })
+    } else {
+      setItemsForState(joinItem_id, "bland", "なし")
+    }
+
     // idから表示用にnameを取得、置換。
     await axios
       .all([
-        axios.get(localhostUrl + 'bland/' + itemsForState[joinItem_id].bland),
         axios.get(localhostUrl + 'category/' + itemsForState[joinItem_id].category),
         axios.get(localhostUrl + 'user/' + itemsForState[joinItem_id].owner),
       ])
       .then(
-        axios.spread((resBland, resCategory, resUser) => {
-          setItemsForState(joinItem_id, 'bland', resBland.data.name);
+        axios.spread((resCategory, resUser) => {
           setItemsForState(joinItem_id, 'category', resCategory.data.name);
           setItemsForState(joinItem_id, 'owner', resUser.data.username);
         })
@@ -312,6 +321,13 @@ class Request_Confirm extends Component {
               {meetingList}
               <p>{this.state.message.meetingTime}</p>
             </div>
+              {
+                this.state.request.note &&
+                <div>
+                  <h2>補足</h2>
+                  <p>{this.state.request.note}</p>
+                </div>
+              }
            {/* すでにリクエストへ反応していたらボタンを押せないように */}
            {
              request.accepted === true || request.denied === true 

@@ -385,15 +385,17 @@ class Private_Message(models.Model):
 
 
 class History(models.Model):
-    owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE, related_name="done_deal")
+    as_host = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="done_deal_host")
+    as_join = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="done_deal_join")
     deal = models.OneToOneField(
         Deal, on_delete=models.CASCADE, related_name="history")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.owner.username
+        return self.deal.request_deal.host_user.username
 
     class Meta:
         db_table = "histories"

@@ -38,6 +38,8 @@ class Request_Form extends Component {
     let pickupForState = [];
     let parentItems = {};
 
+    // loginUserの投稿しているparentを全件取得
+    // 訪問中のgiveItemのownerのpickUp場所を全件取得
     await axios
       .all([
         axios.get(axiosUrl + 'parent/?owner=' + joinUser.id),
@@ -45,19 +47,21 @@ class Request_Form extends Component {
       ])
       .then(
         axios.spread((resParent, resPickup) => {
+          // parentItemsを登録しているかで条件分岐
           if (resParent.data.length !== 0) {
             resParent.data.map((parentObj) => {
               parentItems = { ...parentItems, [parentObj.id]: { name: parentObj.name } };
             });
-            if (resPickup.data.length !== 0) {
-              resPickup.data.map((pickupObj) => {
-                pickupForState = [...pickupForState, pickupObj];
-              });
-            } else {
-              pickupForState = '未登録';
-            }
           } else {
             itemsForState = '商品が投稿されていません';
+          }
+          // pickupを登録しているかで条件分岐
+          if (resPickup.data.length !== 0) {
+            resPickup.data.map((pickupObj) => {
+              pickupForState = [...pickupForState, pickupObj];
+            });
+          } else {
+            pickupForState = '未登録';
           }
         }) // axios.spread closing
       ); //    then closing
@@ -65,9 +69,11 @@ class Request_Form extends Component {
     // console.log(pickupForState);
     // console.log(parentItems);
 
+
     if (Object.keys(parentItems).length !== 0) {
+      //
+      // UserのParent_ItemからGive_Itemのみを取得
       await Promise.all(
-        // UserのParent_ItemからGive_Itemのみを取得
         Object.keys(parentItems).map(async (parent_id) => {
           await axios
             .get(axiosUrl + 'giveitem/?parent_item=' + parent_id)
@@ -155,6 +161,8 @@ class Request_Form extends Component {
     );
 
     if (result) {
+
+      // inputに入力されているmeetingTimeをarrayにまとめるfunction
       const hasValueInMeeting = (meeting) => {
         if (meeting != '') {
           meetingList = [...meetingList, meeting];
@@ -162,10 +170,12 @@ class Request_Form extends Component {
         }
       };
 
+      // 全inputに実行 = 未入力のinputを除外する役割も担当
       hasValueInMeeting(this.state.info.date1);
       hasValueInMeeting(this.state.info.date2);
       hasValueInMeeting(this.state.info.date3);
 
+      // validation時にエラーメッセージを代入するfunction
       const setMessageToState = (key, value) => {
         this.setState({ message: { ...this.state.message, [key]: value } });
       };
@@ -232,7 +242,7 @@ class Request_Form extends Component {
         } //      if(newMeetings.length !== 0) closing
         console.log('meeting_ids is ' + meeting_ids);
 
-        // if内が全てのValidationをクリアしてからの処理。
+        // if内全てのValidationをクリアしてからの処理。
         // 親モデル Request_Deal => 子モデル Request作成
         if (this.state.message.date1 == '') {
           await axios
@@ -253,8 +263,7 @@ class Request_Form extends Component {
             })
             .catch((err) => console.log(err.responsee));
 
-          console.log('reqDeal_id is ' + reqDeal_id);
-
+          // Requestモデルの作成
           await axios
             .post(
               axiosUrl + 'request/',
@@ -268,9 +277,9 @@ class Request_Form extends Component {
               console.log(res);
               request_id = res.data.id;
             })
-            .catch((err) => console.log(err.responsee));
+            .catch((err) => console.log(err.response));
 
-          console.log('reqest_id is ' + request_id);
+          console.log('request_id is ' + request_id);
 
           await Promise.all(
             meeting_ids.map(async (meeting) => {
@@ -323,7 +332,12 @@ class Request_Form extends Component {
         );
       });
     } else {
-      itemsView = <p>{this.state.allItems}</p>;
+      itemsView = (
+        <>
+          <p>{this.state.allItems}</p>
+          <a href="/give/add">商品を出品する(出品された商品から、引き換え商品は選択されます)</a>
+        </>
+        )
     }
 
     if (this.state.allPickup !== '未登録') {
@@ -336,7 +350,12 @@ class Request_Form extends Component {
         );
       });
     } else {
-      pickupsView = <p>{this.state.allPickup}</p>;
+      pickupsView = (
+      <>
+        <p>{this.state.allPickup}</p>
+        <a href={"/give/detail/" + this.props.hostItem}>ホストユーザーにコメントで相談してみましょう</a>
+      </>
+        )
     }
 
     if (this.state.loading === true) {
@@ -374,7 +393,7 @@ class Request_Form extends Component {
           </div>
           <div>
             <h3>補足</h3>
-            <textarea name="note" id="" cols="30" rows="10"></textarea>
+            <textarea name="note" id="" cols="30" rows="10" onChange={this.handleChange}></textarea>
           </div>
           <MiddleButton
             btn_name="リクエストを送る"
