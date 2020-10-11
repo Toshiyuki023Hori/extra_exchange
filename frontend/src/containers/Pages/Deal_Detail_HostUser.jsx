@@ -150,10 +150,47 @@ class Deal_Detail_HostUser extends Component {
 
   render() {
     let alertMessage;
+    let submitButton;
+    let deleteButton;
+
+    if(this.state.deal.completed){
+      submitButton = ( 
+      <MiddleButton
+        btn_name="取引は完了しました"
+        btn_type="submit"
+        btn_click={this.handleSubmit}
+        btn_disable="true"
+      />
+      )
+
+      deleteButton = <MiddleButton
+      btn_name="報告後は削除できません"
+      btn_disable="true"
+    />
+    }else{
+      submitButton = ( 
+      <MiddleButton
+        btn_name="取引成立"
+        btn_type="submit"
+        btn_click={this.handleSubmit}
+        btn_disable={!this.state.deal.joinUserAccept}
+      />
+      )
+
+      deleteButton = (
+        <MiddleButton
+          btn_name="取引をキャンセルする"
+          btn_type="submit"
+          btn_click={this.deleteDeal}
+          btn_disable={this.state.deal.joinUserAccept}
+        />
+      )
+    }
+
 
     // ボタンのdisabledと同時にメッセージも表示。
     if(!this.state.deal.joinUserAccept){
-      alertMessage = <p>ジョインユーザーからの取引成立報告がまだありません。</p>
+      alertMessage = <p>ジョインユーザーからの取引成立報告がまだありません(報告後は取引の削除ができなくなります)。</p>
     }
     if (!this.props.isAuthenticated) {
       return <Redirect to="/login" />;
@@ -177,17 +214,8 @@ class Deal_Detail_HostUser extends Component {
               ジョインユーザーの取引成立の報告 → ホストユーザーの取引完了の報告 → 終了
             </p>
             {alertMessage}
-            <MiddleButton
-            btn_name="取引成立"
-            btn_type="submit"
-            btn_click={this.handleSubmit}
-            btn_disable={!this.state.deal.joinUserAccept}
-            />
-            <MiddleButton
-            btn_name="取引をキャンセルする"
-            btn_type="submit"
-            btn_click={this.deleteDeal}
-            />
+            {submitButton}
+            {deleteButton}
           </div>
         </div>
       );

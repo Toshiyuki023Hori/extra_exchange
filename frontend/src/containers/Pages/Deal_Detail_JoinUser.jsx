@@ -126,6 +126,44 @@ class Deal_Detail_JoinUser extends Component {
 
 
   render() {
+    let submitButton;
+    let deleteButton;
+
+    // 取引成立報告後はボタンを切り替える
+    if(this.state.deal.joinUserAccept){
+      submitButton = (
+        <MiddleButton
+          btn_name="報告済み"
+          btn_type="submit"
+          btn_click={this.handleSubmit}
+          btn_disable="true"
+        />
+      )
+
+      deleteButton = (
+        <MiddleButton
+          btn_name="報告後は削除できません"
+          btn_disable="true"
+        />
+      )
+
+    } else{
+      submitButton = (
+        <MiddleButton
+          btn_name="取引成立を報告"
+          btn_type="submit"
+          btn_click={this.handleSubmit}
+        />
+      )
+      deleteButton = (
+        <MiddleButton
+          btn_name="取引をキャンセルする"
+          btn_type="submit"
+          btn_click={this.deleteDeal}
+        />
+      )
+    }
+
     if (!this.props.isAuthenticated) {
       return <Redirect to="/login" />;
     }
@@ -147,16 +185,8 @@ class Deal_Detail_JoinUser extends Component {
             <p>
               ジョインユーザーの取引成立の報告 → ホストユーザーの取引完了の報告 → 終了
             </p>
-            <MiddleButton
-            btn_name="取引成立"
-            btn_type="submit"
-            btn_click={this.handleSubmit}
-            />
-            <MiddleButton
-            btn_name="取引をキャンセルする"
-            btn_type="submit"
-            btn_click={this.deleteDeal}
-            />
+            {submitButton}
+            {deleteButton}
           </div>
         </div>
       );
