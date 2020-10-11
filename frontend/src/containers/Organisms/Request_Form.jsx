@@ -161,6 +161,8 @@ class Request_Form extends Component {
     );
 
     if (result) {
+
+      // inputに入力されているmeetingTimeをarrayにまとめるfunction
       const hasValueInMeeting = (meeting) => {
         if (meeting != '') {
           meetingList = [...meetingList, meeting];
@@ -168,10 +170,12 @@ class Request_Form extends Component {
         }
       };
 
+      // 全inputに実行 = 未入力のinputを除外する役割も担当
       hasValueInMeeting(this.state.info.date1);
       hasValueInMeeting(this.state.info.date2);
       hasValueInMeeting(this.state.info.date3);
 
+      // validation時にエラーメッセージを代入するfunction
       const setMessageToState = (key, value) => {
         this.setState({ message: { ...this.state.message, [key]: value } });
       };
@@ -238,7 +242,7 @@ class Request_Form extends Component {
         } //      if(newMeetings.length !== 0) closing
         console.log('meeting_ids is ' + meeting_ids);
 
-        // if内が全てのValidationをクリアしてからの処理。
+        // if内全てのValidationをクリアしてからの処理。
         // 親モデル Request_Deal => 子モデル Request作成
         if (this.state.message.date1 == '') {
           await axios
@@ -259,8 +263,7 @@ class Request_Form extends Component {
             })
             .catch((err) => console.log(err.responsee));
 
-          console.log('reqDeal_id is ' + reqDeal_id);
-
+          // Requestモデルの作成
           await axios
             .post(
               axiosUrl + 'request/',
@@ -350,7 +353,7 @@ class Request_Form extends Component {
       pickupsView = (
       <>
         <p>{this.state.allPickup}</p>
-        <a href="/user/pickup">ホストユーザーにコメントで相談してみましょう</a>
+        <a href={"/give/detail/" + this.props.hostItem}>ホストユーザーにコメントで相談してみましょう</a>
       </>
         )
     }
@@ -390,7 +393,7 @@ class Request_Form extends Component {
           </div>
           <div>
             <h3>補足</h3>
-            <textarea name="note" id="" cols="30" rows="10"></textarea>
+            <textarea name="note" id="" cols="30" rows="10" onChange={this.handleChange}></textarea>
           </div>
           <MiddleButton
             btn_name="リクエストを送る"
