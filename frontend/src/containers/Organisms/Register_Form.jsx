@@ -218,7 +218,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(Register_Form);
 
 export const Wrapper = styled.div`
   width:100%;
-  margin-top:15px;
+  margin-top:125px;
 `;
 
 export const InputArea = styled.div`
@@ -266,9 +266,11 @@ export const FormLabel = styled.label`
   width:120px;
   margin-right: 40px;
   float:left;
+  font-weight:700;
 `;
 
 export const Error = styled.p`
+  font-size:0.7rem;
   height:32px;
   background: ${props => props.alert != '' ? '#70AACC' : 'none'};
   width: 60%;

@@ -158,10 +158,17 @@ class Give_Item_List_byUser extends Component {
     return (
         <div>
             <h2>{user.username + "さんのアイテム"}</h2>
-            {itemCards}
+            <ItemPlaces>
+              {itemCards}
+            </ItemPlaces>
         </div>
     )
   }
 }
 
 export default Give_Item_List_byUser;
+
+const ItemPlaces = styled.div`
+  display:flex;
+  justify-content:space-around;
+`;

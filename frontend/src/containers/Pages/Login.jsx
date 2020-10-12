@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
+import styled from "styled-components";
 import Login_Form from '../Organisms/Login_Form';
 import { connect } from 'react-redux';
 import * as actions from '../../reducks/auth/actions';
@@ -10,7 +11,7 @@ function Login() {
   return (
     <>
       <div>
-          <Header_LogReg loginOrRegister="ログイン"/>
+          <StyledHeader loginOrRegister="ログイン"/>
           <Login_Form/>
           <Footer/>
       </div>
@@ -33,3 +34,9 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Login));
+
+const StyledHeader = styled(Header_LogReg)`
+  position:fixed;
+  top:0;
+  left:0;
+`;

@@ -5,9 +5,8 @@ import styled from 'styled-components';
 import axios from 'axios';
 // 以下各ディレクトリからimport
 import * as actions from '../../reducks/auth/actions';
-import SearchBox from '../../presentational/shared/SearchBox';
 import Logo from '../../assets/Logo.png';
-import SmallButton from '../../presentational/shared/SmallButton';
+import { Colors } from "../../presentational/shared/static/CSSvariables";
 
 class Header_LogReg extends Component {
   constructor(props) {
@@ -42,16 +41,26 @@ class Header_LogReg extends Component {
 export default Header_LogReg;
 
 const Wrapper = styled.div`
-  background-color: #8dd6ff;
+  position:fixed;
+  top:0;
+  left:0;
+  padding: 10px 5px 5px 5px;
   width: 100%;
+  height:110px;
+  background-color: #8dd6ff;
   display: grid;
   grid-template-columns: 1fr 5fr;
-  padding: 10px 5px 5px 5px;
 `;
 
 const Image = styled.img`
   width: 230px;
   margin-top: 5px;
+
+  &:hover{
+    box-shadow:0px 0px 7px ${Colors.accent2};
+    transform:scale(1.02,1.02);
+    transition-duration:0.75s;
+  }
 `;
 
 const TextDiv = styled.div`
