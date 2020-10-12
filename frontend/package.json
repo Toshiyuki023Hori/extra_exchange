@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^7.1.2",
     "axios": "^0.20.0",
     "history": "^4.10.1",
+    "polished": "^4.0.2",
     "pure-react-carousel": "^1.27.4",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",

@@ -135,6 +135,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(Header);
 const Wrapper = styled.div`
   background-color: #8dd6ff;
   width: 100%;
+  height:110px;
   display: grid;
   grid-template-columns: 1fr 2.3fr 1fr;
   padding: 10px 5px 5px 5px;

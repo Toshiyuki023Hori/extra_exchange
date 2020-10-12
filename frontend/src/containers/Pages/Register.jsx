@@ -2,25 +2,19 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import Register_Form from '../Organisms/Register_Form';
 import { connect, useSelector } from 'react-redux';
+import Header_LogReg from "../Organisms/Header_LogReg";
+import Footer from "../Organisms/Footer";
 
 function Register(props) {
-  const token = useSelector((state) => state.token);
   return (
     <>
-      {console.log(token)}
-      {props.isAuthenticated ? <h1>You succeeded in Loging in</h1> : <h1>Don't give up!!</h1>}
       <div>
+        <Header_LogReg loginOrRegister="会員登録"/>
         <Register_Form />
+        <Footer/>
       </div>
     </>
   );
 }
 
-const mapStateToProps = (state) => {
-  return {
-    loading: state.loading,
-    error: state.error,
-  };
-};
-
-export default withRouter(connect(mapStateToProps)(Register));
+export default Register;

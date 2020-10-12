@@ -1,15 +1,20 @@
 import React, { useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
+import styled from "styled-components";
 import Login_Form from '../Organisms/Login_Form';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import * as actions from '../../reducks/auth/actions';
-import Header from "../Organisms/Header"
+import Header_LogReg from "../Organisms/Header_LogReg";
+import Footer from "../Organisms/Footer";
 
-function Login({ isAuthenticated,uid,onTryAutoSignup,error }) {
+function Login() {
   return (
     <>
-      {isAuthenticated ? <h1>You succeeded in Loging in</h1> : <h1>Don't give up!!</h1>}
-        <Login_Form />
+      <div>
+          <StyledHeader loginOrRegister="ログイン"/>
+          <Login_Form/>
+          <Footer/>
+      </div>
     </>
   );
 }
@@ -29,3 +34,9 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Login));
+
+const StyledHeader = styled(Header_LogReg)`
+  position:fixed;
+  top:0;
+  left:0;
+`;

@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import MiddleButton from '../../presentational/shared/MiddleButton';
+import LargeButton from '../../presentational/shared/LargeButton';
 import { connect } from 'react-redux';
+import styled from "styled-components";
+import { Colors } from "../../presentational/shared/static/CSSvariables";
+import { lighten } from 'polished';
 import * as actions from '../../reducks/auth/actions';
-import { Redirect } from 'react-router-dom';
 
 class Register_Form extends React.Component {
   constructor(props) {
@@ -63,7 +65,7 @@ class Register_Form extends React.Component {
 
   usernameValidation(value) {
     if (!value) return 'ユーザーネームは必須項目です。';
-    if (value.length < 5) return 'ユーザーネームは最低5文字以上入力してください。';
+    if (value.length < 5) return 'ユーザーネームは最低5文字です。';
     return '';
   }
 
@@ -79,7 +81,7 @@ class Register_Form extends React.Component {
     if (value.length < 8) return 'パスワードは最低8文字入力してください。';
     const regex = /^(?=.*?[a-z])(?=.*?\d)[a-z\d]{8,100}$/i;
     if (!regex.test(value))
-      return 'パスワードは半角英数字をそれぞれ一種類以上含める必要があります。';
+      return 'パスワードは半角英数字をそれぞれ一種類以上必要です。。';
     return '';
   }
 
@@ -108,66 +110,86 @@ class Register_Form extends React.Component {
   };
 
   render() {
-    let errorMessage = null;
+    let errorMessageUser = null;
+    let errorMessageEmail = null;
+    // 登録失敗時にerror.response.dataはobjectで返ってくる
+    // error.response.dataにusernameが入っていたら
     if (this.props.error) {
-      errorMessage = <p>{this.props.error.message}</p>;
+      errorMessageUser = <p>{this.props.error.username}</p>;
+    }
+    // error.response.dataにemailが入っていたら
+    if (this.props.error) {
+      errorMessageEmail = <p>{this.props.error.email}</p>;
     }
 
     const { info, message } = this.state;
     return (
       <>
-        {errorMessage}
-        <div>
-          <div className="nameForm textForm">
-            <label>ユーザーネーム</label>
-            <input name="username" type="text" value={info.username} onChange={this.handleChange} />
-            <p>{message.username}</p>
-          </div>
+      <Wrapper>
+          <Tytle>会員登録</Tytle>
+          <InputArea>
+            <FormArea>
+              <li>
+                <FormLabel>ユーザーネーム</FormLabel>
+                <InputForm name="username" type="text" value={info.username} onChange={this.handleChange} placeholder="最低5文字以上入力してください"/>
+              </li>
+              <Error　alert={message.username}>{message.username}</Error>
+              {errorMessageUser}
 
-          <div className="emailForm textForm">
-            <label>メール</label>
-            <input name="email" type="email" value={info.email} onChange={this.handleChange} />
-            <p>{message.email}</p>
-          </div>
+              <li>
+                <FormLabel>メール</FormLabel>
+                <InputForm name="email" type="email" value={info.email} onChange={this.handleChange} />
+              </li>
+              <Error alert={message.email}>{message.email}</Error>
+              {errorMessageEmail}
 
-          <div className="passwordForm textForm">
-            <label>パスワード</label>
-            <input
-              name="password"
-              type="password"
-              value={info.password}
-              onChange={this.handleChange}
+              <li>
+                <FormLabel>パスワード</FormLabel>
+                <InputForm
+                  name="password"
+                  type="password"
+                  value={info.password}
+                  onChange={this.handleChange}
+                  placeholder="半角英数字最低8文字以上入力してください"
+                />
+              </li>
+              <Error alert={message.password}>{message.password}</Error>
+
+              <li>
+                <FormLabel>パスワード確認</FormLabel>
+                <InputForm
+                  name="confirmPass"
+                  type="password"
+                  value={info.confirmPass}
+                  onChange={this.handleChange}
+                  placeholder="半角英数字最低8文字以上入力してください"
+                />
+              </li>
+              <Error alert={message.confirmPass}>{message.confirmPass}</Error>
+            </FormArea>
+        
+
+            <SubmitButton
+              btn_name="登録"
+              btn_type="submit"
+              btn_click={this.handleSubmit}
+              btn_disable={
+                !info.username ||
+                !info.email ||
+                !info.password ||
+                !info.confirmPass ||
+                message.username ||
+                message.email ||
+                message.password ||
+                message.confirmPass
+              }
+              btn_back={Colors.accent2}
+              btn_text_color={Colors.subcolor1}
+              btn_shadow={Colors.accent1}
             />
-            <p>{message.password}</p>
-          </div>
 
-          <div className="passwordForm textForm">
-            <label>パスワード確認</label>
-            <input
-              name="confirmPass"
-              type="password"
-              value={info.confirmPass}
-              onChange={this.handleChange}
-            />
-            <p>{message.confirmPass}</p>
-          </div>
-
-          <MiddleButton
-            btn_name="登録"
-            btn_type="submit"
-            btn_click={this.handleSubmit}
-            btn_disable={
-              !info.username ||
-              !info.email ||
-              !info.password ||
-              !info.confirmPass ||
-              message.username ||
-              message.email ||
-              message.password ||
-              message.confirmPass
-            }
-          />
-        </div>
+          </InputArea>
+        </Wrapper>
       </>
     );
   }
@@ -178,10 +200,98 @@ Register_Form.propTypes = {
   method: PropTypes.string,
 };
 
+const mapStateToProps = (state) => {
+  return {
+    uid: state.uid,
+    loading: state.loading,
+    error: state.error,
+  };
+};
+
 const mapDispatchToProps = (dispatch) => {
   return {
     onAuth: (username, email, password) => dispatch(actions.authSignup(username, email, password)),
   };
 };
 
-export default connect(null, mapDispatchToProps)(Register_Form);
+export default connect(mapStateToProps, mapDispatchToProps)(Register_Form);
+
+export const Wrapper = styled.div`
+  width:100%;
+  margin-top:125px;
+`;
+
+export const InputArea = styled.div`
+  background-color:${Colors.subcolor1};
+  width:70%;
+  margin:10px auto 0px auto;
+  height: 480px;
+  display:grid;
+  grid-template-rows:4fr 1fr;
+  grid-template-columns:1fr;
+  padding:15px;
+`;
+
+export const Tytle = styled.h1`
+  text-align:center;
+`;
+
+export const FormArea = styled.ul`
+  display:flex;
+  flex-direction:column;
+  justify-content:space-around;
+
+  li {
+    display: flex;
+    list-style: none;
+    align-items: center;
+    justify-content: center;
+    margin-top:15px;
+  }
+`;
+
+export const InputForm = styled.input`
+  background:white;
+  height: 40px;
+  width: 40%;
+  border: 1.2px solid ${Colors.accent1};
+
+  &::placeholder{
+    color:${Colors.characters};
+    font-size:0.82em;
+  }
+`;
+
+export const FormLabel = styled.label`
+  width:120px;
+  margin-right: 40px;
+  float:left;
+  font-weight:700;
+`;
+
+export const Error = styled.p`
+  font-size:0.7rem;
+  height:32px;
+  background: ${props => props.alert != '' ? '#70AACC' : 'none'};
+  width: 60%;
+  margin: 10px auto 0px auto;
+  border-radius: 20px;
+  color: ${Colors.subcolor1};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const SubmitButton = styled(LargeButton)`
+  margin:15px auto 0px auto;
+
+  &:hover:enabled{
+    background-color:${lighten(0.1, '#466A80')};
+    transition: all 200ms linear;
+  }
+
+  &:active:enabled{
+    box-shadow: 0px 0px 0px;
+    transform:translate(4px, 3px);
+  }
+`;
