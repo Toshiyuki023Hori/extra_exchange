@@ -36,10 +36,12 @@ class ItemCard extends Component {
         <Card>
           <ItemImage onClick={() => this.jumpToDetail(parentId)} src={image[0]['image']} alt="" />
           <ItemName>{name}</ItemName>
-          <p>Bland : {bland}</p>
-          <p>
-            ピックアップ : {pickupsView}
-          </p>
+          <ItemDescription>
+            <p>Bland : {bland}</p>
+            <p>
+              ピックアップ : {pickupsView}
+            </p>
+          </ItemDescription>
         </Card>
       );
     }
@@ -49,12 +51,17 @@ class ItemCard extends Component {
 export default ItemCard;
 
 const Card = styled.div`
-  height: 275px;
-  width: 220px;
+  height: 295px;
+  width: 230px;
   border-radius: 8px;
   border: 2px solid ${Colors.accent2};
-  overflow: scroll;
   margin: 5px 12px;
+
+  &:hover{
+    transition-duration:0.2s;
+    transform:scale(1.1) translate(2px, 3px) rotate(5deg);
+    box-shadow:4px 5px 9px #97ABAD;
+  }
 `;
 
 const ItemImage = styled.img`
@@ -65,8 +72,21 @@ const ItemImage = styled.img`
 `;
 
 const ItemName = styled.p`
+  height:45px;
+  padding:6.5px 4px;
   font-size: 1.26em;
   background: #8dd6ff;
   text-align: center;
   font-weight: bold;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+`;
+
+const ItemDescription = styled.div`
+  padding:3px 4px;
+  p {
+    font-size:0.86rem;
+    margin-bottom:5.5px;
+  }
 `;

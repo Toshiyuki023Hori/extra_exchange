@@ -4,6 +4,8 @@ import history from '../../history';
 import styled from 'styled-components';
 import { CircularProgress } from '@material-ui/core';
 import ItemCard from '../../presentational/shared/ItemCard';
+import ReactPaginate from "react-paginate";
+import { Wrapper, ItemPlaces } from "./Give_Item_List_byUser";
 
 class Give_Item_List extends Component {
   constructor(props) {
@@ -11,9 +13,40 @@ class Give_Item_List extends Component {
     this.state = {
       loading: false,
       loginUser: this.props.loginUser,
-      items: '',
+      allItems: '',
+      currentItems:{},
+      offset:0,
+      currentPage:0,
+      perPage:4,
+      pageCount:1,
     };
+    this.handlePageClick = this.handlePageClick.bind(this);
   }
+
+    // ページネーションで表示するitemをstateにセットするfunction
+    setCurrentItemsForState = (items) => {
+      let displayedItems;
+  
+      displayedItems = Object.keys(items).slice(this.state.offset, this.state.offset + this.state.perPage);
+      // 1ページあたりの要素数分抜き出し
+      displayedItems.map((parent_id) => {
+        for (const key in items){
+          if(parent_id === key){
+            this.setState({currentItems : {...this.state.currentItems, [key]:items[key]}});
+            continue
+          }
+        }
+      });
+    };
+  
+    // ページネーションで表示itemを変更させるfunction
+    handlePageClick = async (data) => {
+      const selectedPage = data.selected;
+      const offset = selectedPage * this.state.perPage;
+      await this.setState({currentPage : selectedPage, offset:offset});
+      this.setState({currentItems : {}})
+      this.setCurrentItemsForState(this.state.allItems);
+      };
 
   async componentDidUpdate(prevProps) {
     const { axiosUrl, category } = this.props;
@@ -107,7 +140,6 @@ class Give_Item_List extends Component {
             });
           })
         );
-        console.log('Now is ' + pickupsObject)
   
         // giveItemが持つItem_ImageをitemForStateオブジェクトへ代入
         await Promise.all(
@@ -126,41 +158,69 @@ class Give_Item_List extends Component {
               .catch((err) => console.log(err));
           })
         ); // Promise all closing tag
+
+      // ページネーションのページ数を決定
+      this.setState({pageCount : Math.ceil(Object.keys(itemsForState).length) / this.state.perPage});
+      this.setCurrentItemsForState(itemsForState);
       }
 
-      console.log(itemsForState);
+
+      await this.setState({ allItems: itemsForState });
       this.setState({ loading: false });
-      this.setState({ items: itemsForState });
     } // if closing tag
   } // componentDidUpdate closing
 
   render() {
     let subtitle;
+    let itemCards;
+    let paginationView;
     if(this.props.category){
       subtitle = <h2>{this.props.category.name + this.props.h2title}</h2>
+    }
+
+    if(this.state.allItems === "そのカテゴリーに分類する商品はありません"){
+      itemCards = <h3>{this.state.allItems}</h3>;
+    } else {
+      itemCards = Object.keys(this.state.currentItems).map((parentId, idx) => {
+        return (
+          <ItemCard
+            key={idx}
+            parentId={parentId}
+            name={this.state.currentItems[parentId]['name']}
+            image={this.state.currentItems[parentId]['image']}
+            bland={this.state.currentItems[parentId]['bland']}
+            pickups={this.state.currentItems[parentId]['pickups']}
+          />
+        );
+      });
+
+      paginationView = 
+        <ReactPaginate
+          previousLabel={"← Previous"}
+          nextLabel={"Next →"}
+          breakLabel={<span className="gap">...</span>}
+          pageCount={this.state.pageCount}
+          onPageChange={this.handlePageClick}
+          forcePage={this.state.currentPage}
+          containerClassName={"pagination"}
+          previousLinkClassName={"previous_page"}
+          nextLinkClassName={"next_page"}
+          disabledClassName={"disabled"}
+          activeClassName={"active"}
+        />
     }
 
     if (this.state.loading == true) {
       return <CircularProgress />;
     } else {
       return (
-        <div>
+        <Wrapper>
           {subtitle}
-          {this.state.items == "そのカテゴリーに分類する商品はありません"
-            ? this.state.items
-            : Object.keys(this.state.items).map((parentId, idx) => {
-                return (
-                  <ItemCard
-                    key={idx}
-                    parentId={parentId}
-                    name={this.state.items[parentId]['name']}
-                    image={this.state.items[parentId]['image']}
-                    bland={this.state.items[parentId]['bland']}
-                    pickups={this.state.items[parentId]['pickups']}
-                  />
-                );
-              })}
-        </div>
+          <ItemPlaces>
+            {itemCards}
+            {paginationView}
+          </ItemPlaces>
+        </Wrapper>
       );
     } // else closing tag
   } // render closing tag
