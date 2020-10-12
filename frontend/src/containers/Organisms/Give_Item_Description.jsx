@@ -95,7 +95,7 @@ class Give_Item_Description extends Component {
         requestDealsOfUser = "リクエスト送信なし"
       }
     })
-    .catch((err) => console.log(err));
+    .catch((err) => requestDealsOfUser = "リクエスト送信なし");
 
     // loginUserが一件でもリクエストを送っていたら
     // 取得したrequest_dealの中で、host_itemと一致してるか確認

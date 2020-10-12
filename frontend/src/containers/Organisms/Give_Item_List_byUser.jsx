@@ -3,6 +3,8 @@ import axios from 'axios';
 import history from '../../history';
 import styled from 'styled-components';
 import ItemCard from '../../presentational/shared/ItemCard';
+import ReactPaginate from "react-paginate";
+import "../../presentational/shared/static/Pagination.scss";
 
 class Give_Item_List_byUser extends Component {
   constructor(props) {
@@ -10,15 +12,47 @@ class Give_Item_List_byUser extends Component {
     this.state = {
       loading: true,
       user: '',
-      items: '',
+      allItems: '',
+      currentItems:{},
+      offset:0,
+      currentPage:0,
+      perPage:4,
+      pageCount:1,
     };
+   this.handlePageClick = this.handlePageClick.bind(this);
   }
+
+  // ページネーションで表示するitemをstateにセットするfunction
+  setCurrentItemsForState = (items) => {
+    let displayedItems;
+
+    displayedItems = Object.keys(items).slice(this.state.offset, this.state.offset + this.state.perPage);
+    // 1ページあたりの要素数分抜き出し
+    displayedItems.map((parent_id) => {
+      for (const key in items){
+        if(parent_id === key){
+          this.setState({currentItems : {...this.state.currentItems, [key]:items[key]}});
+          continue
+        }
+      }
+    });
+  };
+
+  // ページネーションで表示itemを変更させるfunction
+  handlePageClick = async (data) => {
+    const selectedPage = data.selected;
+    const offset = selectedPage * this.state.perPage;
+    await this.setState({currentPage : selectedPage, offset:offset});
+    this.setState({currentItems : {}})
+    this.setCurrentItemsForState(this.state.allItems);
+    };
 
   async componentDidMount() {
     const { axiosUrl, owner } = this.props;
     let itemsForState = {};
     let pickupList = [];
     let parentItems = {};
+    let currentItemsForState = {};
 
     console.log('Owner is ' + owner);
 
@@ -103,7 +137,6 @@ class Give_Item_List_byUser extends Component {
 
     
     if(Object.keys(itemsForState).length !== 0){
-      console.log("Root1")
       await Promise.all(
         Object.keys(itemsForState).map(async (parent_id) => {
           await axios
@@ -118,57 +151,90 @@ class Give_Item_List_byUser extends Component {
             .catch((err) => console.log(err));
         }) // map closing
       );//    Promise all closing
+
+      // ページネーションのページ数を決定
+      this.setState({pageCount : Math.ceil(Object.keys(itemsForState).length) / this.state.perPage});
+
+      // perPage分のitemsをページネーションへ
+      this.setCurrentItemsForState(itemsForState);
     } else {
       // Want_Itemは登路しているが、Give_Itemは登録していないパターン。
       // Userの全Parent_Itemを取得しているため、Give_Itemの抽出を待つ必要がある。
       itemsForState = "商品が投稿されていません"
     }
 
-    await this.setState({items : itemsForState});
+    await this.setState({allItems : itemsForState});
     this.setState({loading : false})
   
 }
 
   render() {
-    const {user, items} = this.state;
+    const {user, allItems, pageCount,currentItems, currentPage} = this.state;
     let itemCards;
+    let paginationView;
 
-    if(items === "商品が投稿されていません"){
-      itemCards = <h3>{items}</h3>
+    if(allItems === "商品が投稿されていません"){
+      itemCards = <NotHaveText>{allItems}</NotHaveText>
     } else {
       itemCards = 
-      Object.keys(this.state.items).map((parent_id, idx) => {
+      Object.keys(this.state.currentItems).map((parent_id, idx) => {
           return (
               <ItemCard
               key={idx}
               // リダイレクトのParameter用
               parentId={parent_id}
-              name={items[parent_id]["name"]}
-              bland={items[parent_id]["bland"]}
-              image={items[parent_id]["image"]}
-              pickups={items[parent_id]["pickups"]}
+              name={currentItems[parent_id]["name"]}
+              bland={currentItems[parent_id]["bland"]}
+              image={currentItems[parent_id]["image"]}
+              pickups={currentItems[parent_id]["pickups"]}
               />
           )
-        })
+        });
+
+      paginationView = 
+        <ReactPaginate
+          previousLabel={"<"}
+          nextLabel={">"}
+          breakLabel={<span className="gap">...</span>}
+          pageCount={pageCount}
+          onPageChange={this.handlePageClick}
+          forcePage={currentPage}
+          containerClassName={"pagination"}
+          previousLinkClassName={"previous_page"}
+          nextLinkClassName={"next_page"}
+          disabledClassName={"disabled"}
+          activeClassName={"active"}
+        />
     }
 
     if (this.state.loading == true) {
       return null;
     }
     return (
-        <div>
+        <Wrapper>
             <h2>{user.username + "さんのアイテム"}</h2>
             <ItemPlaces>
               {itemCards}
+              {paginationView}
             </ItemPlaces>
-        </div>
+        </Wrapper>
     )
   }
 }
 
 export default Give_Item_List_byUser;
 
-const ItemPlaces = styled.div`
-  display:flex;
-  justify-content:space-around;
+export const Wrapper = styled.div`
+  width:80%;
+`;
+
+export const ItemPlaces = styled.div`
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr 1fr;
+  justify-items: center;
+  grid-row-gap:25px;
+`;
+
+export const NotHaveText = styled.h3`
+  grid-column: 1 / 3;
 `;
