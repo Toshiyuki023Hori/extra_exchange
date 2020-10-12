@@ -8,6 +8,7 @@ import * as actions from '../../reducks/auth/actions';
 import SearchBox from '../../presentational/shared/SearchBox';
 import Logo from '../../assets/Logo.png';
 import SmallButton from '../../presentational/shared/SmallButton';
+import { Colors } from '../../presentational/shared/static/CSSvariables';
 
 class Header extends Component {
   constructor(props) {
@@ -54,7 +55,7 @@ class Header extends Component {
           {/* 　ログイン済ユーザー */}
           <div>
             <MessageToUserDiv>
-              <span>こんにちは {loginUser.username}さん</span>　
+              <p>こんにちは {loginUser.username}さん</p>　
               <LogoutButton onClick={this.handleLogout}>ログアウト</LogoutButton>
             </MessageToUserDiv>
             <AuthButtonDiv>
@@ -133,6 +134,9 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(mapStateToProps, mapDispatchToProps)(Header);
 
 const Wrapper = styled.div`
+  position:fixed;
+  top:0;
+  left:0;
   background-color: #8dd6ff;
   width: 100%;
   height:110px;
@@ -144,17 +148,34 @@ const Wrapper = styled.div`
 const Image = styled.img`
   width: 230px;
   margin-top: 5px;
+
+  &:hover{
+    box-shadow:0px 0px 7px ${Colors.accent2};
+    transform:scale(1.02,1.02);
+    transition-duration:0.75s;
+  }
 `;
 
 const MessageToUserDiv = styled.div`
   font-size: 13px;
   text-align: right;
   height: 20%;
+  
+  p{
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
 `;
 
 const LogoutButton = styled.button`
   color: #6e787f;
   width: 30%;
+  outline:none;
+
+  &:hover{
+    font-weight:bold;
+  }
 `;
 
 const AuthButtonDiv = styled.div`
