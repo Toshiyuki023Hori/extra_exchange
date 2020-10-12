@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import MiddleButton from '../../presentational/shared/MiddleButton';
+import LargeButton from '../../presentational/shared/LargeButton';
 import { connect } from 'react-redux';
 import styled from "styled-components";
 import { Colors } from "../../presentational/shared/static/CSSvariables";
+import { lighten } from 'polished';
 import * as actions from '../../reducks/auth/actions';
 
 class Register_Form extends React.Component {
@@ -109,15 +110,21 @@ class Register_Form extends React.Component {
   };
 
   render() {
-    let errorMessage = null;
+    let errorMessageUser = null;
+    let errorMessageEmail = null;
+    // 登録失敗時にerror.response.dataはobjectで返ってくる
+    // error.response.dataにusernameが入っていたら
     if (this.props.error) {
-      errorMessage = <p>{this.props.error.message}</p>;
+      errorMessageUser = <p>{this.props.error.username}</p>;
+    }
+    // error.response.dataにemailが入っていたら
+    if (this.props.error) {
+      errorMessageEmail = <p>{this.props.error.email}</p>;
     }
 
     const { info, message } = this.state;
     return (
       <>
-        {errorMessage}
       <Wrapper>
           <Tytle>会員登録</Tytle>
           <InputArea>
@@ -127,12 +134,14 @@ class Register_Form extends React.Component {
                 <InputForm name="username" type="text" value={info.username} onChange={this.handleChange} placeholder="最低5文字以上入力してください"/>
               </li>
               <Error　alert={message.username}>{message.username}</Error>
+              {errorMessageUser}
 
               <li>
                 <FormLabel>メール</FormLabel>
                 <InputForm name="email" type="email" value={info.email} onChange={this.handleChange} />
               </li>
               <Error alert={message.email}>{message.email}</Error>
+              {errorMessageEmail}
 
               <li>
                 <FormLabel>パスワード</FormLabel>
@@ -160,7 +169,7 @@ class Register_Form extends React.Component {
             </FormArea>
         
 
-            <MiddleButton
+            <SubmitButton
               btn_name="登録"
               btn_type="submit"
               btn_click={this.handleSubmit}
@@ -174,6 +183,9 @@ class Register_Form extends React.Component {
                 message.password ||
                 message.confirmPass
               }
+              btn_back={Colors.accent2}
+              btn_text_color={Colors.subcolor1}
+              btn_shadow={Colors.accent1}
             />
 
           </InputArea>
@@ -188,19 +200,27 @@ Register_Form.propTypes = {
   method: PropTypes.string,
 };
 
+const mapStateToProps = (state) => {
+  return {
+    uid: state.uid,
+    loading: state.loading,
+    error: state.error,
+  };
+};
+
 const mapDispatchToProps = (dispatch) => {
   return {
     onAuth: (username, email, password) => dispatch(actions.authSignup(username, email, password)),
   };
 };
 
-export default connect(null, mapDispatchToProps)(Register_Form);
+export default connect(mapStateToProps, mapDispatchToProps)(Register_Form);
 
-const Wrapper = styled.div`
+export const Wrapper = styled.div`
   width:100%;
 `;
 
-const InputArea = styled.div`
+export const InputArea = styled.div`
   background-color:${Colors.subcolor1};
   width:70%;
   margin-left:auto;
@@ -212,11 +232,11 @@ const InputArea = styled.div`
   padding:15px;
 `;
 
-const Tytle = styled.h1`
+export const Tytle = styled.h1`
   text-align:center;
 `;
 
-const FormArea = styled.ul`
+export const FormArea = styled.ul`
   display:flex;
   flex-direction:column;
   justify-content:space-around;
@@ -230,7 +250,7 @@ const FormArea = styled.ul`
   }
 `;
 
-const InputForm = styled.input`
+export const InputForm = styled.input`
   background:white;
   height: 40px;
   width: 40%;
@@ -242,13 +262,13 @@ const InputForm = styled.input`
   }
 `;
 
-const FormLabel = styled.label`
+export const FormLabel = styled.label`
   width:120px;
   margin-right: 40px;
   float:left;
 `;
 
-const Error = styled.p`
+export const Error = styled.p`
   height:32px;
   background: ${props => props.alert != '' ? '#70AACC' : 'none'};
   width: 60%;
@@ -258,4 +278,18 @@ const Error = styled.p`
   display: flex;
   align-items: center;
   justify-content: center;
+`;
+
+export const SubmitButton = styled(LargeButton)`
+  margin:15px auto 0px auto;
+
+  &:hover:enabled{
+    background-color:${lighten(0.1, '#466A80')};
+    transition: all 200ms linear;
+  }
+
+  &:active:enabled{
+    box-shadow: 0px 0px 0px;
+    transform:translate(4px, 3px);
+  }
 `;

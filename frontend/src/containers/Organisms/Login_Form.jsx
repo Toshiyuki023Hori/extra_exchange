@@ -5,6 +5,8 @@ import MiddleButton from '../../presentational/shared/MiddleButton';
 import { connect } from 'react-redux';
 import * as actions from '../../reducks/auth/actions';
 import history from '../../history';
+import { Wrapper,Tytle,InputArea,FormArea,FormLabel,InputForm,Error,SubmitButton } from "./Register_Form";
+import { Colors } from "../../presentational/shared/static/CSSvariables";
 
 class Login_Form extends React.Component {
   constructor(props) {
@@ -81,42 +83,58 @@ class Login_Form extends React.Component {
   };
 
   render() {
-    let errorMessage = null;
+    let errorMessage = "";
     if (this.props.error) {
-      errorMessage = <p>ユーザーネームか、パスワードが間違っています</p>;
+      errorMessage = "ユーザーネームか、パスワードが間違っています";
     }
 
     const { info, message } = this.state;
     return (
       <>
-        <div>
-          {errorMessage}
+        <Wrapper>
+          <Tytle>ログイン</Tytle>
+          <InputArea>
+            <FormArea>
+              <li>
+                <FormLabel>ユーザーネーム</FormLabel>
+                <InputForm name="username" type="text" value={info.username} onChange={this.handleChange} placeholder="最低5文字以上入力してください"/>
+              </li>
+              <Error alert={message.username}>{message.username}</Error>
 
-          <div>
-            <label>ユーザーネーム</label>
-            <input name="username" type="text" value={info.username} onChange={this.handleChange} />
-            <p>{message.username}</p>
-          </div>
-
-          <div>
-            <label>パスワード</label>
-            <input
-              name="password"
-              type="password"
-              value={info.password}
-              onChange={this.handleChange}
+              <li>
+                <FormLabel>パスワード</FormLabel>
+                <InputForm
+                  name="password"
+                  type="password"
+                  value={info.password}
+                  onChange={this.handleChange}
+                  placeholder="半角英数字最低8文字以上入力してください"
+                />
+              </li>
+              {/* 初期値のnullではない */}
+              {/* サーバーからのエラーが投げられてる */}
+              {/* null時は入力フォームにValidation */}
+                {
+                  this.props.error != null
+                  ? <Error alert={errorMessage}>
+                      {errorMessage}
+                    </Error>
+                  : <Error alert={message.password}>
+                      {message.password}
+                    </Error>
+                }
+            </FormArea>
+            <SubmitButton
+              btn_name="ログイン"
+              btn_click={this.handleSubmit}
+              btn_disable={!info.username || !info.password || message.username || message.password}
+              btn_back={Colors.accent2}
+              btn_text_color={Colors.subcolor1}
+              btn_shadow={Colors.accent1}
             />
-            <p>{message.password}</p>
-          </div>
+          </InputArea>
 
-          <MiddleButton
-            btn_name="ログイン"
-            btn_click={this.handleSubmit}
-            btn_disable={!info.username || !info.password || message.username || message.password}
-          />
-
-          <MiddleButton btn_name="サインアウト" btn_click={this.handleLogout} />
-        </div>
+        </Wrapper>
       </>
     );
   }

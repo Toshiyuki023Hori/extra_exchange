@@ -107,7 +107,8 @@ export const authLogin = (username, password) => {
         dispatch(getUserId(username));
       })
       .catch((err) => {
-        dispatch(authFail(err));
+        console.log(err.response);
+        dispatch(authFail(err.response.data));
       });
   };
 };
@@ -131,7 +132,8 @@ export const authSignup = (username, email, password) => {
         dispatch(getUserId(username));
       })
       .catch((err) => {
-        dispatch(authFail(err));
+        console.log(err.response);
+        dispatch(authFail(err.response.data));
       });
   };
 };
