@@ -4,6 +4,7 @@ import Login_Form from '../Organisms/Login_Form';
 import { connect } from 'react-redux';
 import * as actions from '../../reducks/auth/actions';
 import Header_LogReg from "../Organisms/Header_LogReg";
+import Footer from "../Organisms/Footer";
 
 function Login() {
   return (
@@ -11,6 +12,7 @@ function Login() {
       <div>
           <Header_LogReg loginOrRegister="ログイン"/>
           <Login_Form/>
+          <Footer/>
       </div>
     </>
   );

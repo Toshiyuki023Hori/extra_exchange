@@ -218,13 +218,13 @@ export default connect(mapStateToProps, mapDispatchToProps)(Register_Form);
 
 export const Wrapper = styled.div`
   width:100%;
+  margin-top:15px;
 `;
 
 export const InputArea = styled.div`
   background-color:${Colors.subcolor1};
   width:70%;
-  margin-left:auto;
-  margin-right:auto;
+  margin:10px auto 0px auto;
   height: 480px;
   display:grid;
   grid-template-rows:4fr 1fr;

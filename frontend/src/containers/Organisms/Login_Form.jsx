@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import axios from 'axios';
-import MiddleButton from '../../presentational/shared/MiddleButton';
 import { connect } from 'react-redux';
 import * as actions from '../../reducks/auth/actions';
-import history from '../../history';
+import styled from "styled-components";
 import { Wrapper,Tytle,InputArea,FormArea,FormLabel,InputForm,Error,SubmitButton } from "./Register_Form";
 import { Colors } from "../../presentational/shared/static/CSSvariables";
 
@@ -78,10 +76,6 @@ class Login_Form extends React.Component {
     this.props.onAuth(this.state.info.username, this.state.info.password);
   };
 
-  handleLogout = () => {
-    this.props.logout();
-  };
-
   render() {
     let errorMessage = "";
     if (this.props.error) {
@@ -93,8 +87,8 @@ class Login_Form extends React.Component {
       <>
         <Wrapper>
           <Tytle>ログイン</Tytle>
-          <InputArea>
-            <FormArea>
+          <ExtendsInputArea>
+            <ExtendsFormArea>
               <li>
                 <FormLabel>ユーザーネーム</FormLabel>
                 <InputForm name="username" type="text" value={info.username} onChange={this.handleChange} placeholder="最低5文字以上入力してください"/>
@@ -123,7 +117,7 @@ class Login_Form extends React.Component {
                       {message.password}
                     </Error>
                 }
-            </FormArea>
+            </ExtendsFormArea>
             <SubmitButton
               btn_name="ログイン"
               btn_click={this.handleSubmit}
@@ -132,7 +126,7 @@ class Login_Form extends React.Component {
               btn_text_color={Colors.subcolor1}
               btn_shadow={Colors.accent1}
             />
-          </InputArea>
+          </ExtendsInputArea>
 
         </Wrapper>
       </>
@@ -155,3 +149,11 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login_Form);
+
+const ExtendsFormArea = styled(FormArea)`
+  justify-content:center;
+`;
+
+const ExtendsInputArea = styled(InputArea)`
+  height:380px;
+`;
