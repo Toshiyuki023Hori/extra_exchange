@@ -5,7 +5,8 @@ import styled from 'styled-components';
 import { CircularProgress } from '@material-ui/core';
 import ItemCard from '../../presentational/shared/ItemCard';
 import ReactPaginate from "react-paginate";
-import { Wrapper, ItemPlaces } from "./Give_Item_List_byUser";
+import { Wrapper, ItemPlaces, NotHaveText } from "./Give_Item_List_byUser";
+import "../../presentational/shared/static/Pagination.scss";
 
 class Give_Item_List extends Component {
   constructor(props) {
@@ -179,7 +180,7 @@ class Give_Item_List extends Component {
     }
 
     if(this.state.allItems === "そのカテゴリーに分類する商品はありません"){
-      itemCards = <h3>{this.state.allItems}</h3>;
+      itemCards = <NotHaveText>{this.state.allItems}</NotHaveText>;
     } else {
       itemCards = Object.keys(this.state.currentItems).map((parentId, idx) => {
         return (
@@ -196,8 +197,8 @@ class Give_Item_List extends Component {
 
       paginationView = 
         <ReactPaginate
-          previousLabel={"← Previous"}
-          nextLabel={"Next →"}
+          previousLabel={"<"}
+          nextLabel={">"}
           breakLabel={<span className="gap">...</span>}
           pageCount={this.state.pageCount}
           onPageChange={this.handlePageClick}

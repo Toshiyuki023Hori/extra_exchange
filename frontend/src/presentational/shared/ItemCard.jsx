@@ -33,8 +33,8 @@ class ItemCard extends Component {
       return <CircularProgress />;
     } else {
       return (
-        <Card>
-          <ItemImage onClick={() => this.jumpToDetail(parentId)} src={image[0]['image']} alt="" />
+        <Card onClick={() => this.jumpToDetail(parentId)}>
+          <ItemImage  src={image[0]['image']} alt="" />
           <ItemName>{name}</ItemName>
           <ItemDescription>
             <p>Bland : {bland}</p>
@@ -56,6 +56,7 @@ const Card = styled.div`
   border-radius: 8px;
   border: 2px solid ${Colors.accent2};
   margin: 5px 12px;
+  cursor:pointer;
 
   &:hover{
     transition-duration:0.2s;

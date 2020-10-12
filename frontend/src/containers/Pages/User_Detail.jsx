@@ -7,6 +7,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import User_Header from '../Organisms/User_Header';
 import Want_Item_List from '../Organisms/Want_Item_List';
 import Give_Item_List_byUser from '../Organisms/Give_Item_List_byUser';
+import Footer from "../Organisms/Footer";
 
 class User_Detail extends Component {
   constructor(props) {
@@ -55,6 +56,7 @@ class User_Detail extends Component {
 
   const userHeader = <User_Header user={user} />;
 
+    // ゲスト用
     if (!this.props.isAuthenticated && user == "") {
       return <CircularProgress/>
     } else if (!this.props.isAuthenticated && user != ''){
@@ -65,20 +67,23 @@ class User_Detail extends Component {
             <p>{user.profile}</p>
             {wantItemList}
             {giveItemList}
+            <Footer/>
           </>
         );
     }
     
+    // loginUser本人用
     else if (loginUser === '' || user === "") {
       return <CircularProgress />;
     } else {
       return (
         <>
           {header(loginUser)}
-        {userHeader}
+          {userHeader}
           <p>{user.profile}</p>
           {wantItemList}
           {giveItemList}
+          <Footer/>
         </>
       );
     }

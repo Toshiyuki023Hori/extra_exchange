@@ -1,0 +1,32 @@
+.pagination{
+    grid-column: 1 / 5;
+    grid-column: 1 / 5;
+    list-style: none;
+    display: flex;
+    color: #466A80;
+    outline:none;
+
+    a{
+        cursor: pointer;
+    }
+
+    li{
+        margin-right: 20px;
+        margin-top: 10px;
+        border:solid 1px #466A80;
+        padding: 9px;
+        border-radius: 50%;
+        width: 2.3rem;
+        text-align: center;
+
+        &:hover:not(.active){
+          background-color: #cbe3f1;
+        }
+    }
+}
+
+.active{
+  background-color: #466A80;
+  color:#D9F1FF;
+}
+

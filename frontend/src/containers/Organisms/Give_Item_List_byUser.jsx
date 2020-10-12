@@ -4,6 +4,7 @@ import history from '../../history';
 import styled from 'styled-components';
 import ItemCard from '../../presentational/shared/ItemCard';
 import ReactPaginate from "react-paginate";
+import "../../presentational/shared/static/Pagination.scss";
 
 class Give_Item_List_byUser extends Component {
   constructor(props) {
@@ -173,7 +174,7 @@ class Give_Item_List_byUser extends Component {
     let paginationView;
 
     if(allItems === "商品が投稿されていません"){
-      itemCards = <h3>{allItems}</h3>
+      itemCards = <NotHaveText>{allItems}</NotHaveText>
     } else {
       itemCards = 
       Object.keys(this.state.currentItems).map((parent_id, idx) => {
@@ -192,8 +193,8 @@ class Give_Item_List_byUser extends Component {
 
       paginationView = 
         <ReactPaginate
-          previousLabel={"← Previous"}
-          nextLabel={"Next →"}
+          previousLabel={"<"}
+          nextLabel={">"}
           breakLabel={<span className="gap">...</span>}
           pageCount={pageCount}
           onPageChange={this.handlePageClick}
@@ -234,6 +235,6 @@ export const ItemPlaces = styled.div`
   grid-row-gap:25px;
 `;
 
-// const StyledItemCard = styled(ItemCard)`
-//   margin:0px auto;
-// `;
+export const NotHaveText = styled.h3`
+  grid-column: 1 / 3;
+`;
