@@ -13,20 +13,22 @@ class User_Header extends Component {
   render(){
     const {user} = this.props;
     return(
-        <div>
+        <Wrapper>
             <Background 
             background={user.background}
             bg_width="100%"
-            bg_height="70px"
+            bg_height="208px"
             />
-            <StyledIcon 
-            icon={user.icon}
-            img_width="100px"
-            img_height="100px"
-            img_radius="50px"
-            />
-            <Username>{user.username}</Username>
-        </div>
+            <InformationDiv>
+              <StyledIcon 
+              icon={user.icon}
+              img_width="120px"
+              img_height="120px"
+              img_radius="50%"
+              />
+              <Username>{user.username}</Username>
+            </InformationDiv>
+        </Wrapper>
     )
   }
 }
@@ -34,12 +36,26 @@ class User_Header extends Component {
 export default User_Header;
 
 
+const Wrapper = styled.div`
+  height: 310px;
+  `;
+
+const InformationDiv = styled.div`
+  position:relative;
+  bottom: 65px;
+`;
+
 const StyledIcon = styled(Icon)`
   display: block;
   margin-left: auto;
   margin-right: auto;
+  z-index:3;
 `;
 
 const Username = styled.h2`
   text-align:center;
+  margin-top: 15px;
+  font-size: 2.3rem;
 `;
+
+

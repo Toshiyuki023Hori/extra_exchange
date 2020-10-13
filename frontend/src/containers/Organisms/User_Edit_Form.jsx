@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import history from '../../history';
 import CircularProgresss from '@material-ui/core/CircularProgress';
 import MiddleButton from '../../presentational/shared/MiddleButton';
+import { mixinHeaderSpace } from "../../presentational/shared/static/CSSvariables";
 
 class User_Edit_Form extends Component {
   constructor(props) {
@@ -201,7 +202,7 @@ class User_Edit_Form extends Component {
     const { info, message, imgUrls } = this.state;
     return (
       <>
-        <div>
+        <Wrapper>
           <div>
             <label>ユーザーネーム</label>
             <input name="username" type="text" value={info.username} onChange={this.handleChange} />
@@ -213,74 +214,81 @@ class User_Edit_Form extends Component {
             <input name="email" type="email" value={info.email} onChange={this.handleChange} />
             <p>{message.email}</p>
           </div>
-        </div>
 
-        <div>
-          <label>プロフィール</label>　
-          <textarea
-            name="profile"
-            value={info.profile}
-            cols="30"
-            rows="10"
-            onChange={this.handleChange}
-          ></textarea>
-        </div>
+          <div>
+            <label>プロフィール</label>　
+            <textarea
+              name="profile"
+              value={info.profile}
+              cols="30"
+              rows="10"
+              onChange={this.handleChange}
+            ></textarea>
+          </div>
 
-        <div>
-          <label>アイコン画像</label>
-          <input name="icon" type="file" onChange={this.handleImageSelect} />
-          {imgUrls.icon != null ? (
-            <>
-              <Image src={imgUrls.icon} alt="" />
-              {typeof info.icon == 'string' ? (
-                <button name="icon" onClick={() => this.setNoImage('icon')}>
-                  アイコンを未設定にする
-                </button>
-              ) : (
-                <button name="icon" onClick={() => this.cancelUploadedImage('icon')}>
-                  画像取り消し
-                </button>
-              )}
-            </>
-          ) : (
-            <Image src="" alt="" />
-          )}
-        </div>
+          <div>
+            <label>アイコン画像</label>
+            <input name="icon" type="file" onChange={this.handleImageSelect} />
+            {imgUrls.icon != null ? (
+              <>
+                <Image src={imgUrls.icon} alt="" />
+                {typeof info.icon == 'string' ? (
+                  <button name="icon" onClick={() => this.setNoImage('icon')}>
+                    アイコンを未設定にする
+                  </button>
+                ) : (
+                  <button name="icon" onClick={() => this.cancelUploadedImage('icon')}>
+                    画像取り消し
+                  </button>
+                )}
+              </>
+            ) : (
+              <Image src="" alt="" />
+            )}
+          </div>
 
-        <div>
-          <label>背景画像</label>
-          <input name="background" type="file" onChange={this.handleImageSelect} />
-          {imgUrls.background != null ? (
-            <>
-              <Image src={imgUrls.background} alt="" />
-              {typeof info.background == 'string' ? (
-                <button name="background" onClick={() => this.setNoImage('background')}>
-                  背景を未設定にする
-                </button>
-              ) : (
-                <button name="background" onClick={() => this.cancelUploadedImage('background')}>
-                  画像取り消し
-                </button>
-              )}
-            </>
-          ) : (
-            <Image src="" alt="" />
-          )}
-        </div>
+          <div>
+            <label>背景画像</label>
+            <input name="background" type="file" onChange={this.handleImageSelect} />
+            {imgUrls.background != null ? (
+              <>
+                <Image src={imgUrls.background} alt="" />
+                {typeof info.background == 'string' ? (
+                  <button name="background" onClick={() => this.setNoImage('background')}>
+                    背景を未設定にする
+                  </button>
+                ) : (
+                  <button name="background" onClick={() => this.cancelUploadedImage('background')}>
+                    画像取り消し
+                  </button>
+                )}
+              </>
+            ) : (
+              <Image src="" alt="" />
+            )}
+          </div>
 
-        <MiddleButton
-          btn_name="編集完了"
-          btn_type="submit"
-          btn_click={this.handleSubmit}
-          btn_disable={!info.username || !info.email || message.username || message.email}
-        />
+          <MiddleButton
+            btn_name="編集完了"
+            btn_type="submit"
+            btn_click={this.handleSubmit}
+            btn_disable={!info.username || !info.email || message.username || message.email}
+          />
+        </Wrapper>
+
       </>
     );
   }
 }
 
+const Wrapper = styled.div`
+  ${mixinHeaderSpace};
+`;
+
 const Image = styled.img`
   width: 150px;
 `;
+
+
 
 export default User_Edit_Form;

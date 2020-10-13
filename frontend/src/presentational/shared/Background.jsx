@@ -25,5 +25,6 @@ export default Background;
 const BackImage = styled.div`
   width: ${(props) => props.bg_width};
   height: ${(props) => props.bg_height};
-  background:url(${(props) => props.background})
+  background:url(${(props) => props.background}) center;
+  background-size: cover;
 `;

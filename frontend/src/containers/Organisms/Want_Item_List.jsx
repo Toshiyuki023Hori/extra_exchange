@@ -172,7 +172,7 @@ class Want_Item_List extends Component {
         }
       </StyledList>
     } else {
-      itemList = <p>{itemObject}</p>
+      itemList = <NotHaveText>{itemObject}</NotHaveText>
     }
 
     if (parentItems === '' || wantItems === [] || itemObject === '') {
@@ -202,6 +202,12 @@ const StyledList = styled.ol`
     font-size:1.15rem;
     margin-bottom:10px;
   }
+`;
+
+const NotHaveText = styled.p`
+  margin-top:15px;
+  margin-left:30px;
+  font-size:1.15rem;
 `;
 
 const LinkText = styled.a`
