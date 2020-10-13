@@ -13,7 +13,6 @@ class Give_Item_List extends Component {
     super(props);
     this.state = {
       loading: false,
-      loginUser: this.props.loginUser,
       allItems: '',
       currentItems:{},
       offset:0,
@@ -49,7 +48,7 @@ class Give_Item_List extends Component {
       this.setCurrentItemsForState(this.state.allItems);
       };
 
-  async componentDidUpdate(prevProps) {
+  async componentDidMount() {
     const { axiosUrl, category } = this.props;
     let pickedGiveItems;
     let owner_id;
@@ -59,7 +58,6 @@ class Give_Item_List extends Component {
 
     // Parent ComponentのsetStateが完了した時点で発火
     // Categoryに合ったGive_Item > Give_ItemのParent＿Item > Image, blandのUrl, name > itemsForStateからStateへ
-    if (prevProps.category != category) {
       this.setState({ loading: true });
       await axios
         .get(axiosUrl + 'giveitem/?category=' + category.id)
@@ -168,7 +166,6 @@ class Give_Item_List extends Component {
 
       await this.setState({ allItems: itemsForState });
       this.setState({ loading: false });
-    } // if closing tag
   } // componentDidUpdate closing
 
   render() {

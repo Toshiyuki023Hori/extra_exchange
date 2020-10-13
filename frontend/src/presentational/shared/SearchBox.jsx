@@ -29,7 +29,7 @@ class SearchBox extends Component {
             name="itemName"
             onChange={this.handleChange}
             value={this.state.itemName}
-            placeholder="商品名で検索"
+            placeholder="検索機能はただいま開発中です"
           />
           <SubmitButton type="submit">検索</SubmitButton>
         </SearchArea>

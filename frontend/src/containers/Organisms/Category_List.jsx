@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from "styled-components";
+import history from "../../history";
 import axios from "axios";
 
 class Category_List extends Component {
@@ -8,6 +9,7 @@ class Category_List extends Component {
     this.state = {
       allCategories:"",
     }
+    this.jumpToItem = this.jumpToItem.bind(this);
   }
 
   async componentDidMount(){
@@ -15,11 +17,14 @@ class Category_List extends Component {
     await axios.get(axiosUrl + "category")
     .then((res) => { 
         this.setState({allCategories : res.data})
-        // Allcategoriesの初回レンダー時に表示させるデータ。
-        this.props.setCategoryToState(res.data[0]) 
     })
     .catch((err) => console.log(err));
   }
+
+  jumpToItem = (category_id) => {
+    history.push("/category/" + category_id)
+    // window.location.reload();
+  };
 
   render(){
       if(this.state.allCategories == ""){
@@ -30,7 +35,7 @@ class Category_List extends Component {
                   {this.state.allCategories.map((category) => {
                       return <li 
                       key={category.id}
-                      onClick={() => this.props.setCategoryToState(category)}
+                      onClick={() => this.jumpToItem(category.id)}
                       >{category.name}</li>
                   })}
               </ul>

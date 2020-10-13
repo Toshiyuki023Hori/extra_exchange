@@ -51,6 +51,7 @@ class ItemCard extends Component {
 export default ItemCard;
 
 const Card = styled.div`
+  background:white;
   height: 295px;
   width: 230px;
   border-radius: 8px;

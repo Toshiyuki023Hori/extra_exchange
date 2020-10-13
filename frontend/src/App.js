@@ -29,7 +29,7 @@ import Deal_Proceeding_JoinUser from './containers/Pages/Deal_Proceeding_JoinUse
 import Deal_Detail_HostUser from './containers/Pages/Deal_Detail_HostUser';
 import Deal_Detail_JoinUser from './containers/Pages/Deal_Detail_JoinUser';
 import Deal_Complete from "./containers/Pages/Deal_Complete";
-import Allcategories from './containers/Pages/Allcategories';
+import Category_Page from './containers/Pages/Category_Page';
 
 class App extends Component {
   componentDidMount() {
@@ -59,8 +59,8 @@ class App extends Component {
           />
           <Route
             exact
-            path="/category"
-            render={(routeProps) => <Allcategories {...routeProps} {...this.props} />}
+            path="/category/:category_id"
+            render={(routeProps) => <Category_Page {...routeProps} {...this.props} />}
           />
           <Route
             exact

@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import history from '../../history';
+import styled from "styled-components";
 import Give_Item_List from '../Organisms/Give_Item_List';
 import Header from '../Organisms/Header';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { mixinSpace } from "../../presentational/shared/static/CSSvariables";
 
 class Top extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading:true,
       loginUser: '',
       categories: '',
     };
@@ -38,44 +41,64 @@ class Top extends Component {
       })
     );
 
-    this.setState({ categories: categoriesList });
+    await this.setState({ categories: categoriesList });
+    this.setState({loading : false});
+    console.log(this.state.categories);
   }
 
   render() {
+    let giveItemView;
     const header = (value) => {
       return <Header loginUser={value} />;
     };
 
-    const giveItemList = (value) => {
-      return (
-        <Give_Item_List
+    if(this.state.categories != ""){
+      giveItemView = this.state.categories.map((category) => {
+        return (
+          <Give_Item_List
           axiosUrl="http://localhost:8000/api/"
-          h2title="の最新投稿一覧"
-          loginUser={value}
-          category={this.state.categories[0]}
-        />
-      );
-    };
-
-    if (!this.props.isAuthenticated) {
-      return (
-        <>
-          {header('')}
-          {giveItemList('')}
-        </>
-      );
+          h2title="の投稿一覧"
+          category={category}
+          />
+        )
+      })
     }
-    if (this.state.loginUser === '') {
+    
+
+    // ゲスト用
+    if (!this.props.isAuthenticated) {
+      if(this.state.loading === true){
+        return <CircularProgress />;
+      } else{
+        return (
+          <>
+            {header('')}
+            <ListDiv>
+              {giveItemView}
+            </ListDiv>
+          </>
+        );
+      } // else closing
+    }  // if (!this.props.isAuthenticated) closing
+    //
+　　// ログインユーザー用
+    if (this.state.loading === true) {
       return <CircularProgress />;
     } else {
       return (
         <>
           {header(this.state.loginUser)}
-          {giveItemList(this.state.loginUser)}
+          <ListDiv>
+            {giveItemView}
+          </ListDiv>
         </>
-      );
-    }
+      ); // return closing
+    }    // else closing
   }
 }
 
 export default Top;
+
+const ListDiv = styled.div`
+  ${mixinSpace}
+`;

@@ -50,6 +50,7 @@ const Wrapper = styled.div`
   background-color: #8dd6ff;
   display: grid;
   grid-template-columns: 1fr 5fr;
+  box-shadow: 0px 1px 5px;
 `;
 
 const Image = styled.img`
