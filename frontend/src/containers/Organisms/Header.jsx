@@ -134,6 +134,7 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(mapStateToProps, mapDispatchToProps)(Header);
 
 const Wrapper = styled.div`
+  z-index:30;
   position:fixed;
   top:0;
   left:0;
@@ -143,6 +144,7 @@ const Wrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr 2.3fr 1fr;
   padding: 10px 5px 5px 5px;
+  box-shadow: 0px 1px 5px;
 `;
 
 const Image = styled.img`
@@ -165,6 +167,10 @@ const MessageToUserDiv = styled.div`
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
+
+    &::after{
+      content:"▼"
+    }
   }
 `;
 

@@ -23,7 +23,7 @@ class Category_List extends Component {
 
   jumpToItem = (category_id) => {
     history.push("/category/" + category_id)
-    window.location.reload();
+    // window.location.reload();
   };
 
   render(){

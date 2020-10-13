@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import { withRouter, Redirect } from 'react-router-dom';
 import axios from 'axios';
+import styled from "styled-components";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Give_Item_Add_Form from '../Organisms/Give_Item_Add_Form';
 import Header from '../Organisms/Header';
+import Footer from "../Organisms/Footer";
+import { mixinSpace } from "../../presentational/shared/static/CSSvariables";
 
 class Give_Item_Add extends Component {
   constructor(props) {
@@ -33,17 +36,22 @@ class Give_Item_Add extends Component {
       return <CircularProgress />;
     } else {
       return (
-        <div>
+        <Wrapper>
           <Header loginUser={this.state.loginUser} />
           <Give_Item_Add_Form
             owner={this.state.loginUser}
             loginUser={this.state.loginUser}
             axiosUrl="http://localhost:8000/api/"
           />
-        </div>
+          <Footer/>
+        </Wrapper>
       );
     }
   }
 }
 
 export default withRouter(Give_Item_Add);
+
+const Wrapper = styled.div`
+  ${mixinSpace}
+`;

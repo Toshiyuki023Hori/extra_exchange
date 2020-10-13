@@ -34,4 +34,8 @@ const StyledButton = styled.button`
   border-color: ${(props) => props.btn_border};
   background: ${(props) => props.btn_back};
   color: ${(props) => props.btn_text_color};
+
+  &:hover{
+    opacity:0.7;
+  }
 `;

@@ -5,6 +5,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Category_List from '../Organisms/Category_List';
 import Header from '../Organisms/Header';
 import Give_Item_List from '../Organisms/Give_Item_List';
+import { mixinSpace } from "../../presentational/shared/static/CSSvariables";
 
 class Category_Page extends Component {
   constructor(props) {
@@ -92,5 +93,5 @@ class Category_Page extends Component {
 export default Category_Page;
 
 const Wrapper = styled.div`
-  margin-top:110px;
+  ${mixinSpace}
 `;

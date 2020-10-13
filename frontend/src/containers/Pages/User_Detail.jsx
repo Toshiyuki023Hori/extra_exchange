@@ -8,6 +8,7 @@ import User_Header from '../Organisms/User_Header';
 import Want_Item_List from '../Organisms/Want_Item_List';
 import Give_Item_List_byUser from '../Organisms/Give_Item_List_byUser';
 import Footer from "../Organisms/Footer";
+import { mixinSpace } from "../../presentational/shared/static/CSSvariables";
 
 class User_Detail extends Component {
   constructor(props) {
@@ -62,12 +63,14 @@ class User_Detail extends Component {
     } else if (!this.props.isAuthenticated && user != ''){
         return (
           <>
+          <div>
             {header('')}
             {userHeader}
             <p>{user.profile}</p>
             {wantItemList}
             {giveItemList}
             <Footer/>
+          </div>
           </>
         );
     }
@@ -78,12 +81,14 @@ class User_Detail extends Component {
     } else {
       return (
         <>
+        <Wrapper>
           {header(loginUser)}
           {userHeader}
           <p>{user.profile}</p>
           {wantItemList}
           {giveItemList}
           <Footer/>
+        </Wrapper>
         </>
       );
     }
@@ -91,3 +96,7 @@ class User_Detail extends Component {
 }
 
 export default User_Detail;
+
+const Wrapper = styled.div`
+  ${mixinSpace}
+`;
