@@ -9,7 +9,7 @@ import Want_Item_List from '../Organisms/Want_Item_List';
 import Give_Item_List_byUser from '../Organisms/Give_Item_List_byUser';
 import Footer from "../Organisms/Footer";
 import User_Sidemenu from "../Organisms/User_Sidemenu";
-import { mixinSpace } from "../../presentational/shared/static/CSSvariables";
+import { mixinHeaderSpace } from "../../presentational/shared/static/CSSvariables";
 
 class User_Detail extends Component {
   constructor(props) {
@@ -49,6 +49,7 @@ class User_Detail extends Component {
         loginUser=""
         h2Title={'欲しい物リスト'}
         axiosUrl="http://localhost:8000/api/"
+        margin_left='30px'
       />
     );
 
@@ -68,12 +69,12 @@ class User_Detail extends Component {
             {header('')}
             <Body>
               <User_Sidemenu user_id={user.id}/>
-              <div>
+              <InformationDiv>
                 {userHeader}
                 <p>{user.profile}</p>
                 {wantItemList}
                 {giveItemList}
-              </div>
+              </InformationDiv>
             </Body>
             <Footer/>
           </Wrapper>
@@ -109,7 +110,7 @@ class User_Detail extends Component {
 export default User_Detail;
 
 const Wrapper = styled.div`
-  ${mixinSpace}
+  ${mixinHeaderSpace}
 `;
 
 

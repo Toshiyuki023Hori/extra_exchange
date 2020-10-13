@@ -5,7 +5,7 @@ import styled from "styled-components";
 import Give_Item_List from '../Organisms/Give_Item_List';
 import Header from '../Organisms/Header';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { mixinSpace } from "../../presentational/shared/static/CSSvariables";
+import { mixinHeaderSpace } from "../../presentational/shared/static/CSSvariables";
 
 class Top extends Component {
   constructor(props) {
@@ -100,5 +100,5 @@ class Top extends Component {
 export default Top;
 
 const ListDiv = styled.div`
-  ${mixinSpace}
+  ${mixinHeaderSpace}
 `;
