@@ -8,6 +8,10 @@ export const Colors = {
     accent2: '#466A80',
   };
 
-export const mixinSpace = css`
-  margin-top:125px;
+export const mixinHeaderSpace = css`
+  margin-top:110px;
 `;
+
+export const mixinUserMarginLeft =css`
+  margin-left:30px;
+`

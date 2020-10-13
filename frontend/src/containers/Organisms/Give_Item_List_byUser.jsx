@@ -225,16 +225,17 @@ class Give_Item_List_byUser extends Component {
 export default Give_Item_List_byUser;
 
 export const Wrapper = styled.div`
-  width:80%;
+  width:100%;
 `;
 
 export const ItemPlaces = styled.div`
   display:grid;
   grid-template-columns:1fr 1fr 1fr 1fr;
+  justify-content:center;
   justify-items: center;
   grid-row-gap:25px;
 `;
 
-export const NotHaveText = styled.h3`
+export const NotHaveText = styled.p`
   grid-column: 1 / 3;
 `;

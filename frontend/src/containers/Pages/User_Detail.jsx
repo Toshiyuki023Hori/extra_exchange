@@ -8,7 +8,8 @@ import User_Header from '../Organisms/User_Header';
 import Want_Item_List from '../Organisms/Want_Item_List';
 import Give_Item_List_byUser from '../Organisms/Give_Item_List_byUser';
 import Footer from "../Organisms/Footer";
-import { mixinSpace } from "../../presentational/shared/static/CSSvariables";
+import User_Sidemenu from "../Organisms/User_Sidemenu";
+import { mixinHeaderSpace } from "../../presentational/shared/static/CSSvariables";
 
 class User_Detail extends Component {
   constructor(props) {
@@ -48,6 +49,7 @@ class User_Detail extends Component {
         loginUser=""
         h2Title={'欲しい物リスト'}
         axiosUrl="http://localhost:8000/api/"
+        margin_left='30px'
       />
     );
 
@@ -63,14 +65,19 @@ class User_Detail extends Component {
     } else if (!this.props.isAuthenticated && user != ''){
         return (
           <>
-          <div>
+          <Wrapper>
             {header('')}
-            {userHeader}
-            <p>{user.profile}</p>
-            {wantItemList}
-            {giveItemList}
+            <Body>
+              <User_Sidemenu user_id={user.id}/>
+              <InformationDiv>
+                {userHeader}
+                <p>{user.profile}</p>
+                {wantItemList}
+                {giveItemList}
+              </InformationDiv>
+            </Body>
             <Footer/>
-          </div>
+          </Wrapper>
           </>
         );
     }
@@ -83,10 +90,15 @@ class User_Detail extends Component {
         <>
         <Wrapper>
           {header(loginUser)}
-          {userHeader}
-          <p>{user.profile}</p>
-          {wantItemList}
-          {giveItemList}
+          <Body>
+            <User_Sidemenu user_id={user.id} isUser={loginUser.id === user.id}/>
+            <InformationDiv>
+              {userHeader}
+              <p>{user.profile}</p>
+              {wantItemList}
+              {giveItemList}
+            </InformationDiv>
+          </Body>
           <Footer/>
         </Wrapper>
         </>
@@ -98,5 +110,14 @@ class User_Detail extends Component {
 export default User_Detail;
 
 const Wrapper = styled.div`
-  ${mixinSpace}
+  ${mixinHeaderSpace}
+`;
+
+
+const Body = styled.div`
+  display:flex;
+`;
+
+const InformationDiv = styled.div`
+  flex:1;
 `;

@@ -25,7 +25,7 @@ const Image = styled.img`
   width: ${(props) => props.img_width};
   height: ${(props) => props.img_height};
   border-radius: ${(props) => props.img_radius};
-  border: 1px solid;
+  background:white;
   border-color: ${Colors.accent2};
   object-fit: contain;
 `;

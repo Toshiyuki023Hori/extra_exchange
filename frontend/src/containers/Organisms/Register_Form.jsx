@@ -7,6 +7,7 @@ import styled from "styled-components";
 import { Colors } from "../../presentational/shared/static/CSSvariables";
 import { lighten } from 'polished';
 import * as actions from '../../reducks/auth/actions';
+import { mixinHeaderSpace } from "../../presentational/shared/static/CSSvariables";
 
 class Register_Form extends React.Component {
   constructor(props) {
@@ -218,7 +219,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(Register_Form);
 
 export const Wrapper = styled.div`
   width:100%;
-  margin-top:125px;
+  ${mixinHeaderSpace};
 `;
 
 export const InputArea = styled.div`

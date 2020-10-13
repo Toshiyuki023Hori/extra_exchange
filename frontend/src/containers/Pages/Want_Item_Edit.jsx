@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import styled from "styled-components"
 import { Redirect } from 'react-router-dom';
 import Want_Item_Edit_Form from '../Organisms/Want_Item_Edit_Form';
 import Header from '../Organisms/Header';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { mixinHeaderSpace } from "../../presentational/shared/static/CSSvariables";
+import Want_Item_List from '../Organisms/Want_Item_List';
 
 class Want_Item_Edit extends Component {
   constructor(props) {
@@ -36,12 +39,14 @@ class Want_Item_Edit extends Component {
       return (
         <>
           <Header loginUser={this.state.loginUser} />
-          <Want_Item_Edit_Form
-            parent_id={this.props.match.params.parent_id}
-            owner={this.state.loginUser}
-            loginUser={this.state.loginUser}
-            axiosUrl="http://localhost:8000/api/"
-          />
+          <Body>
+            <Want_Item_Edit_Form
+              parent_id={this.props.match.params.parent_id}
+              owner={this.state.loginUser}
+              loginUser={this.state.loginUser}
+              axiosUrl="http://localhost:8000/api/"
+            />
+          </Body>
         </>
       );
     }
@@ -49,3 +54,7 @@ class Want_Item_Edit extends Component {
 }
 
 export default Want_Item_Edit;
+
+const Body = styled.div`
+  ${mixinHeaderSpace};
+`;
