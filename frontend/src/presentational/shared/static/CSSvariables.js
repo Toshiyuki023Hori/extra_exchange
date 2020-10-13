@@ -9,5 +9,5 @@ export const Colors = {
   };
 
 export const mixinSpace = css`
-  margin-top:125px;
+  margin-top:110px;
 `;

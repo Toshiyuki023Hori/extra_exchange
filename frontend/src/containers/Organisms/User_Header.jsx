@@ -19,16 +19,27 @@ class User_Header extends Component {
             bg_width="100%"
             bg_height="70px"
             />
-            <Icon 
+            <StyledIcon 
             icon={user.icon}
             img_width="100px"
             img_height="100px"
             img_radius="50px"
             />
-            <h2>{user.username}</h2>
+            <Username>{user.username}</Username>
         </div>
     )
   }
 }
 
 export default User_Header;
+
+
+const StyledIcon = styled(Icon)`
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+`;
+
+const Username = styled.h2`
+  text-align:center;
+`;

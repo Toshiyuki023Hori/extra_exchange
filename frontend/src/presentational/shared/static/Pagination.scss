@@ -8,6 +8,10 @@
 
     a{
         cursor: pointer;
+
+        &:focus{
+          outline: none;
+        }
     }
 
     li{

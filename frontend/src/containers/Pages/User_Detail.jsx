@@ -8,6 +8,7 @@ import User_Header from '../Organisms/User_Header';
 import Want_Item_List from '../Organisms/Want_Item_List';
 import Give_Item_List_byUser from '../Organisms/Give_Item_List_byUser';
 import Footer from "../Organisms/Footer";
+import User_Sidemenu from "../Organisms/User_Sidemenu";
 import { mixinSpace } from "../../presentational/shared/static/CSSvariables";
 
 class User_Detail extends Component {
@@ -63,14 +64,19 @@ class User_Detail extends Component {
     } else if (!this.props.isAuthenticated && user != ''){
         return (
           <>
-          <div>
+          <Wrapper>
             {header('')}
-            {userHeader}
-            <p>{user.profile}</p>
-            {wantItemList}
-            {giveItemList}
+            <Body>
+              <User_Sidemenu user_id={user.id}/>
+              <div>
+                {userHeader}
+                <p>{user.profile}</p>
+                {wantItemList}
+                {giveItemList}
+              </div>
+            </Body>
             <Footer/>
-          </div>
+          </Wrapper>
           </>
         );
     }
@@ -83,10 +89,15 @@ class User_Detail extends Component {
         <>
         <Wrapper>
           {header(loginUser)}
-          {userHeader}
-          <p>{user.profile}</p>
-          {wantItemList}
-          {giveItemList}
+          <Body>
+            <User_Sidemenu user_id={user.id} isUser={loginUser.id === user.id}/>
+            <InformationDiv>
+              {userHeader}
+              <p>{user.profile}</p>
+              {wantItemList}
+              {giveItemList}
+            </InformationDiv>
+          </Body>
           <Footer/>
         </Wrapper>
         </>
@@ -99,4 +110,13 @@ export default User_Detail;
 
 const Wrapper = styled.div`
   ${mixinSpace}
+`;
+
+
+const Body = styled.div`
+  display:flex;
+`;
+
+const InformationDiv = styled.div`
+  flex:1;
 `;
