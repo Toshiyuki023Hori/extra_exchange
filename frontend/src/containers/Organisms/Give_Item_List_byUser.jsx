@@ -3,6 +3,7 @@ import axios from 'axios';
 import history from '../../history';
 import styled from 'styled-components';
 import ItemCard from '../../presentational/shared/ItemCard';
+import { Colors } from '../../presentational/shared/static/CSSvariables';
 import ReactPaginate from "react-paginate";
 import "../../presentational/shared/static/Pagination.scss";
 
@@ -211,12 +212,12 @@ class Give_Item_List_byUser extends Component {
       return null;
     }
     return (
-        <Wrapper>
-            <h2>{user.username + "さんのアイテム"}</h2>
-            <ItemPlaces>
-              {itemCards}
-              {paginationView}
-            </ItemPlaces>
+        <Wrapper {...this.props}>
+          <h2>{user.username + "さんのアイテム"}</h2>
+          <ItemPlaces>
+            {itemCards}
+            {paginationView}
+          </ItemPlaces>
         </Wrapper>
     )
   }
@@ -224,18 +225,28 @@ class Give_Item_List_byUser extends Component {
 
 export default Give_Item_List_byUser;
 
-export const Wrapper = styled.div`
+const Wrapper = styled.div`
   width:100%;
+  margin-top:${(props) => props.margin_top};
+  margin-bottom:${(props) => props.margin_bottom};
+  margin-left:${(props) => props.margin_left};
+  margin-right:${(props) => props.margin_right};
+  padding-bottom:30px;
+
+  h2{
+    margin-left:7px;
+  }
 `;
 
-export const ItemPlaces = styled.div`
+const ItemPlaces = styled.div`
   display:grid;
   grid-template-columns:1fr 1fr 1fr 1fr;
   justify-content:center;
   justify-items: center;
   grid-row-gap:25px;
+  padding-top:20px;
 `;
 
-export const NotHaveText = styled.p`
+const NotHaveText = styled.p`
   grid-column: 1 / 3;
 `;

@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import history from '../../history';
-import CircularProgresss from '@material-ui/core/CircularProgress';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import MiddleButton from '../../presentational/shared/MiddleButton';
-import { mixinHeaderSpace } from "../../presentational/shared/static/CSSvariables";
+import ValidationMessage from '../../presentational/shared/ValidationMessage';
+import { mixinHeaderSpace, Colors } from '../../presentational/shared/static/CSSvariables';
 
 class User_Edit_Form extends Component {
   constructor(props) {
@@ -88,8 +89,8 @@ class User_Edit_Form extends Component {
       },
     };
 
-    let result = window.confirm("本当にこの画像を削除し、未設定に変更しますか?")
-    if(result){
+    let result = window.confirm('本当にこの画像を削除し、未設定に変更しますか?');
+    if (result) {
       axios
         .delete(
           this.props.axiosUrl + 'user/' + this.props.loginUser.id + '/delete-' + target + '/',
@@ -106,7 +107,9 @@ class User_Edit_Form extends Component {
   };
 
   cancelUploadedImage = async (clickedImage) => {
-    await this.setState({ info: { ...this.state.info, [clickedImage]: this.props.loginUser.[clickedImage] } });
+    await this.setState({
+      info: { ...this.state.info, [clickedImage]: this.props.loginUser[clickedImage] },
+    });
     await this.setState({ imgUrls: { ...this.state.imgUrls, [clickedImage]: null } });
   };
 
@@ -150,9 +153,6 @@ class User_Edit_Form extends Component {
 
   handleSubmit = async () => {
     const data = new FormData();
-    const config = {
-      headers: { 'content-type': 'multipart/form-data' },
-    };
     const token = localStorage.getItem('token');
     const authHeader = {
       headers: {
@@ -173,25 +173,30 @@ class User_Edit_Form extends Component {
     await deleteStringUrl('icon');
     await deleteStringUrl('background');
 
-    console.log('Change To ' + this.state.info.icon + ' ?');
-    console.log('Change To ' + this.state.info.background + ' ?');
-
     Object.keys(this.state.info)
       // image, backgroundが変更されていない場合、それを取り除くためのfilter
       .filter((key) => this.state.info[key] !== 'notNeedSubmit')
       // imageが未設定、もしくは削除されたらnullになるため、それを取り除くfilter
       .filter((key) => this.state.info[key] !== null)
-      .map((filteredKey) => {
-        data.append(filteredKey, this.state.info[filteredKey]);
+      .map((selectedKey) => {
+        data.append(selectedKey, this.state.info[selectedKey]);
         console.log(...data);
       });
 
     axios
       .patch(this.props.axiosUrl + 'user/' + this.props.loginUser.id + '/', data, authHeader)
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
-
-    history.push('/user/' + this.props.loginUser.id);
+      .then((res) => history.push('/user/' + this.props.loginUser.id))
+      .catch((err) => {
+        console.log(err.response.data);
+        if (err.response.data.username) {
+          this.setState({
+            message: { ...this.state.message, username: err.response.data.username },
+          });
+        }
+        if (err.response.data.email) {
+          this.setState({ message: { ...this.state.message, email: err.response.data.email } });
+        }
+      });
   };
 
   //            ===========           ===========           ===========
@@ -202,31 +207,48 @@ class User_Edit_Form extends Component {
     const { info, message, imgUrls } = this.state;
     return (
       <>
-        <Wrapper>
-          <div>
+        <FormArea>
+          <li>
             <label>ユーザーネーム</label>
-            <input name="username" type="text" value={info.username} onChange={this.handleChange} />
-            <p>{message.username}</p>
-          </div>
+            <InputForm
+              name="username"
+              type="text"
+              value={info.username}
+              onChange={this.handleChange}
+              placeholder="最低5文字以上入力してください"
+            />
+          </li>
+          <ValidationMessage
+            errorMessage={message.username}
+            isShowup={message.username != ''}
+            text_color="#FF737A"
+            margin="10px 0px 0px 155px"
+            bg_color="#FFBFC2"
+          />
 
-          <div>
+          <li>
             <label>メール</label>
-            <input name="email" type="email" value={info.email} onChange={this.handleChange} />
-            <p>{message.email}</p>
-          </div>
+            <InputForm name="email" type="email" value={info.email} onChange={this.handleChange} />
+          </li>
+          <ValidationMessage
+            errorMessage={message.email}
+            isShowup={message.email != ''}
+            text_color="#FF737A"
+            margin="10px 0px 0px 155px"
+            bg_color="#FFBFC2"
+          />
 
-          <div>
-            <label>プロフィール</label>　
-            <textarea
+          <li>
+            <ProfileLabel>プロフィール</ProfileLabel>　
+            <StyledTextArea
               name="profile"
               value={info.profile}
-              cols="30"
-              rows="10"
               onChange={this.handleChange}
-            ></textarea>
-          </div>
+              placeholder="最大800字"
+            ></StyledTextArea>
+          </li>
 
-          <div>
+          <li>
             <label>アイコン画像</label>
             <input name="icon" type="file" onChange={this.handleImageSelect} />
             {imgUrls.icon != null ? (
@@ -245,9 +267,9 @@ class User_Edit_Form extends Component {
             ) : (
               <Image src="" alt="" />
             )}
-          </div>
+          </li>
 
-          <div>
+          <li>
             <label>背景画像</label>
             <input name="background" type="file" onChange={this.handleImageSelect} />
             {imgUrls.background != null ? (
@@ -266,29 +288,68 @@ class User_Edit_Form extends Component {
             ) : (
               <Image src="" alt="" />
             )}
-          </div>
+          </li>
+        </FormArea>
 
-          <MiddleButton
-            btn_name="編集完了"
-            btn_type="submit"
-            btn_click={this.handleSubmit}
-            btn_disable={!info.username || !info.email || message.username || message.email}
-          />
-        </Wrapper>
-
+        <MiddleButton
+          btn_name="編集完了"
+          btn_type="submit"
+          btn_click={this.handleSubmit}
+          btn_disable={!info.username || !info.email || message.username || message.email}
+        />
       </>
     );
   }
 }
 
-const Wrapper = styled.div`
-  ${mixinHeaderSpace};
-`;
+export default User_Edit_Form;
 
 const Image = styled.img`
   width: 150px;
 `;
 
+const FormArea = styled.ul`
+  li {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+  }
+  label {
+    margin-right: 30px;
+    width: 125px;
+    float: left;
+    font-weight: 700;
+  }
+`;
 
+const ProfileLabel = styled.label`
+  position: relative;
+  bottom: 90px;
+`;
 
-export default User_Edit_Form;
+const InputForm = styled.input`
+  background: white;
+  height: 40px;
+  width: 50%;
+  border: 1.2px solid ${Colors.accent1};
+
+  &::placeholder {
+    color: ${Colors.characters};
+    font-size: 0.82rem;
+  }
+`;
+
+const StyledTextArea = styled.textarea`
+  background: white;
+  width: 50%;
+  height: 200px;
+  border: 1.2px solid ${Colors.accent1};
+  position: relative;
+  right: 15px;
+
+  &::placeholder {
+    color: ${Colors.characters};
+    font-size: 0.82rem;
+  }
+`;

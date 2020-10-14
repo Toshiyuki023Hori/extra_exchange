@@ -54,7 +54,12 @@ class User_Detail extends Component {
     );
 
     const giveItemList = (
-      <Give_Item_List_byUser owner={user.id} axiosUrl="http://localhost:8000/api/" />
+      <Give_Item_List_byUser 
+      margin_top="20px" 
+      margin_left="15px" 
+      owner={user.id} 
+      axiosUrl="http://localhost:8000/api/" 
+      />
     );
 
   const userHeader = <User_Header user={user} />;
