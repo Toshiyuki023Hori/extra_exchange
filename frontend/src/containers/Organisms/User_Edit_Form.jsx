@@ -205,6 +205,28 @@ class User_Edit_Form extends Component {
 
   render() {
     const { info, message, imgUrls } = this.state;
+    const setNoImageButton = (name, text) => {
+      return (
+        <button name={name} onClick={() => this.setNoImage(name)}>
+          {text}
+        </button>
+      );
+    };
+
+    let deleteIconButton;
+    let deleteBackgroundButton;
+    if (typeof info.icon == 'string') {
+      deleteIconButton = setNoImageButton('icon', 'アイコンを未設定にする');
+    } else {
+      deleteIconButton = setNoImageButton('icon', '画像取り消し');
+    }
+
+    if (typeof info.background == 'string') {
+      deleteBackgroundButton = setNoImageButton('background', '背景を未設定にする');
+    } else {
+      deleteBackgroundButton = setNoImageButton('background', '画像取り消し');
+    }
+
     return (
       <>
         <FormArea>
@@ -253,19 +275,13 @@ class User_Edit_Form extends Component {
             <input name="icon" type="file" onChange={this.handleImageSelect} />
             {imgUrls.icon != null ? (
               <>
-                <Image src={imgUrls.icon} alt="" />
-                {typeof info.icon == 'string' ? (
-                  <button name="icon" onClick={() => this.setNoImage('icon')}>
-                    アイコンを未設定にする
-                  </button>
-                ) : (
-                  <button name="icon" onClick={() => this.cancelUploadedImage('icon')}>
-                    画像取り消し
-                  </button>
-                )}
+                <div>
+                  <Image src={imgUrls.icon} alt="" />
+                  {deleteIconButton}
+                </div>
               </>
             ) : (
-              <Image src="" alt="" />
+              <div></div>
             )}
           </li>
 
@@ -275,18 +291,10 @@ class User_Edit_Form extends Component {
             {imgUrls.background != null ? (
               <>
                 <Image src={imgUrls.background} alt="" />
-                {typeof info.background == 'string' ? (
-                  <button name="background" onClick={() => this.setNoImage('background')}>
-                    背景を未設定にする
-                  </button>
-                ) : (
-                  <button name="background" onClick={() => this.cancelUploadedImage('background')}>
-                    画像取り消し
-                  </button>
-                )}
+                {deleteBackgroundButton}
               </>
             ) : (
-              <Image src="" alt="" />
+              <div></div>
             )}
           </li>
         </FormArea>
@@ -352,4 +360,10 @@ const StyledTextArea = styled.textarea`
     color: ${Colors.characters};
     font-size: 0.82rem;
   }
+`;
+
+const ImageArea = styled.li`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
 `;
