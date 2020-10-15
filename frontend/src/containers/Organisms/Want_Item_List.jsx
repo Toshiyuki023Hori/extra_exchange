@@ -42,22 +42,22 @@ class Want_Item_List extends Component {
       .get(axiosUrl + 'parent/?owner=' + this.state.owner)
       .then((res) => {
         this.setState({ parentItems: res.data });
-        for (let i = 0; i < this.state.parentItems.length; i++) {
-          // Want_Item取得に、Parent_Itemのidが必要になるので、idだけをarrayに代入
-          parentItems_ids = {
-            ...parentItems_ids,
-            [this.state.parentItems[i].id]: { name: this.state.parentItems[i].name },
-          };
-        }
+        // for (let i = 0; i < this.state.parentItems.length; i++) {
+        //   // Want_Item取得に、Parent_Itemのidが必要になるので、idだけをarrayに代入
+        //   parentItems_ids = {
+        //     ...parentItems_ids,
+        //     [this.state.parentItems[i].id]: { name: this.state.parentItems[i].name },
+        //   };
+        // }
       })
       .catch((err) => console.log(err));
     //
     //
-    //  ユーザーが持つParent_Itemの中のWant_Itemを取得する
+    //  Parent_Itemの中のWant_Itemを抽出
     if (this.state.parentItems != '') {
       await Promise.all(
-        Object.keys(parentItems_ids).map(async (key) => {
-          await axios.get(axiosUrl + 'wantitem/?parent_item=' + key).then((res) => {
+        this.state.parentItems.map(async (parentItemObj) => {
+          await axios.get(axiosUrl + 'wantitem/?parent_item=' + parentItemObj.id).then((res) => {
             //  parameterとparent_item一致 => length = 1のarrayがresponse
             if (res.data.length !== 0) {
               this.setState({ wantItems: [...this.state.wantItems, res.data[0]] });
@@ -71,7 +71,7 @@ class Want_Item_List extends Component {
                   };
                 }
               } // for of closing
-            } //  if (res.data.length) closing tag
+            } //   if (res.data.length) closing tag
           }); //   then closing tag
         }) //      map closing tag
       ); //        Promise all closing tag

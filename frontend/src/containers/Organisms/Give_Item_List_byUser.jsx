@@ -138,6 +138,11 @@ class Give_Item_List_byUser extends Component {
 
     
     if(Object.keys(itemsForState).length !== 0){
+     // User_detailにlengthを渡す
+　　　if(this.props.getGiveItemsLength){
+       this.props.getGiveItemsLength(Object.keys(itemsForState).length);
+     }
+
       await Promise.all(
         Object.keys(itemsForState).map(async (parent_id) => {
           await axios
@@ -159,8 +164,8 @@ class Give_Item_List_byUser extends Component {
       // perPage分のitemsをページネーションへ
       this.setCurrentItemsForState(itemsForState);
     } else {
-      // Want_Itemは登路しているが、Give_Itemは登録していないパターン。
-      // Userの全Parent_Itemを取得しているため、Give_Itemの抽出を待つ必要がある。
+      // Want_Item=登録, Give_Item=未登録パターン。
+      // Give_Itemの抽出を待つ必要がある。 => ここで代入
       itemsForState = "商品が投稿されていません"
     }
 
