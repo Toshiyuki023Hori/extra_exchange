@@ -6,6 +6,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import MiddleButton from '../../presentational/shared/MiddleButton';
 import ValidationMessage from '../../presentational/shared/ValidationMessage';
 import { mixinHeaderSpace, Colors } from '../../presentational/shared/static/CSSvariables';
+import Preview_Place from '../../assets/Preview_Place.png';
 
 class User_Edit_Form extends Component {
   constructor(props) {
@@ -207,9 +208,17 @@ class User_Edit_Form extends Component {
     const { info, message, imgUrls } = this.state;
     const setNoImageButton = (name, text) => {
       return (
-        <button name={name} onClick={() => this.setNoImage(name)}>
+        <StyledButton name={name} onClick={() => this.setNoImage(name)}>
           {text}
-        </button>
+        </StyledButton>
+      );
+    };
+
+    const setCancelUploadButton = (name, text) => {
+      return (
+        <StyledButton name={name} onClick={() => this.cancelUploadedImage(name)}>
+          {text}
+        </StyledButton>
       );
     };
 
@@ -218,19 +227,19 @@ class User_Edit_Form extends Component {
     if (typeof info.icon == 'string') {
       deleteIconButton = setNoImageButton('icon', 'アイコンを未設定にする');
     } else {
-      deleteIconButton = setNoImageButton('icon', '画像取り消し');
+      deleteIconButton = setCancelUploadButton('icon', '画像取り消し');
     }
 
     if (typeof info.background == 'string') {
       deleteBackgroundButton = setNoImageButton('background', '背景を未設定にする');
     } else {
-      deleteBackgroundButton = setNoImageButton('background', '画像取り消し');
+      deleteBackgroundButton = setCancelUploadButton('background', '画像取り消し');
     }
 
     return (
       <>
         <FormArea>
-          <li>
+          <TextLiTag>
             <label>ユーザーネーム</label>
             <InputForm
               name="username"
@@ -239,7 +248,7 @@ class User_Edit_Form extends Component {
               onChange={this.handleChange}
               placeholder="最低5文字以上入力してください"
             />
-          </li>
+          </TextLiTag>
           <ValidationMessage
             errorMessage={message.username}
             isShowup={message.username != ''}
@@ -248,10 +257,10 @@ class User_Edit_Form extends Component {
             bg_color="#FFBFC2"
           />
 
-          <li>
+          <TextLiTag>
             <label>メール</label>
             <InputForm name="email" type="email" value={info.email} onChange={this.handleChange} />
-          </li>
+          </TextLiTag>
           <ValidationMessage
             errorMessage={message.email}
             isShowup={message.email != ''}
@@ -260,7 +269,7 @@ class User_Edit_Form extends Component {
             bg_color="#FFBFC2"
           />
 
-          <li>
+          <TextLiTag>
             <ProfileLabel>プロフィール</ProfileLabel>　
             <StyledTextArea
               name="profile"
@@ -268,43 +277,53 @@ class User_Edit_Form extends Component {
               onChange={this.handleChange}
               placeholder="最大800字"
             ></StyledTextArea>
-          </li>
+          </TextLiTag>
 
-          <li>
+          <ImageLiTag>
             <label>アイコン画像</label>
             <input name="icon" type="file" onChange={this.handleImageSelect} />
             {imgUrls.icon != null ? (
               <>
-                <div>
+                <PreviewDiv>
                   <Image src={imgUrls.icon} alt="" />
                   {deleteIconButton}
-                </div>
+                </PreviewDiv>
               </>
             ) : (
-              <div></div>
+              <PreviewDiv>
+                <Image src={Preview_Place} alt="画像表示場所" />
+              </PreviewDiv>
             )}
-          </li>
+          </ImageLiTag>
 
-          <li>
+          <ImageLiTag>
             <label>背景画像</label>
             <input name="background" type="file" onChange={this.handleImageSelect} />
             {imgUrls.background != null ? (
               <>
-                <Image src={imgUrls.background} alt="" />
-                {deleteBackgroundButton}
+                <PreviewDiv>
+                  <Image src={imgUrls.background} alt="" />
+                  {deleteBackgroundButton}
+                </PreviewDiv>
               </>
             ) : (
-              <div></div>
+              <PreviewDiv>
+                <Image src={Preview_Place} alt="画像表示場所" />
+              </PreviewDiv>
             )}
-          </li>
+          </ImageLiTag>
+          <TextLiTag>
+            <StyledMiddleButton
+              btn_name="編集完了"
+              btn_type="submit"
+              btn_click={this.handleSubmit}
+              btn_disable={!info.username || !info.email || message.username || message.email}
+              btn_back={Colors.main}
+              btn_text_color={Colors.accent2}
+              btn_shadow={Colors.accent1}
+            />
+          </TextLiTag>
         </FormArea>
-
-        <MiddleButton
-          btn_name="編集完了"
-          btn_type="submit"
-          btn_click={this.handleSubmit}
-          btn_disable={!info.username || !info.email || message.username || message.email}
-        />
       </>
     );
   }
@@ -317,18 +336,19 @@ const Image = styled.img`
 `;
 
 const FormArea = styled.ul`
-  li {
-    list-style: none;
-    display: flex;
-    align-items: center;
-    margin-top: 15px;
-  }
   label {
     margin-right: 30px;
     width: 125px;
     float: left;
     font-weight: 700;
   }
+`;
+
+const TextLiTag = styled.li`
+  list-style: none;
+  display: flex;
+  align-items: center;
+  margin-top: 15px;
 `;
 
 const ProfileLabel = styled.label`
@@ -355,15 +375,40 @@ const StyledTextArea = styled.textarea`
   border: 1.2px solid ${Colors.accent1};
   position: relative;
   right: 15px;
+  white-space: pre-wrap;
 
   &::placeholder {
     color: ${Colors.characters};
-    font-size: 0.82rem;
   }
 `;
 
-const ImageArea = styled.li`
+const ImageLiTag = styled.li`
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
+  grid-template-columns: 157px 1fr;
+  margin-top: 15px;
+  grid-row-gap: 10px;
+`;
+
+const PreviewDiv = styled.div`
+  text-align: center;
+`;
+
+const StyledButton = styled.button`
+  font-size: 0.76rem;
+  padding: 5px 10px;
+  background: white;
+  border-radius: 5%;
+  color: #6c7880;
+  border: 1px solid #6c7880;
+  margin-top: 10px;
+
+  &:hover {
+    color: white;
+    background: #6c7880;
+  }
+`;
+
+const StyledMiddleButton = styled(MiddleButton)`
+  display: block;
+  margin: 10px auto;
 `;

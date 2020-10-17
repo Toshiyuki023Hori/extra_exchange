@@ -42,13 +42,6 @@ class Want_Item_List extends Component {
       .get(axiosUrl + 'parent/?owner=' + this.state.owner)
       .then((res) => {
         this.setState({ parentItems: res.data });
-        // for (let i = 0; i < this.state.parentItems.length; i++) {
-        //   // Want_Item取得に、Parent_Itemのidが必要になるので、idだけをarrayに代入
-        //   parentItems_ids = {
-        //     ...parentItems_ids,
-        //     [this.state.parentItems[i].id]: { name: this.state.parentItems[i].name },
-        //   };
-        // }
       })
       .catch((err) => console.log(err));
     //
@@ -105,7 +98,7 @@ class Want_Item_List extends Component {
   };
 
   handleDelete = (parent_id) => {
-    let filteredItems = {};
+    let selectedItems = {};
     const { axiosUrl } = this.props;
     const token = localStorage.getItem('token');
     const authHeader = {
@@ -121,10 +114,10 @@ class Want_Item_List extends Component {
         .then((res) => {
           for (let key in this.state.itemObject) {
             if (key != parent_id) {
-              filteredItems = { ...filteredItems, [key]: this.state.itemObject[key] };
+              selectedItems = { ...selectedItems, [key]: this.state.itemObject[key] };
             }
           }
-          this.setState({ itemObject: filteredItems });
+          this.setState({ itemObject: selectedItems });
         })
         .catch((err) => window.alert('削除に失敗しました。'));
     }

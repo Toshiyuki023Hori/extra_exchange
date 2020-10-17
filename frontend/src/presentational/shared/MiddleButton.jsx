@@ -1,6 +1,6 @@
 import React from 'react';
-import styled from "styled-components";
-
+import styled from 'styled-components';
+import { lighten } from 'polished';
 import PropTypes from 'prop-types';
 
 function MiddleButton(props) {
@@ -12,6 +12,7 @@ function MiddleButton(props) {
       disabled={props.btn_disable}
       btn_back={props.btn_back}
       btn_text_color={props.btn_text_color}
+      btn_shadow={props.btn_shadow}
     >
       {props.btn_name}
     </StyledButton>
@@ -21,12 +22,14 @@ function MiddleButton(props) {
 export default MiddleButton;
 
 const StyledButton = styled.button`
-  font-size:1.18em;
-  height:45px;
-  width:250px;
-  padding:2px 3.5px;
-  border:solid 2.5px;
-  border-radius:10px;
+  height: 45px;
+  width: 250px;
+  font-size: 1.18em;
+  font-weight: 550;
+  padding: 2px 3.5px;
+  border-radius: 10px;
   background: ${(props) => props.btn_back};
-  color:${(props) => props.btn_text_color};
+  color: ${(props) => props.btn_text_color};
+  box-shadow: 4px 3px ${(props) => props.btn_shadow};
+  outline: none;
 `;

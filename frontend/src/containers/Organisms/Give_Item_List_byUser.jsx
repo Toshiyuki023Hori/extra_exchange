@@ -138,11 +138,6 @@ class Give_Item_List_byUser extends Component {
 
     
     if(Object.keys(itemsForState).length !== 0){
-     // User_detailにlengthを渡す
-　　　if(this.props.getGiveItemsLength){
-       this.props.getGiveItemsLength(Object.keys(itemsForState).length);
-     }
-
       await Promise.all(
         Object.keys(itemsForState).map(async (parent_id) => {
           await axios

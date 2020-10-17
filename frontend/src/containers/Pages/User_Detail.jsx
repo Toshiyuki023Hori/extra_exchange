@@ -9,7 +9,7 @@ import Want_Item_List from '../Organisms/Want_Item_List';
 import Give_Item_List_byUser from '../Organisms/Give_Item_List_byUser';
 import Footer from '../Organisms/Footer';
 import User_Sidemenu from '../Organisms/User_Sidemenu';
-import { mixinHeaderSpace } from '../../presentational/shared/static/CSSvariables';
+import { Colors ,mixinHeaderSpace } from '../../presentational/shared/static/CSSvariables';
 
 class User_Detail extends Component {
   constructor(props) {
@@ -17,12 +17,7 @@ class User_Detail extends Component {
     this.state = {
       loginUser: '',
       user: '',
-      wantItemsLength: '',
-      giveItemsLength: '',
-      pickupsLength: '',
     };
-    this.getGiveItemsLength = this.getGiveItemsLength.bind(this);
-    this.getWantItemsLength = this.getWantItemsLength.bind(this);
   }
 
   getUser = (uid, key) => {
@@ -35,37 +30,18 @@ class User_Detail extends Component {
       .catch((err) => console.log(err));
   };
 
-  async componentDidMount() {
+  componentDidMount() {
     const localhostUrl = 'http://localhost:8000/api/';
     const loginUser_id = localStorage.getItem('uid');
     const user_id = this.props.match.params.uid;
-    
-    // 他ログインユーザーの訪問 => 初回レンダーの条件にpickupsLengthを含めれない
-    //　getUserより前に値取得
-    if (user_id === loginUser_id) {
-      await axios
-        .get(localhostUrl + 'pickup/?choosing_user=' + loginUser_id)
-        .then((res) => this.setState({ pickupsLength: res.data.length }))
-        .catch((err) => console.log(err));
-    }
 
     // ParentItemのownerが外部キーなので、レンダー時にログインユーザーをセット
     this.getUser(loginUser_id, 'loginUser');
     this.getUser(user_id, 'user');
-
   }
 
-  // Want_Item_Listの個数を取得(propsとして渡す)
-  getWantItemsLength = (length) => {
-    this.setState({wantItemsLength : length})
-  };
-
-  getGiveItemsLength = (length) => {
-    this.setState({giveItemsLength : length})
-  };
-
   render() {
-    const { loginUser, user } = this.state;
+    const { loginUser, user, pickupsLength, wantItemsLength, giveItemsLength } = this.state;
     const header = (value) => {
       return <Header loginUser={value} />;
     };
@@ -78,7 +54,6 @@ class User_Detail extends Component {
         h2Title={'欲しい物リスト'}
         axiosUrl="http://localhost:8000/api/"
         margin_left="30px"
-        getWantItemsLength = {this.getWantItemsLength}
       />
     );
 
@@ -88,7 +63,6 @@ class User_Detail extends Component {
         margin_left="15px"
         owner={user.id}
         axiosUrl="http://localhost:8000/api/"
-        getGiveItemsLength = {this.getGiveItemsLength}
       />
     );
 
@@ -106,7 +80,7 @@ class User_Detail extends Component {
               <User_Sidemenu user_id={user.id} />
               <InformationDiv>
                 {userHeader}
-                <p>{user.profile}</p>
+                <UserProfile>{user.profile}</UserProfile>
                 {wantItemList}
                 {giveItemList}
               </InformationDiv>
@@ -129,8 +103,7 @@ class User_Detail extends Component {
               <User_Sidemenu user_id={user.id} isUser={loginUser.id === user.id} />
               <InformationDiv>
                 {userHeader}
-
-                <p>{user.profile}</p>
+                <UserProfile>{user.profile}</UserProfile>
                 {wantItemList}
                 {giveItemList}
               </InformationDiv>
@@ -155,4 +128,13 @@ const Body = styled.div`
 
 const InformationDiv = styled.div`
   flex: 1;
+`;
+
+const UserProfile = styled.p`
+  width: 70%;
+  border: 3.5px dashed ${Colors.accent1};
+  border-radius: 5%;
+  padding: 10px 18px;
+  margin: 25px auto;
+  white-space:pre-wrap;
 `;

@@ -196,12 +196,12 @@ class Register_Form extends React.Component {
                 />
               </li>
               <ValidationMessage
-                  errorMessage={message.password}
-                  isShowup={message.password != ''}
-                  text_color="#D9F1FF"
-                  margin="10px auto 0px auto"
-                  bg_color="#70AACC"
-                />
+                errorMessage={message.password}
+                isShowup={message.password != ''}
+                text_color="#D9F1FF"
+                margin="10px auto 0px auto"
+                bg_color="#70AACC"
+              />
 
               <li>
                 <FormLabel>パスワード確認</FormLabel>
@@ -214,12 +214,12 @@ class Register_Form extends React.Component {
                 />
               </li>
               <ValidationMessage
-                  errorMessage={message.confirmPass}
-                  isShowup={message.confirmPass != ''}
-                  text_color="#D9F1FF"
-                  margin="10px auto 0px auto"
-                  bg_color="#70AACC"
-                />
+                errorMessage={message.confirmPass}
+                isShowup={message.confirmPass != ''}
+                text_color="#D9F1FF"
+                margin="10px auto 0px auto"
+                bg_color="#70AACC"
+              />
             </FormArea>
 
             <SubmitButton

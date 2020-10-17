@@ -8,6 +8,7 @@ import { store } from './index';
 import './App.css';
 
 import Top from './containers/Pages/Top';
+import About from './containers/Pages/About';
 import Register from './containers/Pages/Register';
 import Login from './containers/Pages/Login';
 import User_PickUp_Add from './containers/Pages/User_PickUp_Add';
@@ -28,7 +29,7 @@ import Deal_Proceeding_HostUser from './containers/Pages/Deal_Proceeding_HostUse
 import Deal_Proceeding_JoinUser from './containers/Pages/Deal_Proceeding_JoinUser';
 import Deal_Detail_HostUser from './containers/Pages/Deal_Detail_HostUser';
 import Deal_Detail_JoinUser from './containers/Pages/Deal_Detail_JoinUser';
-import Deal_Complete from "./containers/Pages/Deal_Complete";
+import Deal_Complete from './containers/Pages/Deal_Complete';
 import Category_Page from './containers/Pages/Category_Page';
 
 class App extends Component {
@@ -42,6 +43,11 @@ class App extends Component {
       <Router history={history}>
         {/* Route内のRoutePassはpropsを渡す役割を果たす */}
         <Switch>
+          <Route
+            exact
+            path="/about"
+            render={(routeProps) => <About {...routeProps} {...this.props} />}
+          />
           <Route
             exact
             path="/top"
