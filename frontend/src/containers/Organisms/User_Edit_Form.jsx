@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import history from '../../history';
-import CircularProgresss from '@material-ui/core/CircularProgress';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import MiddleButton from '../../presentational/shared/MiddleButton';
-import { mixinHeaderSpace } from "../../presentational/shared/static/CSSvariables";
+import ValidationMessage from '../../presentational/shared/ValidationMessage';
+import { mixinHeaderSpace, Colors } from '../../presentational/shared/static/CSSvariables';
+import Preview_Place from '../../assets/Preview_Place.png';
 
 class User_Edit_Form extends Component {
   constructor(props) {
@@ -88,8 +90,8 @@ class User_Edit_Form extends Component {
       },
     };
 
-    let result = window.confirm("本当にこの画像を削除し、未設定に変更しますか?")
-    if(result){
+    let result = window.confirm('本当にこの画像を削除し、未設定に変更しますか?');
+    if (result) {
       axios
         .delete(
           this.props.axiosUrl + 'user/' + this.props.loginUser.id + '/delete-' + target + '/',
@@ -106,7 +108,9 @@ class User_Edit_Form extends Component {
   };
 
   cancelUploadedImage = async (clickedImage) => {
-    await this.setState({ info: { ...this.state.info, [clickedImage]: this.props.loginUser.[clickedImage] } });
+    await this.setState({
+      info: { ...this.state.info, [clickedImage]: this.props.loginUser[clickedImage] },
+    });
     await this.setState({ imgUrls: { ...this.state.imgUrls, [clickedImage]: null } });
   };
 
@@ -150,9 +154,6 @@ class User_Edit_Form extends Component {
 
   handleSubmit = async () => {
     const data = new FormData();
-    const config = {
-      headers: { 'content-type': 'multipart/form-data' },
-    };
     const token = localStorage.getItem('token');
     const authHeader = {
       headers: {
@@ -173,25 +174,30 @@ class User_Edit_Form extends Component {
     await deleteStringUrl('icon');
     await deleteStringUrl('background');
 
-    console.log('Change To ' + this.state.info.icon + ' ?');
-    console.log('Change To ' + this.state.info.background + ' ?');
-
     Object.keys(this.state.info)
       // image, backgroundが変更されていない場合、それを取り除くためのfilter
       .filter((key) => this.state.info[key] !== 'notNeedSubmit')
       // imageが未設定、もしくは削除されたらnullになるため、それを取り除くfilter
       .filter((key) => this.state.info[key] !== null)
-      .map((filteredKey) => {
-        data.append(filteredKey, this.state.info[filteredKey]);
+      .map((selectedKey) => {
+        data.append(selectedKey, this.state.info[selectedKey]);
         console.log(...data);
       });
 
     axios
       .patch(this.props.axiosUrl + 'user/' + this.props.loginUser.id + '/', data, authHeader)
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
-
-    history.push('/user/' + this.props.loginUser.id);
+      .then((res) => history.push('/user/' + this.props.loginUser.id))
+      .catch((err) => {
+        console.log(err.response.data);
+        if (err.response.data.username) {
+          this.setState({
+            message: { ...this.state.message, username: err.response.data.username },
+          });
+        }
+        if (err.response.data.email) {
+          this.setState({ message: { ...this.state.message, email: err.response.data.email } });
+        }
+      });
   };
 
   //            ===========           ===========           ===========
@@ -200,95 +206,209 @@ class User_Edit_Form extends Component {
 
   render() {
     const { info, message, imgUrls } = this.state;
+    const setNoImageButton = (name, text) => {
+      return (
+        <StyledButton name={name} onClick={() => this.setNoImage(name)}>
+          {text}
+        </StyledButton>
+      );
+    };
+
+    const setCancelUploadButton = (name, text) => {
+      return (
+        <StyledButton name={name} onClick={() => this.cancelUploadedImage(name)}>
+          {text}
+        </StyledButton>
+      );
+    };
+
+    let deleteIconButton;
+    let deleteBackgroundButton;
+    if (typeof info.icon == 'string') {
+      deleteIconButton = setNoImageButton('icon', 'アイコンを未設定にする');
+    } else {
+      deleteIconButton = setCancelUploadButton('icon', '画像取り消し');
+    }
+
+    if (typeof info.background == 'string') {
+      deleteBackgroundButton = setNoImageButton('background', '背景を未設定にする');
+    } else {
+      deleteBackgroundButton = setCancelUploadButton('background', '画像取り消し');
+    }
+
     return (
       <>
-        <Wrapper>
-          <div>
+        <FormArea>
+          <TextLiTag>
             <label>ユーザーネーム</label>
-            <input name="username" type="text" value={info.username} onChange={this.handleChange} />
-            <p>{message.username}</p>
-          </div>
+            <InputForm
+              name="username"
+              type="text"
+              value={info.username}
+              onChange={this.handleChange}
+              placeholder="最低5文字以上入力してください"
+            />
+          </TextLiTag>
+          <ValidationMessage
+            errorMessage={message.username}
+            isShowup={message.username != ''}
+            text_color="#FF737A"
+            margin="10px 0px 0px 155px"
+            bg_color="#FFBFC2"
+          />
 
-          <div>
+          <TextLiTag>
             <label>メール</label>
-            <input name="email" type="email" value={info.email} onChange={this.handleChange} />
-            <p>{message.email}</p>
-          </div>
+            <InputForm name="email" type="email" value={info.email} onChange={this.handleChange} />
+          </TextLiTag>
+          <ValidationMessage
+            errorMessage={message.email}
+            isShowup={message.email != ''}
+            text_color="#FF737A"
+            margin="10px 0px 0px 155px"
+            bg_color="#FFBFC2"
+          />
 
-          <div>
-            <label>プロフィール</label>　
-            <textarea
+          <TextLiTag>
+            <ProfileLabel>プロフィール</ProfileLabel>　
+            <StyledTextArea
               name="profile"
               value={info.profile}
-              cols="30"
-              rows="10"
               onChange={this.handleChange}
-            ></textarea>
-          </div>
+              placeholder="最大800字"
+            ></StyledTextArea>
+          </TextLiTag>
 
-          <div>
+          <ImageLiTag>
             <label>アイコン画像</label>
             <input name="icon" type="file" onChange={this.handleImageSelect} />
             {imgUrls.icon != null ? (
               <>
-                <Image src={imgUrls.icon} alt="" />
-                {typeof info.icon == 'string' ? (
-                  <button name="icon" onClick={() => this.setNoImage('icon')}>
-                    アイコンを未設定にする
-                  </button>
-                ) : (
-                  <button name="icon" onClick={() => this.cancelUploadedImage('icon')}>
-                    画像取り消し
-                  </button>
-                )}
+                <PreviewDiv>
+                  <Image src={imgUrls.icon} alt="" />
+                  {deleteIconButton}
+                </PreviewDiv>
               </>
             ) : (
-              <Image src="" alt="" />
+              <PreviewDiv>
+                <Image src={Preview_Place} alt="画像表示場所" />
+              </PreviewDiv>
             )}
-          </div>
+          </ImageLiTag>
 
-          <div>
+          <ImageLiTag>
             <label>背景画像</label>
             <input name="background" type="file" onChange={this.handleImageSelect} />
             {imgUrls.background != null ? (
               <>
-                <Image src={imgUrls.background} alt="" />
-                {typeof info.background == 'string' ? (
-                  <button name="background" onClick={() => this.setNoImage('background')}>
-                    背景を未設定にする
-                  </button>
-                ) : (
-                  <button name="background" onClick={() => this.cancelUploadedImage('background')}>
-                    画像取り消し
-                  </button>
-                )}
+                <PreviewDiv>
+                  <Image src={imgUrls.background} alt="" />
+                  {deleteBackgroundButton}
+                </PreviewDiv>
               </>
             ) : (
-              <Image src="" alt="" />
+              <PreviewDiv>
+                <Image src={Preview_Place} alt="画像表示場所" />
+              </PreviewDiv>
             )}
-          </div>
-
-          <MiddleButton
-            btn_name="編集完了"
-            btn_type="submit"
-            btn_click={this.handleSubmit}
-            btn_disable={!info.username || !info.email || message.username || message.email}
-          />
-        </Wrapper>
-
+          </ImageLiTag>
+          <TextLiTag>
+            <StyledMiddleButton
+              btn_name="編集完了"
+              btn_type="submit"
+              btn_click={this.handleSubmit}
+              btn_disable={!info.username || !info.email || message.username || message.email}
+              btn_back={Colors.main}
+              btn_text_color={Colors.accent2}
+              btn_shadow={Colors.accent1}
+            />
+          </TextLiTag>
+        </FormArea>
       </>
     );
   }
 }
 
-const Wrapper = styled.div`
-  ${mixinHeaderSpace};
-`;
+export default User_Edit_Form;
 
 const Image = styled.img`
   width: 150px;
 `;
 
+const FormArea = styled.ul`
+  label {
+    margin-right: 30px;
+    width: 125px;
+    float: left;
+    font-weight: 700;
+  }
+`;
 
+const TextLiTag = styled.li`
+  list-style: none;
+  display: flex;
+  align-items: center;
+  margin-top: 15px;
+`;
 
-export default User_Edit_Form;
+const ProfileLabel = styled.label`
+  position: relative;
+  bottom: 90px;
+`;
+
+const InputForm = styled.input`
+  background: white;
+  height: 40px;
+  width: 50%;
+  border: 1.2px solid ${Colors.accent1};
+
+  &::placeholder {
+    color: ${Colors.characters};
+    font-size: 0.82rem;
+  }
+`;
+
+const StyledTextArea = styled.textarea`
+  background: white;
+  width: 50%;
+  height: 200px;
+  border: 1.2px solid ${Colors.accent1};
+  position: relative;
+  right: 15px;
+  white-space: pre-wrap;
+
+  &::placeholder {
+    color: ${Colors.characters};
+  }
+`;
+
+const ImageLiTag = styled.li`
+  display: grid;
+  grid-template-columns: 157px 1fr;
+  margin-top: 15px;
+  grid-row-gap: 10px;
+`;
+
+const PreviewDiv = styled.div`
+  text-align: center;
+`;
+
+const StyledButton = styled.button`
+  font-size: 0.76rem;
+  padding: 5px 10px;
+  background: white;
+  border-radius: 5%;
+  color: #6c7880;
+  border: 1px solid #6c7880;
+  margin-top: 10px;
+
+  &:hover {
+    color: white;
+    background: #6c7880;
+  }
+`;
+
+const StyledMiddleButton = styled(MiddleButton)`
+  display: block;
+  margin: 10px auto;
+`;

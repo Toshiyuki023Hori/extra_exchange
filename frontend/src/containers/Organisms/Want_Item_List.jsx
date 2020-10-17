@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import styled from "styled-components";
+import styled from 'styled-components';
 import history from '../../history';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import SmallButton from '../../presentational/shared/SmallButton';
-import { Colors } from "../../presentational/shared/static/CSSvariables";
+import { Colors } from '../../presentational/shared/static/CSSvariables';
 
 class Want_Item_List extends Component {
   constructor(props) {
@@ -29,7 +29,7 @@ class Want_Item_List extends Component {
     const { axiosUrl } = this.props;
 
     // objectForStateにkeyとpropertyを代入するfunction
-    const setObjectForState = (spreadKey, key ,value) => {
+    const setObjectForState = (spreadKey, key, value) => {
       objectForState = {
         ...objectForState,
         [spreadKey]: { ...objectForState[spreadKey], [key]: value },
@@ -42,22 +42,15 @@ class Want_Item_List extends Component {
       .get(axiosUrl + 'parent/?owner=' + this.state.owner)
       .then((res) => {
         this.setState({ parentItems: res.data });
-        for (let i = 0; i < this.state.parentItems.length; i++) {
-          // Want_Item取得に、Parent_Itemのidが必要になるので、idだけをarrayに代入
-          parentItems_ids = {
-            ...parentItems_ids,
-            [this.state.parentItems[i].id]: { name: this.state.parentItems[i].name },
-          };
-        }
       })
       .catch((err) => console.log(err));
     //
     //
-    //  ユーザーが持つParent_Itemの中のWant_Itemを取得する
+    //  Parent_Itemの中のWant_Itemを抽出
     if (this.state.parentItems != '') {
       await Promise.all(
-        Object.keys(parentItems_ids).map(async (key) => {
-          await axios.get(axiosUrl + 'wantitem/?parent_item=' + key).then((res) => {
+        this.state.parentItems.map(async (parentItemObj) => {
+          await axios.get(axiosUrl + 'wantitem/?parent_item=' + parentItemObj.id).then((res) => {
             //  parameterとparent_item一致 => length = 1のarrayがresponse
             if (res.data.length !== 0) {
               this.setState({ wantItems: [...this.state.wantItems, res.data[0]] });
@@ -71,7 +64,7 @@ class Want_Item_List extends Component {
                   };
                 }
               } // for of closing
-            }  //  if (res.data.length) closing tag
+            } //   if (res.data.length) closing tag
           }); //   then closing tag
         }) //      map closing tag
       ); //        Promise all closing tag
@@ -83,14 +76,14 @@ class Want_Item_List extends Component {
       for (const want_item of this.state.wantItems) {
         for (const key in objectForState) {
           if (want_item.parentItem == key) {
-            setObjectForState(key, "url", want_item.url);
-            setObjectForState(key, "want_id", want_item.id);
+            setObjectForState(key, 'url', want_item.url);
+            setObjectForState(key, 'want_id', want_item.id);
           }
         } // for in closing
       } //   for of closing
     } //     if closing
     else {
-      objectForState = 'まだ登録されているものがありません。'
+      objectForState = 'まだ登録されているものがありません。';
     }
 
     this.setState({ itemObject: objectForState });
@@ -105,7 +98,7 @@ class Want_Item_List extends Component {
   };
 
   handleDelete = (parent_id) => {
-    let filteredItems = {};
+    let selectedItems = {};
     const { axiosUrl } = this.props;
     const token = localStorage.getItem('token');
     const authHeader = {
@@ -121,10 +114,10 @@ class Want_Item_List extends Component {
         .then((res) => {
           for (let key in this.state.itemObject) {
             if (key != parent_id) {
-              filteredItems = { ...filteredItems, [key]: this.state.itemObject[key] };
+              selectedItems = { ...selectedItems, [key]: this.state.itemObject[key] };
             }
           }
-          this.setState({ itemObject: filteredItems });
+          this.setState({ itemObject: selectedItems });
         })
         .catch((err) => window.alert('削除に失敗しました。'));
     }
@@ -135,44 +128,43 @@ class Want_Item_List extends Component {
     const { h2Title } = this.props;
     let itemList;
     if (wantItems.length !== 0) {
-      itemList = 
-      <StyledList>
-        {
-        Object.keys(itemObject).map((key, idx) => {
-          return (
-            <>
-              <li key={idx}>
-                {/* URLを持っていたら、リンク先まで飛べるように条件分岐 */}
-                {itemObject[key]['url'] == '' ? (
-                  itemObject[key]['name']
-                ) : (
-                  <LinkText key={idx} href={itemObject[key]['url']}>
-                    {itemObject[key]['name']}
-                  </LinkText>
+      itemList = (
+        <StyledList>
+          {Object.keys(itemObject).map((key, idx) => {
+            return (
+              <>
+                <li key={idx}>
+                  {/* URLを持っていたら、リンク先まで飛べるように条件分岐 */}
+                  {itemObject[key]['url'] == '' ? (
+                    itemObject[key]['name']
+                  ) : (
+                    <LinkText key={idx} href={itemObject[key]['url']}>
+                      {itemObject[key]['name']}
+                    </LinkText>
+                  )}
+                </li>
+                {/* ログインユーザーがownerの場合、UpdataとDeleteを許可する */}
+                {owner == loginUser && (
+                  <>
+                    <SmallButton
+                      btn_type="submit"
+                      btn_click={() => this.handleDelete(key)}
+                      btn_name="削除"
+                    />
+                    <SmallButton
+                      btn_type="submit"
+                      btn_click={() => this.jumpToEdit(key)}
+                      btn_name="編集"
+                    />
+                  </>
                 )}
-              </li>
-              {/* ログインユーザーがownerの場合、UpdataとDeleteを許可する */}
-              {owner == loginUser && (
-                <>
-                  <SmallButton
-                    btn_type="submit"
-                    btn_click={() => this.handleDelete(key)}
-                    btn_name="削除"
-                  />
-                  <SmallButton
-                    btn_type="submit"
-                    btn_click={() => this.jumpToEdit(key)}
-                    btn_name="編集"
-                  />
-                </>
-              )}
-            </>
-          );
-        })
-        }
-      </StyledList>
+              </>
+            );
+          })}
+        </StyledList>
+      );
     } else {
-      itemList = <NotHaveText>{itemObject}</NotHaveText>
+      itemList = <NotHaveText>{itemObject}</NotHaveText>;
     }
 
     if (parentItems === '' || wantItems === [] || itemObject === '') {
@@ -191,48 +183,48 @@ class Want_Item_List extends Component {
 export default Want_Item_List;
 
 const Wrapper = styled.div`
-  margin-left:${(props) => props.margin_left};
+  margin-left: ${(props) => props.margin_left};
 `;
 
 const StyledList = styled.ol`
-  margin-top:15px;
-  margin-left:30px;
-  
-  li{
-    font-size:1.15rem;
-    margin-bottom:10px;
+  margin-top: 15px;
+  margin-left: 30px;
+
+  li {
+    font-size: 1.15rem;
+    margin-bottom: 10px;
   }
 `;
 
 const NotHaveText = styled.p`
-  margin-top:15px;
-  margin-left:30px;
-  font-size:1.15rem;
+  margin-top: 15px;
+  margin-left: 30px;
+  font-size: 1.15rem;
 `;
 
 const LinkText = styled.a`
-  text-decoration:none;
-  color:${Colors.accent1};
-  position:relative;
+  text-decoration: none;
+  color: ${Colors.accent1};
+  position: relative;
 
-  &::after{
-    position:absolute;
-    left:0;
-    bottom:-4px;
-    content:"";
-    width:100%;
-    height:2px;
-    background:${Colors.accent1};
-    transform:scale(0,1);
-    transform-origin:center top;
-    transition:transform .3s;
+  &::after {
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    content: '';
+    width: 100%;
+    height: 2px;
+    background: ${Colors.accent1};
+    transform: scale(0, 1);
+    transform-origin: center top;
+    transition: transform 0.3s;
   }
 
-  &:hover{
-    font-weight:700;
+  &:hover {
+    font-weight: 700;
   }
 
-  &:hover::after{
-    transform:scale(1.1);
+  &:hover::after {
+    transform: scale(1.1);
   }
 `;

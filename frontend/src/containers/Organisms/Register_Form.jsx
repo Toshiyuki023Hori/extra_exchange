@@ -2,12 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import LargeButton from '../../presentational/shared/LargeButton';
+import ValidationMessage from '../../presentational/shared/ValidationMessage';
 import { connect } from 'react-redux';
-import styled from "styled-components";
-import { Colors } from "../../presentational/shared/static/CSSvariables";
+import styled from 'styled-components';
+import { Colors } from '../../presentational/shared/static/CSSvariables';
 import { lighten } from 'polished';
 import * as actions from '../../reducks/auth/actions';
-import { mixinHeaderSpace } from "../../presentational/shared/static/CSSvariables";
+import { mixinHeaderSpace } from '../../presentational/shared/static/CSSvariables';
 
 class Register_Form extends React.Component {
   constructor(props) {
@@ -81,8 +82,7 @@ class Register_Form extends React.Component {
     if (!value) return 'パスワードは必須項目です。';
     if (value.length < 8) return 'パスワードは最低8文字入力してください。';
     const regex = /^(?=.*?[a-z])(?=.*?\d)[a-z\d]{8,100}$/i;
-    if (!regex.test(value))
-      return 'パスワードは半角英数字をそれぞれ一種類以上必要です。。';
+    if (!regex.test(value)) return 'パスワードは半角英数字をそれぞれ一種類以上必要です。。';
     return '';
   }
 
@@ -126,23 +126,64 @@ class Register_Form extends React.Component {
     const { info, message } = this.state;
     return (
       <>
-      <Wrapper>
+        <Wrapper>
           <Tytle>会員登録</Tytle>
           <InputArea>
             <FormArea>
               <li>
                 <FormLabel>ユーザーネーム</FormLabel>
-                <InputForm name="username" type="text" value={info.username} onChange={this.handleChange} placeholder="最低5文字以上入力してください"/>
+                <InputForm
+                  name="username"
+                  type="text"
+                  value={info.username}
+                  onChange={this.handleChange}
+                  placeholder="最低5文字以上入力してください"
+                />
               </li>
-              <Error　alert={message.username}>{message.username}</Error>
-              {errorMessageUser}
+              {this.props.error != null ? (
+                <ValidationMessage
+                  errorMessage={errorMessageUser}
+                  isShowup={message.user != ''}
+                  text_color="#D9F1FF"
+                  margin="10px auto 0px auto"
+                  bg_color="#70AACC"
+                />
+              ) : (
+                <ValidationMessage
+                  errorMessage={message.username}
+                  isShowup={message.username != ''}
+                  text_color="#D9F1FF"
+                  margin="10px auto 0px auto"
+                  bg_color="#70AACC"
+                />
+              )}
 
               <li>
                 <FormLabel>メール</FormLabel>
-                <InputForm name="email" type="email" value={info.email} onChange={this.handleChange} />
+                <InputForm
+                  name="email"
+                  type="email"
+                  value={info.email}
+                  onChange={this.handleChange}
+                />
               </li>
-              <Error alert={message.email}>{message.email}</Error>
-              {errorMessageEmail}
+              {this.props.error != null ? (
+                <ValidationMessage
+                  errorMessage={errorMessageEmail}
+                  isShowup={errorMessageEmail != ''}
+                  text_color="#D9F1FF"
+                  margin="10px auto 0px auto"
+                  bg_color="#70AACC"
+                />
+              ) : (
+                <ValidationMessage
+                  errorMessage={message.email}
+                  isShowup={message.email != ''}
+                  text_color="#D9F1FF"
+                  margin="10px auto 0px auto"
+                  bg_color="#70AACC"
+                />
+              )}
 
               <li>
                 <FormLabel>パスワード</FormLabel>
@@ -154,7 +195,13 @@ class Register_Form extends React.Component {
                   placeholder="半角英数字最低8文字以上入力してください"
                 />
               </li>
-              <Error alert={message.password}>{message.password}</Error>
+              <ValidationMessage
+                errorMessage={message.password}
+                isShowup={message.password != ''}
+                text_color="#D9F1FF"
+                margin="10px auto 0px auto"
+                bg_color="#70AACC"
+              />
 
               <li>
                 <FormLabel>パスワード確認</FormLabel>
@@ -166,9 +213,14 @@ class Register_Form extends React.Component {
                   placeholder="半角英数字最低8文字以上入力してください"
                 />
               </li>
-              <Error alert={message.confirmPass}>{message.confirmPass}</Error>
+              <ValidationMessage
+                errorMessage={message.confirmPass}
+                isShowup={message.confirmPass != ''}
+                text_color="#D9F1FF"
+                margin="10px auto 0px auto"
+                bg_color="#70AACC"
+              />
             </FormArea>
-        
 
             <SubmitButton
               btn_name="登録"
@@ -188,7 +240,6 @@ class Register_Form extends React.Component {
               btn_text_color={Colors.subcolor1}
               btn_shadow={Colors.accent1}
             />
-
           </InputArea>
         </Wrapper>
       </>
@@ -218,81 +269,68 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(mapStateToProps, mapDispatchToProps)(Register_Form);
 
 export const Wrapper = styled.div`
-  width:100%;
+  width: 100%;
   ${mixinHeaderSpace};
 `;
 
 export const InputArea = styled.div`
-  background-color:${Colors.subcolor1};
-  width:70%;
-  margin:10px auto 0px auto;
+  background-color: ${Colors.subcolor1};
+  width: 70%;
+  margin: 10px auto 0px auto;
   height: 480px;
-  display:grid;
-  grid-template-rows:4fr 1fr;
-  grid-template-columns:1fr;
-  padding:15px;
+  display: grid;
+  grid-template-rows: 4fr 1fr;
+  grid-template-columns: 1fr;
+  padding: 15px;
 `;
 
 export const Tytle = styled.h1`
-  text-align:center;
+  text-align: center;
 `;
 
 export const FormArea = styled.ul`
-  display:flex;
-  flex-direction:column;
-  justify-content:space-around;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
 
   li {
     display: flex;
     list-style: none;
     align-items: center;
     justify-content: center;
-    margin-top:15px;
+    margin-top: 15px;
   }
 `;
 
 export const InputForm = styled.input`
-  background:white;
+  background: white;
   height: 40px;
   width: 40%;
   border: 1.2px solid ${Colors.accent1};
 
-  &::placeholder{
-    color:${Colors.characters};
-    font-size:0.82em;
+  &::placeholder {
+    color: ${Colors.characters};
+    font-size: 0.82em;
   }
 `;
 
 export const FormLabel = styled.label`
-  width:120px;
+  width: 120px;
   margin-right: 40px;
-  float:left;
-  font-weight:700;
-`;
-
-export const Error = styled.p`
-  font-size:0.7rem;
-  height:32px;
-  background: ${props => props.alert != '' ? '#70AACC' : 'none'};
-  width: 60%;
-  margin: 10px auto 0px auto;
-  border-radius: 20px;
-  color: ${Colors.subcolor1};
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  float: left;
+  font-weight: 700;
 `;
 
 export const SubmitButton = styled(LargeButton)`
-  margin:15px auto 0px auto;
+  margin: 15px auto 0px auto;
 
-  &:hover:enabled{
-    background-color:${lighten(0.1, '#466A80')};
+  &:hover:enabled {
+    background-color: ${lighten(0.1, '#466A80')};
     transition: all 200ms linear;
   }
 
-  &:active:enabled{
+  &:active:enabled {
     box-shadow: 0px 0px 0px;
-    transform:translate(4px, 3px);
+    transform: translate(4px, 3px);
   }
 `;

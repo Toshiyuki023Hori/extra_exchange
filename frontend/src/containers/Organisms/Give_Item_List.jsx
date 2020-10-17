@@ -4,8 +4,8 @@ import history from '../../history';
 import styled from 'styled-components';
 import { CircularProgress } from '@material-ui/core';
 import ItemCard from '../../presentational/shared/ItemCard';
+import { Colors } from '../../presentational/shared/static/CSSvariables';
 import ReactPaginate from "react-paginate";
-import { Wrapper, ItemPlaces, NotHaveText } from "./Give_Item_List_byUser";
 import "../../presentational/shared/static/Pagination.scss";
 
 class Give_Item_List extends Component {
@@ -212,7 +212,7 @@ class Give_Item_List extends Component {
       return <CircularProgress />;
     } else {
       return (
-        <Wrapper>
+        <Wrapper {...this.props}>
           {subtitle}
           <ItemPlaces>
             {itemCards}
@@ -225,3 +225,30 @@ class Give_Item_List extends Component {
 } // Give_Item_List closing tag
 
 export default Give_Item_List;
+
+const Wrapper = styled.div`
+  width:100%;
+  margin-top:${(props) => props.margin_top};
+  margin-bottom:${(props) => props.margin_bottom};
+  margin-left:${(props) => props.margin_left};
+  margin-right:${(props) => props.margin_right};
+  padding-bottom:30px;
+  border-bottom:solid 1px ${Colors.accent2};
+  
+  h2{
+    margin-left:10px;
+  }
+`;
+
+const ItemPlaces = styled.div`
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr 1fr;
+  justify-content:center;
+  justify-items: center;
+  grid-row-gap:25px;
+  padding-top:20px;
+`;
+
+const NotHaveText = styled.p`
+  grid-column: 1 / 3;
+`;

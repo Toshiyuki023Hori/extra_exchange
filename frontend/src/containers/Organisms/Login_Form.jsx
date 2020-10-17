@@ -5,6 +5,7 @@ import * as actions from '../../reducks/auth/actions';
 import styled from "styled-components";
 import { Wrapper,Tytle,InputArea,FormArea,FormLabel,InputForm,Error,SubmitButton } from "./Register_Form";
 import { Colors } from "../../presentational/shared/static/CSSvariables";
+import ValidationMessage from "../../presentational/shared/ValidationMessage";
 
 class Login_Form extends React.Component {
   constructor(props) {
@@ -93,7 +94,13 @@ class Login_Form extends React.Component {
                 <FormLabel>ユーザーネーム</FormLabel>
                 <InputForm name="username" type="text" value={info.username} onChange={this.handleChange} placeholder="最低5文字以上入力してください"/>
               </li>
-              <Error alert={message.username}>{message.username}</Error>
+              <ValidationMessage
+                  errorMessage={message.username}
+                  isShowup={message.username != ''}
+                  text_color="#D9F1FF"
+                  margin="10px auto 0px auto"
+                  bg_color="#70AACC"
+                />
 
               <li>
                 <FormLabel>パスワード</FormLabel>
@@ -110,12 +117,20 @@ class Login_Form extends React.Component {
               {/* null時は入力フォームにValidation */}
                 {
                   this.props.error != null
-                  ? <Error alert={errorMessage}>
-                      {errorMessage}
-                    </Error>
-                  : <Error alert={message.password}>
-                      {message.password}
-                    </Error>
+                  ? <ValidationMessage
+                      errorMessage={errorMessage}
+                      isShowup={errorMessage != ''}
+                      text_color="#D9F1FF"
+                      margin="10px auto 0px auto"
+                      bg_color="#70AACC"
+                    />
+                  : <ValidationMessage
+                      errorMessage={message.password}
+                      isShowup={message.password != ''}
+                      text_color="#D9F1FF"
+                      margin="10px auto 0px auto"
+                      bg_color="#70AACC"
+                    />
                 }
             </ExtendsFormArea>
             <SubmitButton
