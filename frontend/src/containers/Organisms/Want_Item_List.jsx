@@ -171,7 +171,7 @@ class Want_Item_List extends Component {
       return <CircularProgress />;
     } else {
       return (
-        <Wrapper margin_left={this.props.margin_left}>
+        <Wrapper margin_left={this.props.margin_left} margin_top={this.props.margin_top}>
           <h2>{h2Title}</h2>
           <ol>{itemList}</ol>
         </Wrapper>
@@ -184,6 +184,7 @@ export default Want_Item_List;
 
 const Wrapper = styled.div`
   margin-left: ${(props) => props.margin_left};
+  margin-top:${(props) => props.margin_top}
 `;
 
 const StyledList = styled.ol`
@@ -214,10 +215,10 @@ const LinkText = styled.a`
     content: '';
     width: 100%;
     height: 2px;
-    background: ${Colors.accent1};
     transform: scale(0, 1);
-    transform-origin: center top;
     transition: transform 0.3s;
+    transform-origin: center top;
+    background: ${Colors.accent1};
   }
 
   &:hover {

@@ -3,7 +3,16 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import history from '../../history';
+import styled from 'styled-components';
+import MiddleButton from '../../presentational/shared/MiddleButton';
+import ValidationMessage from '../../presentational/shared/ValidationMessage';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import {
+  mixinUlLabel,
+  mixinInputForm,
+  mixinLiTag,
+  Colors,
+} from '../../presentational/shared/static/CSSvariables';
 
 class Want_Item_Add_Form extends Component {
   constructor(props) {
@@ -205,28 +214,65 @@ class Want_Item_Add_Form extends Component {
       return <CircularProgress />;
     } else {
       return (
-        <div>
-          <div>
+        <FormArea>
+          <TextLiTag>
             <label>商品名</label>
-            <input name="name" type="text" value={info.name} onChange={this.handleChange} />
+            <InputForm
+              name="name"
+              type="text"
+              value={info.name}
+              onChange={this.handleChange}
+              placeholder="最低5文字"
+            />
             <p>{message.name}</p>
-          </div>
+          </TextLiTag>
+          <ValidationMessage
+            errorMessage={message.name}
+            isShowup={message.name != ''}
+            text_color="#D9F1FF"
+            margin="10px 0px 0px 140px"
+            bg_color="#70AACC"
+          />
 
-          <div>
-            <p>{message.keyword1}</p>
-            <p>{message.keyword2}</p>
-            <p>{message.keyword3}</p>
+          <TextLiTag>
             <label>キーワード1</label>
-            <input name="keyword1" type="text" value={info.keyword1} onChange={this.handleChange} />
+            <InputForm
+              name="keyword1"
+              type="text"
+              value={info.keyword1}
+              onChange={this.handleChange}
+              placeholder="最低1つはキーワードを設定してください"
+            />
+          </TextLiTag>
 
+          <TextLiTag>
             <label>キーワード2</label>
-            <input name="keyword2" type="text" value={info.keyword2} onChange={this.handleChange} />
+            <InputForm
+              name="keyword2"
+              type="text"
+              value={info.keyword2}
+              onChange={this.handleChange}
+            />
+          </TextLiTag>
 
+          <TextLiTag>
             <label>キーワード3</label>
-            <input name="keyword3" type="text" value={info.keyword3} onChange={this.handleChange} />
-          </div>
+            <InputForm
+              name="keyword3"
+              type="text"
+              value={info.keyword3}
+              onChange={this.handleChange}
+            />
+          </TextLiTag>
+          <ValidationMessage
+            errorMessage={message.keyword1}
+            isShowup={message.keyword1 != ''}
+            text_color="#D9F1FF"
+            margin="10px 0px 0px 140px"
+            bg_color="#70AACC"
+          />
 
-          <div>
+          <TextLiTag>
             <label>ブランド</label>
             <select name="bland" onChange={this.handleChange}>
               <option value="">ブランド無し</option>
@@ -238,30 +284,57 @@ class Want_Item_Add_Form extends Component {
                 );
               })}
             </select>
-          </div>
+          </TextLiTag>
 
-          <div>
+          <TextLiTag>
             <label>商品参考URL</label>
-            <input name="url" type="text" value={info.url} onChange={this.handleChange} />
-          </div>
+            <InputForm name="url" type="text" value={info.url} onChange={this.handleChange} />
+          </TextLiTag>
 
-          <input
-            type="button"
-            value="登録"
-            onClick={this.handleSubmit}
-            disabled={
-              !info.name ||
-              !info.keyword1 ||
-              message.name ||
-              message.keyword1 ||
-              message.keyword2 ||
-              message.keyword3
-            }
-          />
-        </div>
+          <TextLiTag>
+            <StyledMiddleButton
+              btn_type="button"
+              btn_name="登録"
+              btn_click={this.handleSubmit}
+              btn_disable={
+                !info.name ||
+                !info.keyword1 ||
+                message.name ||
+                message.keyword1 ||
+                message.keyword2 ||
+                message.keyword3
+              }
+              btn_back={Colors.main}
+              btn_text_color={Colors.accent2}
+              btn_shadow={Colors.accent1}
+            />
+          </TextLiTag>
+        </FormArea>
       );
     }
   }
 }
 
 export default Want_Item_Add_Form;
+
+const FormArea = styled.ul`
+  label {
+    ${mixinUlLabel};
+    margin-right: 30px;
+    width: 110px;
+  }
+`;
+
+const InputForm = styled.input`
+  ${mixinInputForm};
+`;
+
+const TextLiTag = styled.li`
+  ${mixinLiTag};
+  margin-top: 15px;
+`;
+
+const StyledMiddleButton = styled(MiddleButton)`
+  display: block;
+  margin: 10px auto;
+`;
