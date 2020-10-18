@@ -32,4 +32,8 @@ const StyledButton = styled.button`
   color: ${(props) => props.btn_text_color};
   box-shadow: 4px 3px ${(props) => props.btn_shadow};
   outline: none;
+
+  &:hover{
+    background:${(props) => lighten(0.7, props.btn_back)};
+  }
 `;
