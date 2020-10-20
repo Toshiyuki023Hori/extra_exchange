@@ -80,7 +80,9 @@ class User_Detail extends Component {
               <User_Sidemenu user_id={user.id} />
               <InformationDiv>
                 {userHeader}
-                <UserProfile>{user.profile}</UserProfile>
+                {user.profile && 
+                  <UserProfile>{user.profile}</UserProfile>
+                }
                 {wantItemList}
                 {giveItemList}
               </InformationDiv>
@@ -103,7 +105,9 @@ class User_Detail extends Component {
               <User_Sidemenu user_id={user.id} isUser={loginUser.id === user.id} />
               <InformationDiv>
                 {userHeader}
-                <UserProfile>{user.profile}</UserProfile>
+                {user.profile && 
+                  <UserProfile>{user.profile}</UserProfile>
+                }
                 {wantItemList}
                 {giveItemList}
               </InformationDiv>
