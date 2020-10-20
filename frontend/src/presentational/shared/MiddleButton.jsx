@@ -28,7 +28,7 @@ const StyledButton = styled.button`
   font-weight: 550;
   padding: 2px 3.5px;
   border-radius: 10px;
-  background: ${(props) => props.btn_back};
+  background: ${(props) => props.btn_disable ? lighten(0.4, props.btn_back) : props.btn_back};
   color: ${(props) => props.btn_text_color};
   box-shadow: 4px 3px ${(props) => props.btn_shadow};
   outline: none;

@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import axios from 'axios';
 import LargeButton from '../../presentational/shared/LargeButton';
 import ValidationMessage from '../../presentational/shared/ValidationMessage';
 import { connect } from 'react-redux';

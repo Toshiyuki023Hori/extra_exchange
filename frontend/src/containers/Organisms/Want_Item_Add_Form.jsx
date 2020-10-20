@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import MiddleButton from '../../presentational/shared/MiddleButton';
 import ValidationMessage from '../../presentational/shared/ValidationMessage';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import down_arrow from '../../assets/DownArrow.png';
 import {
   mixinUlLabel,
   mixinInputForm,
@@ -210,6 +211,16 @@ class Want_Item_Add_Form extends Component {
 
   render() {
     const { info, message, allBland } = this.state;
+    let keywordError;
+
+    if(message.keyword1 != ""){
+      keywordError = message.keyword1;
+    } else if(message.keyword2 != ""){
+      keywordError = message.keyword2;
+    } else if(message.keyword3 != ""){
+      keywordError = message.keyword3;
+    }
+
     if (this.state.info.owner === '' || this.state.allBland === '') {
       return <CircularProgress />;
     } else {
@@ -224,7 +235,6 @@ class Want_Item_Add_Form extends Component {
               onChange={this.handleChange}
               placeholder="最低5文字"
             />
-            <p>{message.name}</p>
           </TextLiTag>
           <ValidationMessage
             errorMessage={message.name}
@@ -265,8 +275,8 @@ class Want_Item_Add_Form extends Component {
             />
           </TextLiTag>
           <ValidationMessage
-            errorMessage={message.keyword1}
-            isShowup={message.keyword1 != ''}
+            errorMessage={keywordError}
+            isShowup={message.keyword1 != '' || message.keyword2 != '' || message.keyword3 != ''}
             text_color="#D9F1FF"
             margin="10px 0px 0px 140px"
             bg_color="#70AACC"
@@ -274,7 +284,7 @@ class Want_Item_Add_Form extends Component {
 
           <TextLiTag>
             <label>ブランド</label>
-            <select name="bland" onChange={this.handleChange}>
+            <DropDown name="bland" onChange={this.handleChange}>
               <option value="">ブランド無し</option>
               {allBland.map((bland, idx) => {
                 return (
@@ -283,7 +293,7 @@ class Want_Item_Add_Form extends Component {
                   </option>
                 );
               })}
-            </select>
+            </DropDown>
           </TextLiTag>
 
           <TextLiTag>
@@ -337,4 +347,14 @@ const TextLiTag = styled.li`
 const StyledMiddleButton = styled(MiddleButton)`
   display: block;
   margin: 10px auto;
+`;
+
+const DropDown = styled.select`
+  border: 1.2px solid #70aacc;
+  padding: 10px 15px;
+  outline: none;
+  background: url(${down_arrow});
+  background-repeat: no-repeat;
+  background-size: 17px 19px;
+  background-position: right 10px center;
 `;
