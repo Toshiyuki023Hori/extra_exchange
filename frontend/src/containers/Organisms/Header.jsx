@@ -55,7 +55,25 @@ class Header extends Component {
           {/* 　ログイン済ユーザー */}
           <div>
             <MessageToUserDiv>
-              <p>こんにちは {loginUser.username}さん</p>　
+              <div>
+                <UsernamePara>
+                  こんにちは {loginUser.username}さん
+                </UsernamePara>
+                <SubMenuUL>
+                  <SubMenuLI>
+                    <a href="/about">アバウト</a>
+                  </SubMenuLI>
+                  <SubMenuLI>
+                    <a href="/about">ユーザー情報を見る</a>
+                  </SubMenuLI>
+                  <SubMenuLI>
+                    <a href="">リクエスト一覧を見る</a>
+                  </SubMenuLI>
+                  <SubMenuLI>
+                    <a href="">取引一覧を見る</a>
+                  </SubMenuLI>
+                </SubMenuUL>
+              </div>
               <LogoutButton onClick={this.handleLogout}>ログアウト</LogoutButton>
             </MessageToUserDiv>
             <AuthButtonDiv>
@@ -82,7 +100,14 @@ class Header extends Component {
         <>
           {/* ゲストユーザー */}
           <div>
-            <MessageToUserDiv>こんにちは ゲストさん</MessageToUserDiv>
+            <MessageToUserDiv>
+              <UsernamePara>こんにちは ゲストさん</UsernamePara>
+              <SubMenuUL>
+                <SubMenuLI>
+                  <a href="/about">アバウト</a>
+                </SubMenuLI>
+              </SubMenuUL>
+            </MessageToUserDiv>
             <AuthButtonDiv>
               <SmallButton
                 btn_name="登録"
@@ -162,15 +187,47 @@ const MessageToUserDiv = styled.div`
   font-size: 13px;
   text-align: right;
   height: 20%;
-  
-  p{
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
+`;
 
-    &::after{
-      content:"▼"
+const UsernamePara = styled.p`
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  position:relative;
+
+  &::after{
+    content:"▼"
+  }
+
+  &:hover ~ ul{
+      top: 30px;
+      visibility: visible;
+      opacity: 1;
     }
+`;
+
+const SubMenuUL = styled.ul`
+  position: absolute;
+  top: 20px;
+  width: 100%;
+  background: ${Colors.subcolor1};
+  transition: all .2s ease;
+  visibility: hidden;
+  opacity: 0;
+  z-index:41;
+  list-style:none; 
+  text-align:left;
+
+  &:hover{
+    top:30px;
+    visibility:visible;
+    opacity:1;
+  }
+`;
+
+const SubMenuLI = styled.li`
+  a{
+    display:block;
   }
 `;
 
