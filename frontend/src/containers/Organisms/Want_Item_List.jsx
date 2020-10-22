@@ -94,7 +94,7 @@ class Want_Item_List extends Component {
   //            ===========           ===========           ===========           ===========
 
   jumpToEdit = (parent_id) => {
-    history.push('/want/' + parent_id + '/edit');
+    history.push('/want/edit/' + parent_id);
   };
 
   handleDelete = (parent_id) => {

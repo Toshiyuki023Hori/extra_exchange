@@ -1,4 +1,5 @@
 import { css } from 'styled-components';
+import down_arrow from '../../../assets/DownArrow.png';
 
 export const Colors = {
   main: '#8DD6FF',
@@ -48,4 +49,27 @@ export const mixinLiTag = css`
   list-style: none;
   display: flex;
   align-items: center;
+`;
+
+export const mixinDropDown = css`
+  border: 1.2px solid #70aacc;
+  padding: 10px 15px;
+  outline: none;
+  background: url(${down_arrow});
+  background-repeat: no-repeat;
+  background-size: 17px 19px;
+  background-position: right 10px center;
+`
+
+export const mixinTextArea = css`
+  background: white;
+  width: 50%;
+  height: 200px;
+  border: 1.2px solid ${Colors.accent1};
+  position: relative;
+  white-space: pre-wrap;
+
+  &::placeholder {
+    color: ${Colors.characters};
+  }
 `;

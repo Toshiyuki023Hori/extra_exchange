@@ -3,6 +3,7 @@ import { withRouter, Redirect } from 'react-router-dom';
 import axios from 'axios';
 import styled from "styled-components";
 import CircularProgress from '@material-ui/core/CircularProgress';
+import User_Sidemenu from '../Organisms/User_Sidemenu';
 import Give_Item_Add_Form from '../Organisms/Give_Item_Add_Form';
 import Header from '../Organisms/Header';
 import Footer from "../Organisms/Footer";
@@ -36,15 +37,18 @@ class Give_Item_Add extends Component {
       return <CircularProgress />;
     } else {
       return (
-        <Wrapper>
+         <div>
           <Header loginUser={this.state.loginUser} />
-          <Give_Item_Add_Form
-            owner={this.state.loginUser}
-            loginUser={this.state.loginUser}
-            axiosUrl="http://localhost:8000/api/"
-          />
+        　<Body>
+            <User_Sidemenu user_id={this.state.loginUser} isUser='true'/>
+            <StyledGive_ItemDiv
+              owner={this.state.loginUser}
+              loginUser={this.state.loginUser}
+              axiosUrl="http://localhost:8000/api/"
+            />
+          </Body>
           <Footer/>
-        </Wrapper>
+         </div>
       );
     }
   }
@@ -52,6 +56,12 @@ class Give_Item_Add extends Component {
 
 export default withRouter(Give_Item_Add);
 
-const Wrapper = styled.div`
-  ${mixinHeaderSpace}
+const Body = styled.div`
+  margin-top:93px;
+  display:flex;
+`;
+
+const StyledGive_ItemDiv = styled(Give_Item_Add_Form)`
+  flex:1;
+  padding: 20px 0px 0px 20px;
 `;
