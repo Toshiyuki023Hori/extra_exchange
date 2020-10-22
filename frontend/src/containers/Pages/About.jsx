@@ -134,6 +134,7 @@ const PrepareStepDiv = styled.div`
 
   img {
     height: 260px;
+    display: block;
   }
 `;
 
@@ -141,19 +142,11 @@ const LinkText = styled.a`
   text-align: center;
   color: ${Colors.accent2};
   text-decoration: none;
-
-  &&::after {
-    ${mixinHoverUnderlineEffect};
-    transform-origin: center top;
-    background: ${Colors.accent2};
-  }
+  display: inline-block;
+  position: relative;
 
   &:hover {
     font-weight: 700;
-  }
-
-  &:hover::after {
-    transform: scale(1.1);
   }
 `;
 

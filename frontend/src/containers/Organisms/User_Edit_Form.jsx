@@ -6,6 +6,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import MiddleButton from '../../presentational/shared/MiddleButton';
 import ValidationMessage from '../../presentational/shared/ValidationMessage';
 import { mixinHeaderSpace, Colors } from '../../presentational/shared/static/CSSvariables';
+import { lighten } from 'polished';
 import Preview_Place from '../../assets/Preview_Place.png';
 
 class User_Edit_Form extends Component {
@@ -236,6 +237,9 @@ class User_Edit_Form extends Component {
       deleteBackgroundButton = setCancelUploadButton('background', '画像取り消し');
     }
 
+    let buttonDisableConditions =
+      !info.username || !info.email || message.username || message.email;
+
     return (
       <>
         <FormArea>
@@ -313,15 +317,13 @@ class User_Edit_Form extends Component {
             )}
           </ImageLiTag>
           <TextLiTag>
-            <StyledMiddleButton
-              btn_name="編集完了"
-              btn_type="submit"
+            <SubmitButton
+              btn_type="button"
               btn_click={this.handleSubmit}
-              btn_disable={!info.username || !info.email || message.username || message.email}
-              btn_back={Colors.main}
-              btn_text_color={Colors.accent2}
-              btn_shadow={Colors.accent1}
-            />
+              btn_disable={buttonDisableConditions}
+            >
+              編集完了
+            </SubmitButton>
           </TextLiTag>
         </FormArea>
       </>
@@ -408,7 +410,20 @@ const StyledButton = styled.button`
   }
 `;
 
-const StyledMiddleButton = styled(MiddleButton)`
+const SubmitButton = styled(MiddleButton)`
   display: block;
   margin: 10px auto;
+  background: ${(props) => (!props.btn_disable ? '#8DD6FF' : '#E0F4FF')};
+  color: ${(props) => (!props.btn_disable ? '#466A80' : '#BDCFDA')};
+  box-shadow: 4px 3px ${Colors.accent1};
+
+  &:hover:enabled {
+    background-color: #a8e0ff;
+    transition: all 200ms linear;
+  }
+
+  &:active:enabled {
+    box-shadow: 0px 0px 0px;
+    transform: translate(4px, 3px);
+  }
 `;

@@ -213,11 +213,11 @@ class Want_Item_Add_Form extends Component {
     const { info, message, allBland } = this.state;
     let keywordError;
 
-    if(message.keyword1 != ""){
+    if (message.keyword1 != '') {
       keywordError = message.keyword1;
-    } else if(message.keyword2 != ""){
+    } else if (message.keyword2 != '') {
       keywordError = message.keyword2;
-    } else if(message.keyword3 != ""){
+    } else if (message.keyword3 != '') {
       keywordError = message.keyword3;
     }
 
@@ -302,9 +302,8 @@ class Want_Item_Add_Form extends Component {
           </TextLiTag>
 
           <TextLiTag>
-            <StyledMiddleButton
+            <SubmitButton
               btn_type="button"
-              btn_name="登録"
               btn_click={this.handleSubmit}
               btn_disable={
                 !info.name ||
@@ -314,10 +313,9 @@ class Want_Item_Add_Form extends Component {
                 message.keyword2 ||
                 message.keyword3
               }
-              btn_back={Colors.main}
-              btn_text_color={Colors.accent2}
-              btn_shadow={Colors.accent1}
-            />
+            >
+              登録
+            </SubmitButton>
           </TextLiTag>
         </FormArea>
       );
@@ -344,11 +342,6 @@ const TextLiTag = styled.li`
   margin-top: 15px;
 `;
 
-const StyledMiddleButton = styled(MiddleButton)`
-  display: block;
-  margin: 10px auto;
-`;
-
 const DropDown = styled.select`
   border: 1.2px solid #70aacc;
   padding: 10px 15px;
@@ -357,4 +350,22 @@ const DropDown = styled.select`
   background-repeat: no-repeat;
   background-size: 17px 19px;
   background-position: right 10px center;
+`;
+
+const SubmitButton = styled(MiddleButton)`
+  display: block;
+  margin: 10px auto;
+  background: ${(props) => (!props.btn_disable ? '#8DD6FF' : '#E0F4FF')};
+  color: ${(props) => (!props.btn_disable ? '#466A80' : '#BDCFDA')};
+  box-shadow: 4px 3px ${Colors.accent1};
+
+  &:hover:enabled {
+    background-color: #a8e0ff;
+    transition: all 200ms linear;
+  }
+
+  &:active:enabled {
+    box-shadow: 0px 0px 0px;
+    transform: translate(4px, 3px);
+  }
 `;

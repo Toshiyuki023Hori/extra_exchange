@@ -136,34 +136,41 @@ class Want_Item_List extends Component {
                 <li key={idx}>
                   {/* URLを持っていたら、リンク先まで飛べるように条件分岐 */}
                   {itemObject[key]['url'] == '' ? (
-                    itemObject[key]['name']
+                    <SpanText key={idx}>{itemObject[key]['name']}</SpanText>
                   ) : (
                     <LinkText key={idx} href={itemObject[key]['url']}>
                       {itemObject[key]['name']}
                     </LinkText>
                   )}
+
+                  {/* ログインユーザーがownerの場合、UpdataとDeleteを許可する */}
+                  {owner == loginUser && (
+                    <>
+                      <StyledSmallButton
+                        btn_type="submit"
+                        btn_click={() => this.jumpToEdit(key)}
+                        btn_name="編集"
+                        btn_back={Colors.main}
+                        btn_text_color={Colors.accent2}
+                      />
+                      <StyledSmallButton
+                        btn_type="submit"
+                        btn_click={() => this.handleDelete(key)}
+                        btn_name="削除"
+                        btn_back={Colors.accent2}
+                        btn_text_color={Colors.subcolor1}
+                      />
+                    </>
+                  )}
                 </li>
-                {/* ログインユーザーがownerの場合、UpdataとDeleteを許可する */}
-                {owner == loginUser && (
-                  <>
-                    <SmallButton
-                      btn_type="submit"
-                      btn_click={() => this.handleDelete(key)}
-                      btn_name="削除"
-                    />
-                    <SmallButton
-                      btn_type="submit"
-                      btn_click={() => this.jumpToEdit(key)}
-                      btn_name="編集"
-                    />
-                  </>
-                )}
               </>
             );
-          })}
+          })}{' '}
+          {/* Object.keys(itemObject).map closing */}
         </StyledList>
       );
-    } else {
+    } // if (wantItems.length !== 0) closing
+    else {
       itemList = <NotHaveText>{itemObject}</NotHaveText>;
     }
 
@@ -171,7 +178,10 @@ class Want_Item_List extends Component {
       return <CircularProgress />;
     } else {
       return (
-        <Wrapper margin_left={this.props.margin_left} margin_top={this.props.margin_top}>
+        <Wrapper
+          margin_left={this.props.margin_left}
+          margin_top={this.props.margin_top}
+        >
           <h2>{h2Title}</h2>
           <ol>{itemList}</ol>
         </Wrapper>
@@ -184,7 +194,7 @@ export default Want_Item_List;
 
 const Wrapper = styled.div`
   margin-left: ${(props) => props.margin_left};
-  margin-top:${(props) => props.margin_top}
+  margin-top: ${(props) => props.margin_top};
 `;
 
 const StyledList = styled.ol`
@@ -193,7 +203,7 @@ const StyledList = styled.ol`
 
   li {
     font-size: 1.15rem;
-    margin-bottom: 10px;
+    margin-bottom: 17px;
   }
 `;
 
@@ -203,29 +213,26 @@ const NotHaveText = styled.p`
   font-size: 1.15rem;
 `;
 
-const LinkText = styled.a`
-  text-decoration: none;
-  color: ${Colors.accent1};
-  position: relative;
+const SpanText = styled.span`
+  display: inline-block;
+  margin-right: 60px;
+  width: 300px;
+`;
 
-  &::after {
-    position: absolute;
-    left: 0;
-    bottom: -4px;
-    content: '';
-    width: 100%;
-    height: 2px;
-    transform: scale(0, 1);
-    transition: transform 0.3s;
-    transform-origin: center top;
-    background: ${Colors.accent1};
-  }
+const LinkText = styled.a`
+  text-decoration: underline;
+  text-decoration-color: ${Colors.accent1};
+  color: ${Colors.accent1};
+  margin-right: 60px;
+  display: inline-block;
+  width: 300px;
 
   &:hover {
     font-weight: 700;
   }
+`;
 
-  &:hover::after {
-    transform: scale(1.1);
-  }
+const StyledSmallButton = styled(SmallButton)`
+  margin-right: 30px;
+  border: none;
 `;

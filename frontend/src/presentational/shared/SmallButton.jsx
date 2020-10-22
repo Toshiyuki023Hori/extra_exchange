@@ -11,6 +11,7 @@ class SmallButton extends Component {
     return (
       <StyledButton
         {...this.props}
+        className={this.props.className}
         type={this.props.btn_type}
         onClick={this.props.btn_click}
         onSubmit={this.props.btn_submit}
