@@ -13,9 +13,6 @@ import { Colors } from '../../presentational/shared/static/CSSvariables';
 class Header extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      loginUser: this.props.loginUser,
-    };
     this.jumpToLogin = this.jumpToLogin.bind(this);
     this.jumpToRegister = this.jumpToRegister.bind(this);
     this.jumpToTop = this.jumpToTop.bind(this);
@@ -46,7 +43,7 @@ class Header extends Component {
 
   render() {
     const { isAuthenticated } = this.props;
-    const { loginUser } = this.state;
+    const { loginUser } = this.props;
     let authenticatedView;
     let guestView;
     if (isAuthenticated) {
@@ -62,13 +59,13 @@ class Header extends Component {
                     <a href="/about">アバウト</a>
                   </li>
                   <li>
-                    <a href="/about">ユーザー情報を見る</a>
+                    <a href={'/user/' + loginUser.id}>ユーザー情報を見る</a>
                   </li>
                   <li>
-                    <a href="">リクエスト一覧を見る</a>
+                    <a href="/request/waiting">リクエスト一覧を見る</a>
                   </li>
                   <li>
-                    <a href="">取引一覧を見る</a>
+                    <a href="/deal/proceeding/host">取引一覧を見る</a>
                   </li>
                 </UserUl>
               </SubMenuDiv>
@@ -193,6 +190,7 @@ const UsernamePara = styled.p`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: inline-block;
 
   &::after {
     content: '▼';
@@ -224,6 +222,15 @@ const SubMenuDiv = styled.div`
     opacity: 0;
     z-index: 31;
 
+    a {
+      text-decoration: none;
+      color: ${Colors.characters};
+
+      &:hover {
+        font-weight: 700;
+      }
+    }
+
     &:hover {
       top: 22px;
       visibility: visible;
@@ -233,21 +240,22 @@ const SubMenuDiv = styled.div`
 `;
 
 const GuestUl = styled.ul`
-  height:80px;
+  height: 80px;
   width: 40%;
-  left:180px;
+  left: 180px;
 `;
 
 const UserUl = styled.ul`
-  height:160px;
+  height: 160px;
   width: 60%;
   left: 120px;
 `;
 
 const LogoutButton = styled.button`
   color: #6e787f;
-  width: 30%;
   outline: none;
+  text-align: right;
+  display: inline-block;
 
   &:hover {
     font-weight: bold;
