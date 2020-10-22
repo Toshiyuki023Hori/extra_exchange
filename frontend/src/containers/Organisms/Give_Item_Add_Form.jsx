@@ -12,6 +12,7 @@ import {
   mixinLiTag,
   mixinDropDown,
   mixinTextArea,
+  Colors,
 } from '../../presentational/shared/static/CSSvariables';
 import Preview_Place from '../../assets/Preview_Place_Large.png';
 
@@ -479,22 +480,25 @@ class Give_Item_Add_Form extends Component {
                 ></StyledTextArea>
               </TextLiTag>
 
-              <MiddleButton
-                btn_name="登録"
-                btn_type="submit"
-                btn_disable={
-                  !info.name ||
-                  !info.keyword1 ||
-                  info.images.length === 0 ||
-                  !info.category ||
-                  message.name ||
-                  message.keyword1 ||
-                  message.keyword2 ||
-                  message.keyword3 ||
-                  message.images ||
-                  message.category
-                }
-              />
+              <TextLiTag>
+                <SubmitButton
+                  btn_type="submit"
+                  btn_disable={
+                    !info.name ||
+                    !info.keyword1 ||
+                    info.images.length === 0 ||
+                    !info.category ||
+                    message.name ||
+                    message.keyword1 ||
+                    message.keyword2 ||
+                    message.keyword3 ||
+                    message.images ||
+                    message.category
+                  }
+                >
+                  登録
+                </SubmitButton>
+              </TextLiTag>
             </FormArea>
           </form>
         </div>
@@ -573,7 +577,6 @@ const DeleteButton = styled.button`
   left: 20px;
   margin-top: 10px;
   padding: 5px 10px;
-  border-radius: 5%;
   font-size: 0.76rem;
   color: #6c7880;
   border: 1px solid #6c7880;
@@ -582,5 +585,23 @@ const DeleteButton = styled.button`
   &:hover {
     color: white;
     background: #6c7880;
+  }
+`;
+
+const SubmitButton = styled(MiddleButton)`
+  display: block;
+  margin: 10px auto;
+  background: ${(props) => (!props.btn_disable ? '#8DD6FF' : '#E0F4FF')};
+  color: ${(props) => (!props.btn_disable ? '#466A80' : '#BDCFDA')};
+  box-shadow: 4px 3px ${Colors.accent1};
+
+  &:hover:enabled {
+    background-color: #a8e0ff;
+    transition: all 200ms linear;
+  }
+
+  &:active:enabled {
+    box-shadow: 0px 0px 0px;
+    transform: translate(4px, 3px);
   }
 `;
