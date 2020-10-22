@@ -58,6 +58,7 @@ class Want_Item_Add extends Component {
               />
             </Want_Item_Div>
           </Body>
+          <Footer/>
         </div>
       );
     }
