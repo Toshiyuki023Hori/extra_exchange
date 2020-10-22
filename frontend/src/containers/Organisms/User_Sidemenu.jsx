@@ -21,6 +21,9 @@ class User_Sidemenu extends Component {
                 <LinkText href="/user/edit">アカウント情報の編集</LinkText>
               </li>
               <li>
+                <LinkText href="/user/changepass">パスワードの変更</LinkText>
+              </li>
+              <li>
                 <LinkText href="/want/add">欲しいものリストの表示、追加</LinkText>
               </li>
               <li>

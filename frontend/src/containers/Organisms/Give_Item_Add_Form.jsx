@@ -346,6 +346,9 @@ class Give_Item_Add_Form extends Component {
     } else {
       return (
         <div className={this.props.className}>
+
+　　　　　　<h2>商品の出品</h2>
+
           <form onSubmit={this.handleSubmit}>
             <FormArea>
               <TextLiTag>

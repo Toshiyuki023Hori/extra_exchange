@@ -3,12 +3,13 @@ import { Redirect } from 'react-router-dom';
 import axios from 'axios';
 import Header from '../Organisms/Header';
 import SmallButton from '../../presentational/shared/SmallButton';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import styled from 'styled-components';
 import history from '../../history';
 import User_PickUp_Add_Form from '../Organisms/User_PickUp_Add_Form';
 import User_PickUp_List from '../Organisms/User_PickUp_List';
-import TouchRipple from '@material-ui/core/ButtonBase/TouchRipple';
+import User_Sidemenu from '../Organisms/User_Sidemenu';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { Colors, mixinHeaderSpace, mixinDropDown, mixinLiTag, mixinUlLabel } from '../../presentational/shared/static/CSSvariables';
 
 class User_PickUp_Add extends Component {
   constructor(props) {
@@ -75,26 +76,41 @@ class User_PickUp_Add extends Component {
       return <CircularProgress />;
     } else {
       return (
-        <>
+        <div>
           <Header loginUser={this.state.loginUser} />
-          <User_PickUp_Add_Form
-            loginUser={this.state.loginUser}
-            axiosUrl="http://localhost:8000/api/"
-            permission={this.state.permissionAdd}
-            checkOwnPickUps={this.checkOwnPickUps}
-          />
-          <User_PickUp_List
-            loginUser={this.state.loginUser}
-            axiosUrl="http://localhost:8000/api/"
-            permission={this.state.permissionAdd}
-            len={this.state.numOwnPickUps}
-            updateNum={this.updateNum}
-            checkOwnPickUps={this.checkOwnPickUps}
-          />
-        </>
+          <Body>
+            <User_Sidemenu user_id={this.state.loginUser.id} isUser='true' />
+            <Pickup_Div>
+              <User_PickUp_Add_Form
+                loginUser={this.state.loginUser}
+                axiosUrl="http://localhost:8000/api/"
+                permission={this.state.permissionAdd}
+                checkOwnPickUps={this.checkOwnPickUps}
+              />
+              <User_PickUp_List
+                loginUser={this.state.loginUser}
+                axiosUrl="http://localhost:8000/api/"
+                permission={this.state.permissionAdd}
+                len={this.state.numOwnPickUps}
+                updateNum={this.updateNum}
+                checkOwnPickUps={this.checkOwnPickUps}
+              />
+            </Pickup_Div>
+          </Body>
+        </div>
       );
     }
   }
 }
 
 export default User_PickUp_Add;
+
+const Body = styled.div`
+  ${mixinHeaderSpace};
+  display:flex;
+`;
+
+const Pickup_Div = styled.div`
+  flex:1;
+  padding:20px 0px 0px 20px;
+`;

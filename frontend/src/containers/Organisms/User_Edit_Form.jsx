@@ -243,6 +243,9 @@ class User_Edit_Form extends Component {
     return (
       <>
         <FormArea>
+
+　　　　　　<h2>アカウント情報の編集</h2>
+
           <TextLiTag>
             <label>ユーザーネーム</label>
             <InputForm

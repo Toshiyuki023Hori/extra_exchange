@@ -226,6 +226,9 @@ class Want_Item_Add_Form extends Component {
     } else {
       return (
         <FormArea>
+
+          <h2>欲しいもの商品の追加</h2>
+
           <TextLiTag>
             <label>商品名</label>
             <InputForm
