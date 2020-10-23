@@ -40,7 +40,7 @@ class Give_Item_Add extends Component {
          <div>
           <Header loginUser={this.state.loginUser} />
         　<Body>
-            <User_Sidemenu user_id={this.state.loginUser} isUser='true'/>
+            <User_Sidemenu user_id={this.state.loginUser.id} isUser='true'/>
             <StyledGive_ItemDiv
               owner={this.state.loginUser}
               loginUser={this.state.loginUser}
