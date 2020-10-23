@@ -141,7 +141,7 @@ class User_ChangePass_Form extends Component {
             errorMessage={message.oldPassword}
             isShowup={message.oldPassword != ''}
             text_color="#D9F1FF"
-            margin="10px 0px 0px 140px"
+            margin="10px 0px 0px 190px"
             bg_color="#70AACC"
           />
 
@@ -158,7 +158,7 @@ class User_ChangePass_Form extends Component {
             errorMessage={message.newPassword1}
             isShowup={message.newPassword1 != ''}
             text_color="#D9F1FF"
-            margin="10px 0px 0px 140px"
+            margin="10px 0px 0px 190px"
             bg_color="#70AACC"
           />
 
@@ -175,7 +175,7 @@ class User_ChangePass_Form extends Component {
             errorMessage={message.newPassword2}
             isShowup={message.newPassword2 != ''}
             text_color="#D9F1FF"
-            margin="10px 0px 0px 140px"
+            margin="10px 0px 0px 190px"
             bg_color="#70AACC"
           />
 
