@@ -1,15 +1,22 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import axios from 'axios';
-import Header from '../Organisms/Header';
 import SmallButton from '../../presentational/shared/SmallButton';
 import styled from 'styled-components';
 import history from '../../history';
+import Header from '../Organisms/Header';
+import Footer from '../Organisms/Footer';
 import User_PickUp_Add_Form from '../Organisms/User_PickUp_Add_Form';
 import User_PickUp_List from '../Organisms/User_PickUp_List';
 import User_Sidemenu from '../Organisms/User_Sidemenu';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { Colors, mixinHeaderSpace, mixinDropDown, mixinLiTag, mixinUlLabel } from '../../presentational/shared/static/CSSvariables';
+import {
+  Colors,
+  mixinHeaderSpace,
+  mixinDropDown,
+  mixinLiTag,
+  mixinUlLabel,
+} from '../../presentational/shared/static/CSSvariables';
 
 class User_PickUp_Add extends Component {
   constructor(props) {
@@ -34,37 +41,37 @@ class User_PickUp_Add extends Component {
       .catch((err) => console.log(err));
   }
 
-  componentDidUpdate(prevProps, prevState){
-    if(prevState.numOwnPickUps != this.state.numOwnPickUps){
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.numOwnPickUps != this.state.numOwnPickUps) {
       this.switchPermission();
     }
   }
 
   switchPermission = () => {
-    if (this.state.numOwnPickUps >= 3) {
+    // PickUp_List内の'登録されているピックアップ地点はありません。' = 22
+    // これは、numOwnPickUpsが0(未登録)時に等しい
+    if (this.state.numOwnPickUps !== 22 && this.state.numOwnPickUps >= 3) {
       this.setState({ permissionAdd: false });
-    } else if (!this.state.numOwnPickUps < 3) {
+    } else if (this.state.numOwnPickUps < 3 || this.state.numOwnPickUps === 22) {
       this.setState({ permissionAdd: true });
     }
   };
 
   updateNum = (value) => {
-    this.setState({numOwnPickUps:value})
+    this.setState({ numOwnPickUps: value });
   };
 
   // User_Pickup_Add_FormでSubmit完了後に発火
   // 追加後に新しいnumOwnPickUpsを取得
   // これによりswitchPermission発火
   checkOwnPickUps = async () => {
-    console.log("now is " + this.state.numOwnPickUps);
     const localhostUrl = 'http://localhost:8000/api/';
     await axios
-    .get(localhostUrl + 'pickup/?choosingUser=' + this.state.loginUser.id)
-    .then((res) => {
-      this.setState({ numOwnPickUps: res.data.length });
-    })
-    .catch((err) => console.log(err));
-    console.log("After " + this.state.numOwnPickUps)
+      .get(localhostUrl + 'pickup/?choosingUser=' + this.state.loginUser.id)
+      .then((res) => {
+        this.setState({ numOwnPickUps: res.data.length });
+      })
+      .catch((err) => console.log(err));
   };
 
   render() {
@@ -79,7 +86,7 @@ class User_PickUp_Add extends Component {
         <div>
           <Header loginUser={this.state.loginUser} />
           <Body>
-            <User_Sidemenu user_id={this.state.loginUser.id} isUser='true' />
+            <User_Sidemenu user_id={this.state.loginUser.id} isUser="true" />
             <Pickup_Div>
               <User_PickUp_Add_Form
                 loginUser={this.state.loginUser}
@@ -97,6 +104,7 @@ class User_PickUp_Add extends Component {
               />
             </Pickup_Div>
           </Body>
+          <Footer />
         </div>
       );
     }
@@ -107,10 +115,11 @@ export default User_PickUp_Add;
 
 const Body = styled.div`
   ${mixinHeaderSpace};
-  display:flex;
+  display: flex;
+  height: 70vh;
 `;
 
 const Pickup_Div = styled.div`
-  flex:1;
-  padding:20px 0px 0px 20px;
+  flex: 1;
+  padding: 20px 0px 0px 20px;
 `;

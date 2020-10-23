@@ -37,7 +37,6 @@ class User_PickUp_Add_Form extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.lines != this.state.lines) {
-      console.log('FIRE!!');
       axios
         .get('http://express.heartrails.com/api/json?method=getStations&line=' + this.state.lines)
         .then((res) => {
@@ -73,44 +72,46 @@ class User_PickUp_Add_Form extends Component {
       pickupPlaces = textInput;
     }
 
-    //登録済みの駅かをgetリクエストで確認
-    // ifで分岐させるために、awaitで非同期制御
-    await axios
-      .get(axiosUrl + 'pickup/?name=' + pickupPlaces)
-      .then((res) => {
-        pickup_id = res.data[0].id;
-        res.data[0].choosingUser.map((user_id) => {
-          originalUsers = [...originalUsers, user_id];
-        });
-      })
-      .catch((err) => console.log(err));
-
-    // DBに存在している場合は、PATCHでUserを追加
-    if (typeof pickup_id === 'number') {
-      axios
-        .patch(
-          axiosUrl + 'pickup/' + pickup_id + '/',
-          {
-            choosingUser: [...originalUsers, owner.id],
-          },
-          authHeader
-        )
-        .then((res) => history.push("/user/pickup"))
+    if(pickupPlaces != undefined){
+      //登録済みの駅かをgetリクエストで確認
+      // ifで分岐させるために、awaitで非同期制御
+      await axios
+        .get(axiosUrl + 'pickup/?name=' + pickupPlaces)
+        .then((res) => {
+          pickup_id = res.data[0].id;
+          res.data[0].choosingUser.map((user_id) => {
+            originalUsers = [...originalUsers, user_id];
+          });
+        })
         .catch((err) => console.log(err));
-    } 
-    // DBに存在していない場合はPOSTで新規作成。
-    else {
-      axios
-        .post(
-          axiosUrl + 'pickup/',
-          {
-            name: pickupPlaces,
-            choosingUser: [owner.id],
-          },
-          authHeader
-        )
-        .then((res) => this.props.checkOwnPickUps())
-        .catch((err) => window.alert('ピックアップ地点追加の登録に失敗しました。'));
+  
+      // DBに存在している場合は、PATCHでUserを追加
+      if (typeof pickup_id === 'number') {
+        axios
+          .patch(
+            axiosUrl + 'pickup/' + pickup_id + '/',
+            {
+              choosingUser: [...originalUsers, owner.id],
+            },
+            authHeader
+          )
+          .then((res) => this.props.checkOwnPickUps())
+          .catch((err) => console.log(err));
+      } 
+      // DBに存在していない場合はPOSTで新規作成。
+      else {
+        axios
+          .post(
+            axiosUrl + 'pickup/',
+            {
+              name: pickupPlaces,
+              choosingUser: [owner.id],
+            },
+            authHeader
+          )
+          .then((res) => this.props.checkOwnPickUps())
+          .catch((err) => window.alert('ピックアップ地点追加の登録に失敗しました。'));
+      }
     }
   };
 
@@ -155,7 +156,7 @@ class User_PickUp_Add_Form extends Component {
             <StyledLiTag>
               <label>ドロップダウンで追加</label>
               <DropDown name="lines" disabled={stations != ''} onChange={this.handleChange}>
-                <option value="">路線を選ぶ</option>
+                <option value="">路線を選ぶ(東京都内)</option>
                 {allLines.map((line, idx) => {
                   return (
                     <option key={idx} value={line}>

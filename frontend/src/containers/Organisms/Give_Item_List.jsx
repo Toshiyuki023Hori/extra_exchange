@@ -17,7 +17,7 @@ class Give_Item_List extends Component {
       currentItems:{},
       offset:0,
       currentPage:0,
-      perPage:4,
+      perPage:8,
       pageCount:1,
     };
     this.handlePageClick = this.handlePageClick.bind(this);
