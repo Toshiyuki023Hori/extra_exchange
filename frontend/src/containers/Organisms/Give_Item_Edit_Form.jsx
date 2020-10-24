@@ -799,7 +799,6 @@ const ButtonLiTag = styled(RequireLiTag)`
 
 const SubmitButton = styled(MiddleButton)`
   display: block;
-  margin: 10px auto;
   background: ${(props) => (!props.btn_disable ? '#8DD6FF' : '#E0F4FF')};
   color: ${(props) => (!props.btn_disable ? '#466A80' : '#BDCFDA')};
   box-shadow: 4px 3px ${Colors.accent1};
