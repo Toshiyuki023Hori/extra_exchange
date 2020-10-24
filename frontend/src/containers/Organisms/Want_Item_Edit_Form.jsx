@@ -303,6 +303,9 @@ class Want_Item_Edit_Form extends Component {
     } else {
       return (
         <div className={this.props.className}>
+
+　　　　　　<h2>欲しいもの商品の編集</h2>
+
           <FormArea>
             <TextLiTag>
               <label>商品名</label>

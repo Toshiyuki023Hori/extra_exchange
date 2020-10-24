@@ -205,6 +205,7 @@ class Give_Item_Add_Form extends Component {
       headers: { 'content-type': 'multipart/form-data' },
     };
 
+    // keywordがinputに入力されているかを確認するためのfunction
     const hasValueInKeyword = (keyword) => {
       if (keyword !== '') {
         keywordsList = [...keywordsList, keyword];
@@ -216,6 +217,7 @@ class Give_Item_Add_Form extends Component {
     hasValueInKeyword(this.state.info.keyword2);
     hasValueInKeyword(this.state.info.keyword3);
 
+    // 新規keywordと既存keywordの区別
     await Promise.all(
       keywordsList.map(async (keyword) => {
         await axios
@@ -236,6 +238,7 @@ class Give_Item_Add_Form extends Component {
       })
     );
 
+    // 新規keywordの作成 => keyword_idsと再び合体
     if (newKeywords.length !== 0) {
       await Promise.all(
         newKeywords.map(async (keyword) => {
@@ -351,7 +354,7 @@ class Give_Item_Add_Form extends Component {
 
           <form onSubmit={this.handleSubmit}>
             <FormArea>
-              <TextLiTag>
+              <RequireLiTag>
                 <label>商品名</label>
                 <InputForm
                   name="name"
@@ -360,7 +363,7 @@ class Give_Item_Add_Form extends Component {
                   onChange={this.handleChange}
                   placeholder="最大100字"
                 />
-              </TextLiTag>
+              </RequireLiTag>
               <ValidationMessage
                 errorMessage={message.name}
                 isShowup={message.name != ''}
@@ -381,7 +384,7 @@ class Give_Item_Add_Form extends Component {
                 </DropDown>
               </OptionalLiTag>
 
-              <TextLiTag>
+              <RequireLiTag>
                 <label>キーワード1</label>
                 <InputForm
                   name="keyword1"
@@ -390,9 +393,9 @@ class Give_Item_Add_Form extends Component {
                   onChange={this.handleChange}
                   placeholder="最低1つ設定してください。"
                 />
-              </TextLiTag>
+              </RequireLiTag>
 
-              <TextLiTag>
+              <RequireLiTag>
                 <label>キーワード2</label>
                 <InputForm
                   name="keyword2"
@@ -400,9 +403,9 @@ class Give_Item_Add_Form extends Component {
                   value={info.keyword2}
                   onChange={this.handleChange}
                 />
-              </TextLiTag>
+              </RequireLiTag>
 
-              <TextLiTag>
+              <RequireLiTag>
                 <label>キーワード3</label>
                 <InputForm
                   name="keyword3"
@@ -410,7 +413,7 @@ class Give_Item_Add_Form extends Component {
                   value={info.keyword3}
                   onChange={this.handleChange}
                 />
-              </TextLiTag>
+              </RequireLiTag>
               <ValidationMessage
                 errorMessage={keywordError}
                 isShowup={
@@ -435,7 +438,7 @@ class Give_Item_Add_Form extends Component {
                 </DropDown>
               </OptionalLiTag>
 
-              <TextLiTag>
+              <RequireLiTag>
                 <label>カテゴリ</label>
                 <DropDown name="category" onChange={this.handleChange}>
                   <option value="">(必須項目)</option>
@@ -447,7 +450,7 @@ class Give_Item_Add_Form extends Component {
                     );
                   })}
                 </DropDown>
-              </TextLiTag>
+              </RequireLiTag>
               <ValidationMessage
                 errorMessage={message.category}
                 isShowup={message.category != ''}
@@ -473,7 +476,7 @@ class Give_Item_Add_Form extends Component {
                 bg_color="#FFBFC2"
               />
 
-              <TextLiTag>
+              <RequireLiTag>
                 <DetailLabel>説明</DetailLabel>
                 <StyledTextArea
                   name="detail"
@@ -481,9 +484,9 @@ class Give_Item_Add_Form extends Component {
                   onChange={this.handleChange}
                   placeholder="最大800字"
                 ></StyledTextArea>
-              </TextLiTag>
+              </RequireLiTag>
 
-              <TextLiTag>
+              <RequireLiTag>
                 <SubmitButton
                   btn_type="submit"
                   btn_disable={
@@ -501,7 +504,7 @@ class Give_Item_Add_Form extends Component {
                 >
                   登録
                 </SubmitButton>
-              </TextLiTag>
+              </RequireLiTag>
             </FormArea>
           </form>
         </div>
@@ -520,12 +523,12 @@ const FormArea = styled.ul`
   }
 `;
 
-const TextLiTag = styled.li`
+const RequireLiTag = styled.li`
   ${mixinLiTag};
   margin-top: 15px;
 `;
 
-const OptionalLiTag = styled(TextLiTag)`
+const OptionalLiTag = styled(RequireLiTag)`
   margin-bottom: 42px;
 `;
 
