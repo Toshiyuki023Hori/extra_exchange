@@ -61,6 +61,7 @@ class Give_Item_Edit_Form extends Component {
     this.cancelUploadedImage = this.cancelUploadedImage.bind(this);
     this.handleImageSelect = this.handleImageSelect.bind(this);
     this.deleteOriginal = this.deleteOriginal.bind(this);
+    this.jumpToDetail = this.jumpToDetail.bind(this);
   }
 
   // ===========           ===========           ===========           ===========           ===========
@@ -286,6 +287,10 @@ class Give_Item_Edit_Form extends Component {
   };
   // delete Original 終わり
 
+  jumpToDetail = (id) => {
+    history.push('/give/detail/' + id)
+  };
+
   //
   //
   //           ===========           ===========
@@ -442,7 +447,10 @@ class Give_Item_Edit_Form extends Component {
           .then((res) => console.log('You made it ! \n \n' + res.data))
           .catch((err) => window.alert(err.response.data));
       });
+
+    history.push('/give/detail/' + parentItem_id);
   };
+  // handleSubmit Closing
 
   render() {
     const {
@@ -459,7 +467,8 @@ class Give_Item_Edit_Form extends Component {
       setState,
     } = this.state;
     let imageMessage;
-    let previewedImages;
+    let originalImagesView;
+    let previewedImagesView;
     let deleteButton;
     // 要素変数　はじめ
     if (info.images.length < 1) {
@@ -484,8 +493,19 @@ class Give_Item_Edit_Form extends Component {
       );
     }
 
+    originalImagesView = Object.keys(originalImages).map((id) => {
+      return (
+        <Preview_OriginalImage
+          key={id}
+          src={originalImages[id]}
+          alt=""
+          onClick={this.deleteOriginal}
+        />
+      );
+    });
+
     if (uploadedImage.length !== 0) {
-      previewedImages = uploadedImage.map((img, idx) => {
+      previewedImagesView = uploadedImage.map((img, idx) => {
         return <Preview_Image key={idx} src={img} alc="アップロード写真" />;
       });
 
@@ -625,21 +645,14 @@ class Give_Item_Edit_Form extends Component {
 
               <ImageLiTag>
                 {/*  */}
-                <ImageLabel>商品画像</ImageLabel>
+                <label>商品画像</label>
                 <InputFile type="file" multiple onChange={this.handleImageSelect} />
-                {Object.keys(originalImages).map((id) => {
-                  return (
-                    <Preview_Image
-                      key={id}
-                      src={originalImages[id]}
-                      alt=""
-                      onClick={this.deleteOriginal}
-                    />
-                    );
-                  })}
-                {/* Validation適用前から表示させたいためVaildationとは別に記述 */}
-                {previewedImages}
-                {deleteButton}
+                <AttentionPtag>※登録済画像はクリックで削除できます。</AttentionPtag>
+                <Preview_OriginalImages_Div>{originalImagesView}</Preview_OriginalImages_Div>
+                <Preview_UploadedImages_Div>
+                  {previewedImagesView}
+                  {deleteButton}
+                </Preview_UploadedImages_Div>
               </ImageLiTag>
               {imageMessage}
 
@@ -652,26 +665,31 @@ class Give_Item_Edit_Form extends Component {
                 ></StyledTextArea>
               </RequireLiTag>
 
-              <SubmitButton
-                btn_type="submit"
-                btn_disable={
-                  !info.name ||
-                  !info.keyword1 ||
-                  !info.category ||
-                  info.state == '' ||
-                  info.images.length === 0 ||
-                  info.images.length > 5 ||
-                  message.name ||
-                  message.keyword1 ||
-                  message.keyword2 ||
-                  message.keyword3 ||
-                  message.category ||
-                  message.state ||
-                  message.images
-                }
-              >
-                編集完了
-              </SubmitButton>
+              <ButtonLiTag>
+                <SubmitButton
+                  btn_type="submit"
+                  btn_disable={
+                    !info.name ||
+                    !info.keyword1 ||
+                    !info.category ||
+                    info.state == '' ||
+                    info.images.length === 0 ||
+                    info.images.length > 5 ||
+                    message.name ||
+                    message.keyword1 ||
+                    message.keyword2 ||
+                    message.keyword3 ||
+                    message.category ||
+                    message.state ||
+                    message.images
+                  }
+                >
+                  編集完了
+                </SubmitButton>
+                <BackButton btn_type="button" btn_click={() => this.jumpToDetail(parentItem.id)}>
+                  戻る
+                </BackButton>
+              </ButtonLiTag>
             </FormArea>
           </form>
         </div>
@@ -725,14 +743,9 @@ const ImageLiTag = styled.li`
   align-items: center;
 `;
 
-const ImageLabel = styled.label`
-  &::after {
-    content: '画像はクリックで\\A削除できます';
-    display: block;
-    font-weight: normal;
-    font-size: 0.65rem;
-    white-space: pre;
-  }
+const AttentionPtag = styled.p`
+  grid-column: 1 / 7;
+  font-size: 0.85rem;
 `;
 
 const InputFile = styled.input`
@@ -745,16 +758,24 @@ const Preview_Image = styled.img`
   margin-right: 25px;
 `;
 
-const Preview_Place_Image = styled.img`
-  display: block;
-  height: 160px;
-  position: relative;
-  left: 128px;
+const Preview_OriginalImage = styled(Preview_Image)`
+  &:hover {
+    opacity: 0.7;
+  }
+`;
+
+const Preview_OriginalImages_Div = styled.div`
   grid-column: 1 / 7;
 `;
 
+const Preview_UploadedImages_Div = styled(Preview_OriginalImages_Div)`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  align-items: center;
+`;
+
 const DeleteButton = styled.button`
-  grid-column: 1 / 7;
+  grid-column: 1 / 6;
   width: ${(props) => 160 * props.imgUrls_length}px;
   position: relative;
   left: 20px;
@@ -769,6 +790,11 @@ const DeleteButton = styled.button`
     color: white;
     background: #6c7880;
   }
+`;
+
+const ButtonLiTag = styled(RequireLiTag)`
+  justify-content: space-evenly;
+  margin-top: 25px;
 `;
 
 const SubmitButton = styled(MiddleButton)`
@@ -788,3 +814,21 @@ const SubmitButton = styled(MiddleButton)`
     transform: translate(4px, 3px);
   }
 `;
+
+const BackButton = styled(MiddleButton)`
+  display: block;
+  background: ${Colors.accent2};
+  color: ${Colors.subcolor1};
+  box-shadow: 4px 3px ${Colors.accent1};
+
+  &:hover {
+    background-color: #6792ab;
+    transition: all 200ms linear;
+  }
+
+  &:active {
+    box-shadow: 0px 0px 0px;
+    transform: translate(4px, 3px);
+  }
+`;
+
