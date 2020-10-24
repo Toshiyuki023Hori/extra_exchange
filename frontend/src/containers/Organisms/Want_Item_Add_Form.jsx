@@ -12,6 +12,7 @@ import {
   mixinUlLabel,
   mixinInputForm,
   mixinLiTag,
+  mixinDropDown,
   Colors,
 } from '../../presentational/shared/static/CSSvariables';
 
@@ -346,13 +347,7 @@ const TextLiTag = styled.li`
 `;
 
 const DropDown = styled.select`
-  border: 1.2px solid #70aacc;
-  padding: 10px 15px;
-  outline: none;
-  background: url(${down_arrow});
-  background-repeat: no-repeat;
-  background-size: 17px 19px;
-  background-position: right 10px center;
+  ${mixinDropDown};
 `;
 
 const SubmitButton = styled(MiddleButton)`

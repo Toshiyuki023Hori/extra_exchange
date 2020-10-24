@@ -3,8 +3,17 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import history from '../../history';
-import SmallButton from '../../presentational/shared/SmallButton';
+import styled from 'styled-components';
+import MiddleButton from '../../presentational/shared/MiddleButton';
+import ValidationMessage from '../../presentational/shared/ValidationMessage';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import {
+  Colors,
+  mixinDropDown,
+  mixinInputForm,
+  mixinLiTag,
+  mixinUlLabel,
+} from '../../presentational/shared/static/CSSvariables';
 
 class Want_Item_Edit_Form extends Component {
   constructor(props) {
@@ -272,73 +281,124 @@ class Want_Item_Edit_Form extends Component {
   //            ===========           ===========           ===========
 
   render() {
-    const { info, message, allBland, parentItem, wantItem,originalBland } = this.state;
+    const { info, message, allBland, parentItem, wantItem, originalBland } = this.state;
+    let keywordError;
+
+    if (message.keyword1 != '') {
+      keywordError = message.keyword1;
+    } else if (message.keyword2 != '') {
+      keywordError = message.keyword2;
+    } else if (message.keyword3 != '') {
+      keywordError = message.keyword3;
+    }
+
+    const matchOriginalBland = (originalBland_id, bland_id) => {
+      if (originalBland_id == bland_id) {
+        return 'selected';
+      }
+    };
+
     if (info.owner === '' || allBland === '' || parentItem === '' || wantItem === '') {
       return <CircularProgress />;
     } else {
       return (
-        <div>
-          <div>
-            <label>商品名</label>
-            <input name="name" type="text" value={info.name} onChange={this.handleChange} />
-            <p>{message.name}</p>
-          </div>
+        <div className={this.props.className}>
 
-          <div>
-            <p>{message.keyword1}</p>
-            <p>{message.keyword2}</p>
-            <p>{message.keyword3}</p>
-            <label>キーワード1</label>
-            <input name="keyword1" type="text" value={info.keyword1} onChange={this.handleChange} />
+　　　　　　<h2>欲しいもの商品の編集</h2>
 
-            <label>キーワード2</label>
-            <input name="keyword2" type="text" value={info.keyword2} onChange={this.handleChange} />
+          <FormArea>
+            <TextLiTag>
+              <label>商品名</label>
+              <InputForm name="name" type="text" value={info.name} onChange={this.handleChange} />
+            </TextLiTag>
+            <ValidationMessage
+              errorMessage={message.name}
+              isShowup={message.name != ''}
+              text_color="#FF737A"
+              margin="10px 0px 0px 140px"
+              bg_color="#FFBFC2"
+            />
 
-            <label>キーワード3</label>
-            <input name="keyword3" type="text" value={info.keyword3} onChange={this.handleChange} />
-          </div>
+            <TextLiTag>
+              <label>キーワード1</label>
+              <InputForm
+                name="keyword1"
+                type="text"
+                value={info.keyword1}
+                onChange={this.handleChange}
+              />
+            </TextLiTag>
 
-          <div>
-            <label>ブランド</label>
-            <span>
-              {
-                // ドロップダウンの横に現在のブランドを表示
-                info.bland === '' //
-                  ? ' ' + 'なし'
-                  : ' ' + originalBland
-              }
-            </span>
-            <select name="bland" onChange={this.handleChange}>
-              <option value="">ブランド無し</option>
-              {allBland.map((bland, idx) => {
-                return (
-                  <option key={idx} value={bland.id}>
-                    {bland.name}
-                  </option>
-                );
-              })}
-            </select>
-          </div>
+            <TextLiTag>
+              <label>キーワード2</label>
+              <InputForm
+                name="keyword2"
+                type="text"
+                value={info.keyword2}
+                onChange={this.handleChange}
+              />
+            </TextLiTag>
 
-          <div>
-            <label>商品参考URL</label>
-            <input name="url" type="text" value={info.url} onChange={this.handleChange} />
-          </div>
+            <TextLiTag>
+              <label>キーワード3</label>
+              <InputForm
+                name="keyword3"
+                type="text"
+                value={info.keyword3}
+                onChange={this.handleChange}
+              />
+            </TextLiTag>
+            <ValidationMessage
+              errorMessage={keywordError}
+              isShowup={message.keyword1 != '' || message.keyword2 != '' || message.keyword3 != ''}
+              text_color="#FF737A"
+              margin="10px 0px 0px 140px"
+              bg_color="#FFBFC2"
+            />
 
-          <SmallButton
-            btn_type="button"
-            btn_name="編集完了"
-            btn_click={this.handleSubmit}
-            btn_disable={
-              !info.name ||
-              !info.keyword1 ||
-              message.name ||
-              message.keyword1 ||
-              message.keyword2 ||
-              message.keyword3
-            }
-          />
-          <SmallButton btn_type="button" btn_name="戻る" btn_click={this.jumpToList} />
+            <TextLiTag>
+              <label>ブランド</label>
+              <DropDown
+                name="bland"
+                onChange={this.handleChange}
+                defaultValue={this.state.parentItem.bland}
+              >
+                <option value="">ブランド無し</option>
+                {allBland.map((bland, idx) => {
+                  return (
+                    <option key={idx} value={bland.id}>
+                      {bland.name}
+                    </option>
+                  );
+                })}
+              </DropDown>
+            </TextLiTag>
+
+            <TextLiTag>
+              <label>商品参考URL</label>
+              <InputForm name="url" type="text" value={info.url} onChange={this.handleChange} />
+            </TextLiTag>
+
+            <ButtonLiTag>
+              <SubmitButton
+                btn_type="button"
+                btn_click={this.handleSubmit}
+                btn_disable={
+                  !info.name ||
+                  !info.keyword1 ||
+                  message.name ||
+                  message.keyword1 ||
+                  message.keyword2 ||
+                  message.keyword3
+                }
+              >
+                編集完了
+              </SubmitButton>
+              <BackButton btn_type="button" btn_click={this.jumpToList}>
+                戻る
+              </BackButton>
+            </ButtonLiTag>
+          </FormArea>
         </div>
       );
     }
@@ -346,3 +406,63 @@ class Want_Item_Edit_Form extends Component {
 }
 
 export default Want_Item_Edit_Form;
+
+const FormArea = styled.ul`
+  label {
+    ${mixinUlLabel};
+    margin-right: 30px;
+    width: 110px;
+  }
+`;
+
+const InputForm = styled.input`
+  ${mixinInputForm};
+`;
+
+const TextLiTag = styled.li`
+  ${mixinLiTag};
+  margin-top: 15px;
+`;
+
+const DropDown = styled.select`
+  ${mixinDropDown};
+`;
+
+const ButtonLiTag = styled(TextLiTag)`
+  justify-content: space-evenly;
+  margin-top: 25px;
+`;
+
+const SubmitButton = styled(MiddleButton)`
+  display: block;
+  background: ${(props) => (!props.btn_disable ? '#8DD6FF' : '#E0F4FF')};
+  color: ${(props) => (!props.btn_disable ? '#466A80' : '#BDCFDA')};
+  box-shadow: 4px 3px ${Colors.accent1};
+
+  &:hover:enabled {
+    background-color: #a8e0ff;
+    transition: all 200ms linear;
+  }
+
+  &:active:enabled {
+    box-shadow: 0px 0px 0px;
+    transform: translate(4px, 3px);
+  }
+`;
+
+const BackButton = styled(MiddleButton)`
+  display: block;
+  background: ${Colors.accent2};
+  color: ${Colors.subcolor1};
+  box-shadow: 4px 3px ${Colors.accent1};
+
+  &:hover {
+    background-color: #6792ab;
+    transition: all 200ms linear;
+  }
+
+  &:active {
+    box-shadow: 0px 0px 0px;
+    transform: translate(4px, 3px);
+  }
+`;

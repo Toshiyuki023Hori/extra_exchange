@@ -3,10 +3,11 @@ import axios from 'axios';
 import styled from "styled-components"
 import { Redirect } from 'react-router-dom';
 import Want_Item_Edit_Form from '../Organisms/Want_Item_Edit_Form';
+import User_Sidemenu from '../Organisms/User_Sidemenu';
 import Header from '../Organisms/Header';
+import Footer from '../Organisms/Footer';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { mixinHeaderSpace } from "../../presentational/shared/static/CSSvariables";
-import Want_Item_List from '../Organisms/Want_Item_List';
 
 class Want_Item_Edit extends Component {
   constructor(props) {
@@ -40,13 +41,15 @@ class Want_Item_Edit extends Component {
         <>
           <Header loginUser={this.state.loginUser} />
           <Body>
-            <Want_Item_Edit_Form
+            <User_Sidemenu user_id={this.state.loginUser.id} isUser="true" />
+            <Styled_Want_Item_Edit_Form
               parent_id={this.props.match.params.parent_id}
               owner={this.state.loginUser}
               loginUser={this.state.loginUser}
               axiosUrl="http://localhost:8000/api/"
             />
           </Body>
+          <Footer/>
         </>
       );
     }
@@ -57,4 +60,10 @@ export default Want_Item_Edit;
 
 const Body = styled.div`
   ${mixinHeaderSpace};
+  display:flex;
+`;
+
+const Styled_Want_Item_Edit_Form = styled(Want_Item_Edit_Form)`
+  flex:1;
+  padding:20px 0px 0px 20px;
 `;

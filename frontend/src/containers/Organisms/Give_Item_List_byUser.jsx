@@ -105,13 +105,13 @@ class Give_Item_List_byUser extends Component {
           //  axios.get Fin
 
           if(parentItems[parent_id]['bland'] !== null){
-              await axios.get(axiosUrl + 'bland/?item=' + parent_id)
+              await axios.get(axiosUrl + 'bland/' + parentItems[parent_id]['bland'])
               .then((res) => {
                 parentItems = {
                     ...parentItems,
                     [parent_id]: {
                       ...parentItems[parent_id],
-                      bland:res.data[0].name
+                      bland:res.data.name
                     },
                   }; // itemForState(スプレッド) closing
               })//      then closing
