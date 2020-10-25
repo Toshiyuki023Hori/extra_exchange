@@ -4,10 +4,12 @@ import styled from 'styled-components';
 import history from '../../history';
 import Give_Item_Description from '../Organisms/Give_Item_Description';
 import Header from '../Organisms/Header';
+import Footer from '../Organisms/Footer';
 import User_Description from '../Organisms/User_Description';
 import Comment_Zone from '../Organisms/Comment_Zone';
 import Give_Item_List_byUser from '../Organisms/Give_Item_List_byUser';
 import { CircularProgress } from '@material-ui/core';
+import { Colors, mixinHeaderSpace } from '../../presentational/shared/static/CSSvariables';
 
 class Give_Item_Detail extends Component {
   constructor(props) {
@@ -61,11 +63,8 @@ class Give_Item_Detail extends Component {
       );
 
       giveItemList = (
-        <Give_Item_List_byUser
-          owner={parentItem.owner}
-          axiosUrl="http://localhost:8000/api/"
-        />
-      )
+        <Give_Item_List_byUser owner={parentItem.owner} axiosUrl="http://localhost:8000/api/" />
+      );
     }
 
     if (this.state.loginUser === '' || this.state.parentItem === '') {
@@ -74,20 +73,23 @@ class Give_Item_Detail extends Component {
       return (
         <div>
           <Header loginUser={loginUser} />
-          <Give_Item_Description
-            parent_id={parentItem.id}
-            loginUser={loginUser}
-            axiosUrl="http://localhost:8000/api/"
-            setGiveItem={this.setGiveItem}
-          />
-          {userDescription}
-          <Comment_Zone
-            owner={parentItem.owner}
-            giveItem={giveItem}
-            loginUser={loginUser}
-            axiosUrl="http://localhost:8000/api/"
-          />
-          {giveItemList}
+          <Body>
+            <Give_Item_Description
+              parent_id={parentItem.id}
+              loginUser={loginUser}
+              axiosUrl="http://localhost:8000/api/"
+              setGiveItem={this.setGiveItem}
+            />
+            {userDescription}
+            <Comment_Zone
+              owner={parentItem.owner}
+              giveItem={giveItem}
+              loginUser={loginUser}
+              axiosUrl="http://localhost:8000/api/"
+            />
+            {giveItemList}
+          </Body>
+          <Footer />
         </div>
       );
     }
@@ -95,3 +97,10 @@ class Give_Item_Detail extends Component {
 }
 
 export default Give_Item_Detail;
+
+const Body = styled.div`
+  ${mixinHeaderSpace};
+  width: 77%;
+  margin-left: auto;
+  margin-right: auto;
+`;

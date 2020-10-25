@@ -9,7 +9,7 @@ import Want_Item_List from '../Organisms/Want_Item_List';
 import Give_Item_List_byUser from '../Organisms/Give_Item_List_byUser';
 import Footer from '../Organisms/Footer';
 import User_Sidemenu from '../Organisms/User_Sidemenu';
-import { Colors ,mixinHeaderSpace } from '../../presentational/shared/static/CSSvariables';
+import { Colors, mixinHeaderSpace } from '../../presentational/shared/static/CSSvariables';
 
 class User_Detail extends Component {
   constructor(props) {
@@ -80,9 +80,7 @@ class User_Detail extends Component {
               <User_Sidemenu user_id={user.id} />
               <InformationDiv>
                 {userHeader}
-                {user.profile && 
-                  <UserProfile>{user.profile}</UserProfile>
-                }
+                {user.profile && <UserProfile>{user.profile}</UserProfile>}
                 {wantItemList}
                 {giveItemList}
               </InformationDiv>
@@ -105,9 +103,7 @@ class User_Detail extends Component {
               <User_Sidemenu user_id={user.id} isUser={loginUser.id === user.id} />
               <InformationDiv>
                 {userHeader}
-                {user.profile && 
-                  <UserProfile>{user.profile}</UserProfile>
-                }
+                {user.profile && <UserProfile>{user.profile}</UserProfile>}
                 {wantItemList}
                 {giveItemList}
               </InformationDiv>
@@ -137,8 +133,8 @@ const InformationDiv = styled.div`
 const UserProfile = styled.p`
   width: 70%;
   border: 3.5px dashed ${Colors.accent1};
-  border-radius: 5%;
+  border-radius: 1rem;
   padding: 10px 18px;
   margin: 25px auto;
-  white-space:pre-wrap;
+  white-space: pre-wrap;
 `;

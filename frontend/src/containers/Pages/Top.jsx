@@ -90,9 +90,9 @@ class Top extends Component {
               <Category_Bar>
                 <SubTitle>注目のカテゴリはこちら!</SubTitle>
                 <CategoryList>{categoryList}</CategoryList>
-                <p>
-                  <Others href="/category/1">その他のカテゴリーをみる</Others>
-                </p>
+                <Others>
+                  <a href="/category/1">その他のカテゴリーをみる</a>
+                </Others>
               </Category_Bar>
               {giveItemView}
             </Wrapper>
@@ -112,7 +112,9 @@ class Top extends Component {
             <Category_Bar>
               <SubTitle>注目のカテゴリはこちら!</SubTitle>
               <CategoryList>{categoryList}</CategoryList>
-              <Others href="/category/1">その他のカテゴリーをみる</Others>
+              <Others>
+                <a href="/category/1">その他のカテゴリーをみる</a>
+              </Others>
             </Category_Bar>
             {giveItemView}
           </Wrapper>
@@ -165,13 +167,15 @@ const CategoryLink = styled.a`
   }
 `;
 
-const Others = styled.a`
-  font-size: 1.25rem;
-  color: ${Colors.accent1};
-  cursor: pointer;
-  text-decoration: none;
+const Others = styled.p`
+  a {
+    font-size: 1.25rem;
+    color: ${Colors.accent1};
+    cursor: pointer;
+    text-decoration: none;
 
-  &:hover {
-    font-weight: bold;
+    &:hover {
+      font-weight: bold;
+    }
   }
 `;

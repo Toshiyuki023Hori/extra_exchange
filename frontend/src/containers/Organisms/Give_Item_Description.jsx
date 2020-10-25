@@ -5,20 +5,21 @@ import history from '../../history';
 import { CircularProgress, Chip } from '@material-ui/core';
 import Carousel from '../../presentational/shared/Carousel';
 import MiddleButton from '../../presentational/shared/MiddleButton';
+import { Colors } from '../../presentational/shared/static/CSSvariables';
 
 class Give_Item_Description extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading:true,
+      loading: true,
       parentItem: '',
       giveItem: '',
       pickups: [],
       images: [],
-      sentRequest:false,
+      sentRequest: false,
     };
     this.jumpToEdit = this.jumpToEdit.bind(this);
-    this.jumpToRequest = this.jumpToRequest.bind(this)
+    this.jumpToRequest = this.jumpToRequest.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
   }
 
@@ -39,7 +40,7 @@ class Give_Item_Description extends Component {
     const parent_id = parseInt(this.props.parent_id);
     let requestDealsOfUser;
 
-    // 
+    //
     await axios
       .all([
         axios.get(axiosUrl + 'parent/' + parent_id),
@@ -86,30 +87,31 @@ class Give_Item_Description extends Component {
       );
 
     // loginUserの持つrequest_dealを全件取得
-    await axios.get(axiosUrl + 'requestdeal/?join_user=' + loginUser.id)
-    .then((res) => {
-      if(res.data.length !== 0){
-        requestDealsOfUser = res.data;
-        console.log(requestDealsOfUser)
-      }else {
-        requestDealsOfUser = "リクエスト送信なし"
-      }
-    })
-    .catch((err) => requestDealsOfUser = "リクエスト送信なし");
+    await axios
+      .get(axiosUrl + 'requestdeal/?join_user=' + loginUser.id)
+      .then((res) => {
+        if (res.data.length !== 0) {
+          requestDealsOfUser = res.data;
+          console.log(requestDealsOfUser);
+        } else {
+          requestDealsOfUser = 'リクエスト送信なし';
+        }
+      })
+      .catch((err) => (requestDealsOfUser = 'リクエスト送信なし'));
 
     // loginUserが一件でもリクエストを送っていたら
     // 取得したrequest_dealの中で、host_itemと一致してるか確認
     // hostItem = parent_id => リクエスト送信済
-    if(requestDealsOfUser !== 'リクエスト送信なし'){
-      for(const reqDealObj of requestDealsOfUser){
-        console.log(reqDealObj.hostItem)
-        if(reqDealObj.hostItem === parent_id){
-          this.setState({sentRequest : true})
+    if (requestDealsOfUser !== 'リクエスト送信なし') {
+      for (const reqDealObj of requestDealsOfUser) {
+        console.log(reqDealObj.hostItem);
+        if (reqDealObj.hostItem === parent_id) {
+          this.setState({ sentRequest: true });
         }
       }
     }
 
-    this.setState({loading : false});
+    this.setState({ loading: false });
   }
   //
   //  //  //  // componentDidMount Fin
@@ -117,7 +119,7 @@ class Give_Item_Description extends Component {
 
   jumpToEdit = () => {
     history.push('/give/edit/' + this.props.parent_id);
-  };    // jumpToEdit Closing
+  }; // jumpToEdit Closing
 
   jumpToRequest = () => {
     history.push('/give/request/' + this.props.parent_id);
@@ -154,63 +156,150 @@ class Give_Item_Description extends Component {
     // dateTimeを表示用にフォーマット。
     const formatDataForDisplay = (dataTime) => {
       console.log(dataTime);
-      const year = dataTime.slice(0,4);
-      const month = dataTime.slice(5,7);
-      const day = dataTime.slice(8,10);
-      return `${year}年${month}月${day}日`
+      const year = dataTime.slice(0, 4);
+      const month = dataTime.slice(5, 7);
+      const day = dataTime.slice(8, 10);
+      return `${year}年${month}月${day}日`;
     };
-
 
     // ピックアップの表示分岐
     if (pickups.length !== 0) {
-      pickupView = pickups.map((pickup) => {
-        return <li>{pickup}</li>;
-      });
+      pickupView = (
+        <PickupULtag>
+          {pickups.map((pickup) => {
+            return <li>{pickup}</li>;
+          })}
+        </PickupULtag>
+      );
     } else {
-      pickupView = <li>未登録</li>;
+      pickupView = <UnregisteredPtag>未登録</UnregisteredPtag>;
     }
 
     // 訪問者がownerか否かで表示を変える。
     if (parentItem.owner === this.props.loginUser.id) {
-      editButton = <MiddleButton btn_name="編集" btn_click={this.jumpToEdit} />;
-      deleteButton = <MiddleButton btn_name="削除" btn_click={this.handleDelete} />;
+      editButton = (
+        <SubmitButton btn_type="button" btn_click={this.jumpToEdit}>
+          編集
+        </SubmitButton>
+      );
+      deleteButton = (
+        <BackButton btn_type="button" btn_click={this.handleDelete}>
+          削除
+        </BackButton>
+      );
     } else {
       // ownerじゃないなら編集・削除はできない
-      if(sentRequest === false){
-        requestButton = <MiddleButton btn_name="リクエストを送る" btn_click={this.jumpToRequest} />;
+      if (sentRequest === false) {
+        requestButton = (
+          <SubmitButton btn_click={this.jumpToRequest}>リクエストを送る</SubmitButton>
+        );
         // sentRequestがtrueなら送信済なので、二重で送信させない。
-      } else{
-        requestButton = <MiddleButton btn_name="リクエスト送信済" btn_click={this.jumpToRequest} btn_disable={sentRequest} />;
+      } else {
+        requestButton = (
+          <SubmitButton btn_click={this.jumpToRequest} btn_disable={sentRequest}>
+            リクエスト送信済
+          </SubmitButton>
+        );
       }
     }
     if (loading === true) {
       return <CircularProgress />;
     }
     return (
-      <DescriptionWrapper>
+      <div>
         <Carousel images={images} />
         <div>
           <h1>{parentItem.name}</h1>
-          <p>{formatDataForDisplay(giveItem.createdAt)}に投稿</p>
-          <p>状態 : {giveItem.state}</p>
-          <p>ブランド : {parentItem.bland}</p>
-          <p>{giveItem.detail}</p>
+          <DatePtag>{formatDataForDisplay(giveItem.createdAt)}に投稿</DatePtag>
+          <InfoPtag>状態 : {giveItem.state}</InfoPtag>
+          <InfoPtag>ブランド : {parentItem.bland}</InfoPtag>
+          {giveItem.detail && <DetailPtag>{giveItem.detail}</DetailPtag>}
           <p>{giveItem.category}</p>
-          <p>ピックアップ地点</p>
-          <ul>{pickupView}</ul>
-          {editButton}
-          {deleteButton}
-          {requestButton}
+          <PickupPtag>ピックアップ地点</PickupPtag>
+          {pickupView}
+          <ButtonDiv>
+            {editButton}
+            {deleteButton}
+            {requestButton}
+          </ButtonDiv>
         </div>
-      </DescriptionWrapper>
+      </div>
     );
   }
 }
 
 export default Give_Item_Description;
 
-const DescriptionWrapper = styled.div`
-  width: 77%;
-  margin-left: auto;
-  margin-right: auto;
+const DatePtag = styled.p`
+  font-size: 0.8rem;
+  margin: 0.3rem 0px 0.5rem 0px;
+`;
+
+const InfoPtag = styled.p`
+  font-size: 1.11rem;
+  margin-bottom: 0.67rem;
+`;
+
+const DetailPtag = styled(InfoPtag)`
+  white-space: pre-wrap;
+  width: 100%;
+  border: 3.5px dashed ${Colors.accent1};
+  border-radius: 1rem;
+  padding: 0.7rem 1rem;
+  font-size: 1rem;
+`;
+
+const UnregisteredPtag = styled.p`
+  margin-left:2.35rem;
+`;
+
+const PickupPtag = styled(InfoPtag)`
+  margin-bottom: 0px;
+  margin-top: 0.15rem;
+`;
+
+const PickupULtag = styled.ul`
+  li {
+    margin-left: 2.35rem;
+    margin-bottom: 0.65rem;
+  }
+`;
+
+const ButtonDiv = styled.div`
+  display: flex;
+  justify-content: space-around;
+`;
+
+const SubmitButton = styled(MiddleButton)`
+  display: block;
+  background: ${(props) => (!props.btn_disable ? '#8DD6FF' : '#E0F4FF')};
+  color: ${(props) => (!props.btn_disable ? '#466A80' : '#BDCFDA')};
+  box-shadow: 4px 3px ${Colors.accent1};
+
+  &:hover:enabled {
+    background-color: #a8e0ff;
+    transition: all 200ms linear;
+  }
+
+  &:active:enabled {
+    box-shadow: 0px 0px 0px;
+    transform: translate(4px, 3px);
+  }
+`;
+
+const BackButton = styled(MiddleButton)`
+  display: block;
+  background: ${Colors.accent2};
+  color: ${Colors.subcolor1};
+  box-shadow: 4px 3px ${Colors.accent1};
+
+  &:hover {
+    background-color: #6792ab;
+    transition: all 200ms linear;
+  }
+
+  &:active {
+    box-shadow: 0px 0px 0px;
+    transform: translate(4px, 3px);
+  }
 `;
