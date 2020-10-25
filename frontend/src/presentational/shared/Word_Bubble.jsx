@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import Icon from './Icon';
-import { Colorts } from './static/CSSvariables';
+import { Colors } from './static/CSSvariables';
 
 class Word_Bubble extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      username: '',
       icon: '',
     };
   }
@@ -18,6 +19,7 @@ class Word_Bubble extends Component {
       .get(axiosUrl + 'user/' + commenter)
       .then((res) => {
         console.log('Icon is ' + res.data);
+        this.setState({ username: res.data.username });
         this.setState({ icon: res.data.icon });
       })
       .catch((err) => console.log(err));
@@ -25,12 +27,18 @@ class Word_Bubble extends Component {
 
   render() {
     const { background } = this.props;
-    if (this.state.icon == '') {
+    if (this.state.icon == '' || this.state.username == '') {
       return null;
     } else {
       return (
         <div>
-          <Bubble background={background}>
+          <Username>
+            {this.state.username}
+            {this.props.isHost && 
+              <span>(ホスト)</span>
+            }
+          </Username>
+          <Bubble isHost={this.props.isHost} onClick={this.props.onClick}>
             <Bubble__Icon>
               <Icon
                 icon={this.state.icon}
@@ -40,7 +48,7 @@ class Word_Bubble extends Component {
                 img_width="42px"
               />
             </Bubble__Icon>
-            <p>{this.props.text}</p>
+            <CommentText>{this.props.text}</CommentText>
           </Bubble>
         </div>
       );
@@ -50,14 +58,30 @@ class Word_Bubble extends Component {
 
 export default Word_Bubble;
 
+const Username = styled.p`
+  position: relative;
+  left: 5.3rem;
+  font-size: 0.85rem;
+  font-weight: bolder;
+`;
+
 const Bubble = styled.div`
   position: relative;
   padding: 8px 35px;
-  background: #466A80;
   display: inline-block;
-  border-radius: 13px;
+  border-radius: 0.2rem;
   margin-left: 80px;
-  margin-bottom: 12px;
+  margin-bottom: 17px;
+  cursor:pointer;
+  background: ${Colors.subcolor1};
+  color: black;
+  ${(props) =>
+    props.isHost &&
+    `
+    background : ${Colors.accent2};
+    color: ${Colors.subcolor1};
+  `}
+
   &::before {
     content: '';
     position: absolute;
@@ -66,9 +90,14 @@ const Bubble = styled.div`
     height: 0px;
     left: -15px;
     top: 10px;
-    border-right: 15px solid #466A80;
     border-top: 0px solid transparent;
-    border-bottom: 20px solid transparent;
+    border-bottom: 12px solid transparent;
+    border-right: 15px solid ${Colors.subcolor1};
+    ${(props) =>
+      props.isHost &&
+      `
+      border-right: 15px solid ${Colors.accent2};
+    `}
   }
 `;
 
@@ -76,4 +105,8 @@ const Bubble__Icon = styled.div`
   position: absolute;
   left: -80px;
   top: -10px;
+`;
+
+const CommentText = styled.p`
+  white-space: pre-wrap;
 `;

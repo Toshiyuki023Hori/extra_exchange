@@ -22,7 +22,7 @@ class Give_Item_Detail extends Component {
     this.setGiveItem = this.setGiveItem.bind(this);
   }
 
-  getAxios = (url, id, target) => {
+  fetchDataWithAxios = (url, id, target) => {
     const localhostUrl = 'http://localhost:8000/api/';
     axios
       .get(localhostUrl + url + id)
@@ -39,9 +39,9 @@ class Give_Item_Detail extends Component {
     if (uid === null) {
       this.setState({ loginUser: 'なし' });
     } else {
-      this.getAxios('user/', uid, 'loginUser');
+      this.fetchDataWithAxios('user/', uid, 'loginUser');
     }
-    this.getAxios('parent/', this.props.match.params.parent_id, 'parentItem');
+    this.fetchDataWithAxios('parent/', this.props.match.params.parent_id, 'parentItem');
   }
 
   setGiveItem = (giveItem_id) => {
@@ -63,7 +63,10 @@ class Give_Item_Detail extends Component {
       );
 
       giveItemList = (
-        <Give_Item_List_byUser owner={parentItem.owner} axiosUrl="http://localhost:8000/api/" />
+        <Styled_Give_Item_List_byUser
+          owner={parentItem.owner}
+          axiosUrl="http://localhost:8000/api/"
+        />
       );
     }
 
@@ -103,4 +106,9 @@ const Body = styled.div`
   width: 77%;
   margin-left: auto;
   margin-right: auto;
+`;
+
+const Styled_Give_Item_List_byUser = styled(Give_Item_List_byUser)`
+  margin-top: 2rem;
+  border-top: 2px solid ${Colors.accent1};
 `;

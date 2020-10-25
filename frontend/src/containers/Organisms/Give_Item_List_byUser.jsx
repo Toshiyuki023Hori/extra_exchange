@@ -231,6 +231,7 @@ const Wrapper = styled.div`
   margin-bottom:${(props) => props.margin_bottom};
   margin-left:${(props) => props.margin_left};
   margin-right:${(props) => props.margin_right};
+  padding-top:30px;
   padding-bottom:30px;
 
   h2{
