@@ -5,6 +5,7 @@ import history from '../../history';
 import { CircularProgress, Chip } from '@material-ui/core';
 import Carousel from '../../presentational/shared/Carousel';
 import MiddleButton from '../../presentational/shared/MiddleButton';
+import CategoryTag from '../../presentational/shared/CategoryTag';
 import { Colors } from '../../presentational/shared/static/CSSvariables';
 
 class Give_Item_Description extends Component {
@@ -214,7 +215,7 @@ class Give_Item_Description extends Component {
           <InfoPtag>状態 : {giveItem.state}</InfoPtag>
           <InfoPtag>ブランド : {parentItem.bland}</InfoPtag>
           {giveItem.detail && <DetailPtag>{giveItem.detail}</DetailPtag>}
-          <p>{giveItem.category}</p>
+          <CategoryTag category_name={giveItem.category} />
           <PickupPtag>ピックアップ地点</PickupPtag>
           {pickupView}
           <ButtonDiv>
@@ -250,7 +251,7 @@ const DetailPtag = styled(InfoPtag)`
 `;
 
 const UnregisteredPtag = styled.p`
-  margin-left:2.35rem;
+  margin-left: 2.35rem;
 `;
 
 const PickupPtag = styled(InfoPtag)`
