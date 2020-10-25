@@ -63,7 +63,10 @@ class Give_Item_Detail extends Component {
       );
 
       giveItemList = (
-        <Give_Item_List_byUser owner={parentItem.owner} axiosUrl="http://localhost:8000/api/" />
+        <Styled_Give_Item_List_byUser
+          owner={parentItem.owner}
+          axiosUrl="http://localhost:8000/api/"
+        />
       );
     }
 
@@ -103,4 +106,9 @@ const Body = styled.div`
   width: 77%;
   margin-left: auto;
   margin-right: auto;
+`;
+
+const Styled_Give_Item_List_byUser = styled(Give_Item_List_byUser)`
+  margin-top: 2rem;
+  border-top: 2px solid ${Colors.accent1};
 `;
