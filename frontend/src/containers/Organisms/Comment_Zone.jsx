@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import axios from 'axios';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Word_Bubble from '../../presentational/shared/Word_Bubble';
@@ -62,7 +62,7 @@ class Comment_Zone extends Component {
         authHeader
       )
       .then((res) => console.log(res.data))
-      .catch((err) => window.alert(err.response.data));
+      .catch((err) => window.alert('未記入で送信はできません。'));
 
     this.setComments();
     this.setState({ comment: '' });
@@ -74,7 +74,7 @@ class Comment_Zone extends Component {
     let commentsView;
     //
     if (allComments === 'まだ投稿がありません') {
-      commentsView = <p>{allComments}</p>;
+      commentsView = <NotHavePtag>{allComments}</NotHavePtag>;
     } else if (allComments.length > 0) {
       commentsView = allComments.map((commentObj) => {
         return (
@@ -83,9 +83,7 @@ class Comment_Zone extends Component {
             key={commentObj.id}
             text={commentObj.comment}
             commenter={commentObj.owner}
-            isHost={
-              commentObj.owner == this.props.owner
-            }
+            isHost={commentObj.owner == this.props.owner}
           />
         );
       });
@@ -97,20 +95,23 @@ class Comment_Zone extends Component {
       return (
         <div>
           <h3>コメント</h3>
-          <CommentDiv>
-            {commentsView}
-          </CommentDiv>
-          <input
-            value={comment}
-            type="text"
-            name="comment"
-            onChange={this.handleChange}
-            placeholder="コメントを入力してください"
-            disabled={this.props.loginUser === 'なし'}
-          />
-          <button type="submit" onClick={this.handleSubmit}>
-            送信
-          </button>
+          <CommentDiv>{commentsView}</CommentDiv>
+          <SubmitDiv>
+            <textarea
+              value={comment}
+              name="comment"
+              onChange={this.handleChange}
+              placeholder={
+                this.props.loginUser === 'なし'
+                  ? 'コメント機能は登録ユーザーのみがご利用になれます'
+                  : 'コメントを入力してください'
+              }
+              disabled={this.props.loginUser === 'なし'}
+            />
+            <button type="submit" onClick={this.handleSubmit}>
+              送信
+            </button>
+          </SubmitDiv>
         </div>
       );
     }
@@ -120,5 +121,46 @@ class Comment_Zone extends Component {
 export default Comment_Zone;
 
 const CommentDiv = styled.div`
-  margin-top:1rem;
+  margin-top: 1rem;
+`;
+
+const SubmitDiv = styled.div`
+  display: flex;
+  justify-content: center;
+
+  textarea {
+    display: block;
+    height: 3rem;
+    width: 80%;
+    border: 1px solid ${Colors.characters};
+    resize: none;
+    outline: none;
+
+    &::placeholder {
+      color: ${Colors.characters};
+      vertical-align: center;
+      position: relative;
+      top: 0.75rem;
+    }
+
+    &:disabled {
+      background: #CECECE;
+    }
+  }
+
+  button {
+    display: block;
+    width: 10%;
+    height: 3rem;
+    color: ${Colors.subcolor1};
+    border-top: 1px solid ${Colors.accent2};
+    border-right: 1px solid ${Colors.accent2};
+    border-bottom: 1px solid ${Colors.accent2};
+    background: ${Colors.accent1};
+    outline: none;
+  }
+`;
+
+const NotHavePtag = styled.p`
+  margin-bottom: 1rem;
 `;
