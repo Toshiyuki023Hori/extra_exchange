@@ -4,6 +4,7 @@ import axios from 'axios';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Category_List from '../Organisms/Category_List';
 import Header from '../Organisms/Header';
+import Footer from '../Organisms/Footer';
 import Give_Item_List from '../Organisms/Give_Item_List';
 import { mixinHeaderSpace } from "../../presentational/shared/static/CSSvariables";
 
@@ -40,13 +41,13 @@ class Category_Page extends Component {
     };
 
     const categoryList = (
-      <Category_List
+      <Styled_Category_List
         axiosUrl="http://localhost:8000/api/"
       />
     );
 
     const giveItemList = (
-      <Give_Item_List
+      <Styled_Give_Item_List
         axiosUrl="http://localhost:8000/api/"
         h2title="カテゴリの投稿一覧"
         category={this.state.category}
@@ -63,11 +64,11 @@ class Category_Page extends Component {
         return (
           <>
             {header('')}
-            <Wrapper>
-              <h3>カテゴリ一覧</h3>
+            <Body>
               {categoryList}
               {giveItemList}
-            </Wrapper>
+            </Body>
+            <Footer/>
           </>
         );
       }
@@ -79,11 +80,11 @@ class Category_Page extends Component {
       return (
         <>
           {header(this.state.loginUser)}
-          <Wrapper>
-            <h3>カテゴリ一覧</h3>
+          <Body>
             {categoryList}
             {giveItemList}
-          </Wrapper>
+          </Body>
+          <Footer/>
         </>
       );
     }
@@ -92,6 +93,16 @@ class Category_Page extends Component {
 
 export default Category_Page;
 
-const Wrapper = styled.div`
-  ${mixinHeaderSpace}
+const Body = styled.div`
+  ${mixinHeaderSpace};
+  display:flex;
+`;
+
+const Styled_Category_List = styled(Category_List)`
+  padding: 20px 10px;
+  width: 15rem;
+`;
+
+const Styled_Give_Item_List = styled(Give_Item_List)`
+  padding:20px 15px;
 `;

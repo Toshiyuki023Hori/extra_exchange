@@ -58,7 +58,7 @@ class Want_Item_Add extends Component {
               />
             </Want_Item_Div>
           </Body>
-          <Footer/>
+          <Footer />
         </div>
       );
     }
@@ -69,10 +69,10 @@ export default withRouter(Want_Item_Add);
 
 const Body = styled.div`
   ${mixinHeaderSpace};
-  display:flex;
+  display: flex;
 `;
 
 const Want_Item_Div = styled.div`
-  flex:1;
-  padding:20px 0px 0px 20px;
+  flex: 1;
+  padding: 20px 0px 0px 20px;
 `;

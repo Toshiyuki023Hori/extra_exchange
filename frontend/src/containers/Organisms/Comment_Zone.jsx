@@ -93,7 +93,7 @@ class Comment_Zone extends Component {
       return null;
     } else {
       return (
-        <CommentWrapper>
+        <div>
           <h3>コメント</h3>
           {commentsView}
           <input
@@ -102,21 +102,15 @@ class Comment_Zone extends Component {
             name="comment"
             onChange={this.handleChange}
             placeholder="コメントを入力してください"
-            disabled={this.props.loginUser === "なし"}
+            disabled={this.props.loginUser === 'なし'}
           />
           <button type="submit" onClick={this.handleSubmit}>
             送信
           </button>
-        </CommentWrapper>
+        </div>
       );
     }
   }
 }
 
 export default Comment_Zone;
-
-const CommentWrapper = styled.div`
-  width: 77%;
-  margin-left: auto;
-  margin-right: auto;
-`;
