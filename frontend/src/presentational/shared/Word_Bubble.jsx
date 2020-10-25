@@ -38,7 +38,7 @@ class Word_Bubble extends Component {
               <span>(ホスト)</span>
             }
           </Username>
-          <Bubble isHost={this.props.isHost}>
+          <Bubble isHost={this.props.isHost} onClick={this.props.onClick}>
             <Bubble__Icon>
               <Icon
                 icon={this.state.icon}
@@ -72,6 +72,7 @@ const Bubble = styled.div`
   border-radius: 0.2rem;
   margin-left: 80px;
   margin-bottom: 17px;
+  cursor:pointer;
   background: ${Colors.subcolor1};
   color: black;
   ${(props) =>

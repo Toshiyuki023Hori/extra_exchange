@@ -50,7 +50,7 @@ export default User_Description;
 
 const Wrapper = styled.div`
   margin-top:2rem;
-  border-top: 2px solid ${Colors.accent2};
+  border-top: 2px solid ${Colors.accent1};
 `;
 
 const Icon_Div = styled.div`

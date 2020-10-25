@@ -14,6 +14,7 @@ class Comment_Zone extends Component {
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.deleteComment = this.deleteComment.bind(this);
   }
 
   setComments = () => {
@@ -68,6 +69,23 @@ class Comment_Zone extends Component {
     this.setState({ comment: '' });
   };
 
+  deleteComment = (comment_id, comment_owner) => {
+    const token = localStorage.getItem('token');
+    const authHeader = {
+      headers: {
+        Authorization: 'Token ' + token,
+      },
+    };
+    const result = window.confirm('このコメントを削除してよろしいですか?');
+
+    if (result && comment_owner == this.props.loginUser.id) {
+      axios.delete(this.props.axiosUrl + 'comment/' + comment_id, authHeader);
+      this.setComments();
+    } else {
+      window.alert('コメントは、コメントを投稿したユーザー自身でしか削除できません。');
+    }
+  };
+
   render() {
     const { loginUser } = this.props;
     const { allComments, comment } = this.state;
@@ -84,6 +102,7 @@ class Comment_Zone extends Component {
             text={commentObj.comment}
             commenter={commentObj.owner}
             isHost={commentObj.owner == this.props.owner}
+            onClick={() => this.deleteComment(commentObj.id, commentObj.owner)}
           />
         );
       });
@@ -144,7 +163,7 @@ const SubmitDiv = styled.div`
     }
 
     &:disabled {
-      background: #CECECE;
+      background: #cecece;
     }
   }
 

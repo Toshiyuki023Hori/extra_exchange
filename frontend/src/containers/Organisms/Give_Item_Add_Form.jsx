@@ -201,9 +201,6 @@ class Give_Item_Add_Form extends Component {
         Authorization: 'Token ' + token,
       },
     };
-    const config = {
-      headers: { 'content-type': 'multipart/form-data' },
-    };
 
     // keywordがinputに入力されているかを確認するためのfunction
     const hasValueInKeyword = (keyword) => {
@@ -349,9 +346,7 @@ class Give_Item_Add_Form extends Component {
     } else {
       return (
         <div className={this.props.className}>
-
-　　　　　　<h2>商品の出品</h2>
-
+          　　　　　　<h2>商品の出品</h2>
           <form onSubmit={this.handleSubmit}>
             <FormArea>
               <RequireLiTag>
