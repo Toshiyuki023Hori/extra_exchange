@@ -81,9 +81,11 @@ class Comment_Zone extends Component {
           <Word_Bubble
             axiosUrl="http://localhost:8000/api/"
             key={commentObj.id}
-            background={Colors.accent2}
             text={commentObj.comment}
             commenter={commentObj.owner}
+            isHost={
+              commentObj.owner == this.props.owner
+            }
           />
         );
       });
@@ -95,7 +97,9 @@ class Comment_Zone extends Component {
       return (
         <div>
           <h3>コメント</h3>
-          {commentsView}
+          <CommentDiv>
+            {commentsView}
+          </CommentDiv>
           <input
             value={comment}
             type="text"
@@ -114,3 +118,7 @@ class Comment_Zone extends Component {
 }
 
 export default Comment_Zone;
+
+const CommentDiv = styled.div`
+  margin-top:1rem;
+`;
