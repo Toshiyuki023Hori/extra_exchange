@@ -19,7 +19,7 @@ class Top extends Component {
   }
   async componentDidMount() {
     const localhostUrl = 'http://localhost:8000/api/';
-    const topCategoryList = ['メンズ服', 'レディース服', 'カバン'];
+    const topCategoryList = ['メンズ服', 'レディース服', 'ゲーム'];
     let categoriesList = [];
     // ParentItemのownerが外部キーなので、レンダー時にログインユーザーをセット
     await axios
@@ -66,13 +66,14 @@ class Top extends Component {
     if (this.state.categories != '') {
       giveItemView = this.state.categories.map((category) => {
         return (
-          <StyledGiveItemList
+          <Give_Item_List
             id={'#' + category.id}
             axiosUrl="http://localhost:8000/api/"
             h2title="の投稿一覧"
             category={category}
             margin_top="20px"
             margin_bottom="20px"
+            position_left="2rem"
           />
         );
       });
@@ -135,10 +136,6 @@ const Category_Bar = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-`;
-
-const StyledGiveItemList = styled(Give_Item_List)`
-  border-bottom: solid 1px ${Colors.accent2};
 `;
 
 const SubTitle = styled.p`

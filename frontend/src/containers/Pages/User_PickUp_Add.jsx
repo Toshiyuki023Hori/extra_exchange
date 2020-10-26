@@ -116,7 +116,7 @@ export default User_PickUp_Add;
 const Body = styled.div`
   ${mixinHeaderSpace};
   display: flex;
-  height: 70vh;
+  height: 35rem;
 `;
 
 const Pickup_Div = styled.div`

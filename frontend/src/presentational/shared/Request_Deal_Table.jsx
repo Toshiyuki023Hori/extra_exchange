@@ -61,13 +61,13 @@ class Request_Deal_Table extends Component {
       tableData = Object.keys(requestDeal).map((id, idx) => {
         return (
           <>
-            <tr onClick={() => this.jumpToUniquePage(requestDeal, id)}>
+            <StyledTableRow onClick={() => this.jumpToUniquePage(requestDeal, id)}>
               <TableData>{idx + 1}</TableData>
               <TableData>{requestDeal[id]['hostItem']}</TableData>
               <TableData>{requestDeal[id]['hostUser']}</TableData>
               <TableData>{requestDeal[id]['joinItem']}</TableData>
               <TableData>{checkStatus(id)}</TableData>
-            </tr>
+            </StyledTableRow>
           </>
         );
       });
@@ -85,13 +85,13 @@ class Request_Deal_Table extends Component {
       tableData = Object.keys(requestDeal).map((id, idx) => {
         return (
           <>
-            <tr onClick={() => this.jumpToUniquePage(requestDeal, id)}>
+            <StyledTableRow onClick={() => this.jumpToUniquePage(requestDeal, id)}>
               <TableData>{idx + 1}</TableData>
               <TableData>{requestDeal[id]['joinItem']}</TableData>
               <TableData>{requestDeal[id]['joinUser']}</TableData>
               <TableData>{requestDeal[id]['hostItem']}</TableData>
               <TableData>{checkStatus(id)}</TableData>
-            </tr>
+            </StyledTableRow>
           </>
         );
       });
@@ -110,14 +110,14 @@ class Request_Deal_Table extends Component {
       tableData = Object.keys(requestDeal).map((id, idx) => {
         return (
           <>
-            <tr onClick={() => this.jumpToUniquePage(requestDeal, id)}>
+            <StyledTableRow onClick={() => this.jumpToUniquePage(requestDeal, id)}>
               <TableData>{idx + 1}</TableData>
               <TableData>{requestDeal[id]['hostItem']}</TableData>
               <TableData>{requestDeal[id]['hostUser']}</TableData>
               <TableData>{requestDeal[id]['joinItem']}</TableData>
               <TableData>{requestDeal[id]['joinUser']}</TableData>
               <TableData>{checkStatus(id)}</TableData>
-            </tr>
+            </StyledTableRow>
           </>
         );
       });
@@ -129,13 +129,13 @@ class Request_Deal_Table extends Component {
       requestDeal === '進行中の取引はありません。'
     ) {
       return (
-        <div>
-          <h3>{requestDeal}</h3>
-        </div>
+        <Wrapper>
+          <StyledH3tag>{requestDeal}</StyledH3tag>
+        </Wrapper>
       );
     } else {
       return (
-        <div>
+        <Wrapper className={this.props.className}>
           <TableSelf>
             <thead>
               <tr>{tableHead}</tr>
@@ -143,7 +143,7 @@ class Request_Deal_Table extends Component {
 
             <tbody>{tableData}</tbody>
           </TableSelf>
-        </div>
+        </Wrapper>
       );
     }
   }
@@ -151,14 +151,19 @@ class Request_Deal_Table extends Component {
 
 export default Request_Deal_Table;
 
+const Wrapper = styled.div`
+  margin:2rem auto;
+`;
+
 const TableSelf = styled.table`
-  width: 70%;
+  width: 80%;
   border: solid 2px;
   border-collapse: collapse;
+  margin:0 auto;
 `;
 
 const TableHead = styled.th`
-  background: aliceblue;
+  background: #F0F8FF;
   color: black;
   font-weight: bold;
   padding: 24px 21px;
@@ -170,4 +175,17 @@ const TableData = styled.td`
   padding: 24px 21px;
   border: solid 2px;
   text-align: center;
+`;
+
+const StyledTableRow = styled.tr`
+  cursor:pointer;
+
+  &:hover{
+    background:#F2F2F2;
+  }
+`;
+
+const StyledH3tag = styled.p`
+  margin-left:3rem;
+  font-weight:bolder;
 `;

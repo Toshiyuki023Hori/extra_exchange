@@ -54,6 +54,7 @@ class User_Detail extends Component {
         h2Title={'欲しい物リスト'}
         axiosUrl="http://localhost:8000/api/"
         margin_left="30px"
+        margin_top='30px'
       />
     );
 

@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { Redirect } from 'react-router-dom';
-import Header from '../Organisms/Header';
 import axios from 'axios';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Deal_Proceeding_List from "../Organisms/Deal_Proceeding_List";
+import Deal_Proceeding_List from '../Organisms/Deal_Proceeding_List';
+import Header from '../Organisms/Header';
+import Footer from '../Organisms/Footer';
+import { Colors, mixinHeaderSpace } from '../../presentational/shared/static/CSSvariables';
 
 class Deal_Proceeding_HostUser extends Component {
   constructor(props) {
@@ -27,20 +29,26 @@ class Deal_Proceeding_HostUser extends Component {
     if (!this.props.isAuthenticated) {
       return <Redirect to="/login" />;
     }
-    if (this.state.loginUser == "") {
+    if (this.state.loginUser == '') {
       return <CircularProgress />;
     } else {
       return (
         <div>
           <Header loginUser={this.state.loginUser} />
-          <h1>あなたがホストユーザーの進行中の取引</h1>
-          <Deal_Proceeding_List
-            loginUser={this.state.loginUser}
-            axiosUrl="http://localhost:8000/api/"
-            hostOrJoinUrl="host_user"
-            loginUserKey="hostUser"
-            notLoginUserKey="joinUser"
-          />
+          <Body>
+            <StyledH2tag>あなたがホストユーザーの進行中の取引</StyledH2tag>
+            <Deal_Proceeding_List
+              loginUser={this.state.loginUser}
+              axiosUrl="http://localhost:8000/api/"
+              hostOrJoinUrl="host_user"
+              loginUserKey="hostUser"
+              notLoginUserKey="joinUser"
+            />
+            <LinkDiv>
+              <a href="/deal/proceeding/join">{this.state.loginUser.username}さんがジョインしている進行中の取引</a>
+            </LinkDiv>
+          </Body>
+          <Footer/>
         </div>
       );
     }
@@ -48,3 +56,45 @@ class Deal_Proceeding_HostUser extends Component {
 }
 
 export default Deal_Proceeding_HostUser;
+
+const Body = styled.div`
+  ${mixinHeaderSpace};
+  min-height:30rem;
+`;
+
+const StyledH2tag = styled.h2`
+  padding-top: 1.5rem;
+  padding-left: 1.5rem;
+`;
+
+const LinkDiv = styled.div`
+  text-align: center;
+
+  a {
+    display: inline-block;
+    margin: 0 auto;
+    text-decoration: none;
+    font-size: 1.15rem;
+    color: ${Colors.characters};
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0px;
+      width: 100%;
+      height: 2px;
+      background: ${Colors.characters};
+      transform: scale(0, 1);
+      transform-origin: center top;
+      transition: transform 0.3s;
+    }
+
+    &:hover {
+      font-weight: 700;
+    }
+    &:hover::after {
+      transform: scale(1, 1);
+    }
+`;

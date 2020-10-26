@@ -177,7 +177,7 @@ class Give_Item_List extends Component {
     }
 
     if(this.state.allItems === "そのカテゴリーに分類する商品はありません"){
-      itemCards = <NotHaveText>{this.state.allItems}</NotHaveText>;
+      itemCards = <NotHaveText position_left={this.props.position_left}>{this.state.allItems}</NotHaveText>;
     } else {
       itemCards = Object.keys(this.state.currentItems).map((parentId, idx) => {
         return (
@@ -233,7 +233,7 @@ const Wrapper = styled.div`
   margin-left:${(props) => props.margin_left};
   margin-right:${(props) => props.margin_right};
   padding-bottom:30px;
-  border-bottom:solid 1px ${Colors.accent2};
+  border-bottom:solid 2px ${Colors.accent1};
   
   h2{
     margin-left:10px;
@@ -251,4 +251,7 @@ const ItemPlaces = styled.div`
 
 const NotHaveText = styled.p`
   grid-column: 1 / 3;
+  position: absolute;
+  left: ${(props) => props.position_left};
+  font-size: 1.15rem;
 `;

@@ -6,6 +6,8 @@ import axios from 'axios';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Request_Deal_Table from '../../presentational/shared/Request_Deal_Table';
 import Header from '../Organisms/Header';
+import Footer from '../Organisms/Footer';
+import { Colors, mixinHeaderSpace } from '../../presentational/shared/static/CSSvariables';
 
 class Request_Waiting extends Component {
   constructor(props) {
@@ -115,14 +117,22 @@ class Request_Waiting extends Component {
       return (
         <div>
           <Header loginUser={this.state.loginUser} />
-          <h1>送信したリクエスト一覧</h1>
-          <Request_Deal_Table
-            requestDeal={this.state.allRequests}
-            loginUser={this.state.loginUser}
-            jumpUrl="/request/"
-            parentType="join"
-            requestOrDeal="request"
-          />
+          <Body>
+            <StyledH2tag>送信したリクエスト一覧</StyledH2tag>
+            <Styled_Request_Deal_Table
+              requestDeal={this.state.allRequests}
+              loginUser={this.state.loginUser}
+              jumpUrl="/request/"
+              parentType="join"
+              requestOrDeal="request"
+            />
+            <LinkDiv>
+              <a href="/request/applied">
+                {this.state.loginUser.username}さんへ送信されたリクエストを見る
+              </a>
+            </LinkDiv>
+          </Body>
+          <Footer />
         </div>
       );
     }
@@ -130,3 +140,49 @@ class Request_Waiting extends Component {
 }
 
 export default Request_Waiting;
+
+const Body = styled.div`
+  ${mixinHeaderSpace};
+  min-height: 30rem;
+`;
+
+const StyledH2tag = styled.h2`
+  padding-top: 1.5rem;
+  padding-left: 1.5rem;
+`;
+
+const Styled_Request_Deal_Table = styled(Request_Deal_Table)`
+  margin: 2rem 0rem;
+`;
+
+const LinkDiv = styled.div`
+  text-align: center;
+
+  a {
+    display: inline-block;
+    margin: 0 auto;
+    text-decoration: none;
+    font-size: 1.15rem;
+    color: ${Colors.characters};
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0px;
+      width: 100%;
+      height: 2px;
+      background: ${Colors.characters};
+      transform: scale(0, 1);
+      transform-origin: center top;
+      transition: transform 0.3s;
+    }
+
+    &:hover {
+      font-weight: 700;
+    }
+    &:hover::after {
+      transform: scale(1, 1);
+    }
+`;

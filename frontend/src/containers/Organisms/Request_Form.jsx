@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
+import history from '../../history';
 import { CircularProgress } from '@material-ui/core';
 import MiddleButton from '../../presentational/shared/MiddleButton';
-import history from "../../history";
+import { Colors } from '../../presentational/shared/static/CSSvariables';
 
 class Request_Form extends Component {
   constructor(props) {
@@ -13,8 +14,11 @@ class Request_Form extends Component {
         joinItem: '',
         pickup: '',
         date1: '',
+        time1:'',
         date2: '',
+        time2:'',
         date3: '',
+        time3:'',
         note: '',
       },
       message: {
@@ -69,14 +73,14 @@ class Request_Form extends Component {
     // console.log(pickupForState);
     // console.log(parentItems);
 
-
     if (Object.keys(parentItems).length !== 0) {
       //
       // UserのParent_ItemからGive_Itemのみを取得
+      // 取引済のものは除外(Exclude: doneDeal == true)
       await Promise.all(
         Object.keys(parentItems).map(async (parent_id) => {
           await axios
-            .get(axiosUrl + 'giveitem/?parent_item=' + parent_id)
+            .get(axiosUrl + 'giveitem/?done_deal=false&parent_item=' + parent_id)
             .then((res) => {
               if (res.data.length !== 0) {
                 parentItems = {
@@ -157,11 +161,10 @@ class Request_Form extends Component {
     let reqDeal_id;
 
     let result = window.confirm(
-    'こちらのリクエストを送信しますか？\n送信後は編集は行えません(削除をすることはできます)。'
+      'こちらのリクエストを送信しますか？\n送信後は編集は行えません(削除をすることはできます)。'
     );
 
     if (result) {
-
       // inputに入力されているmeetingTimeをarrayにまとめるfunction
       const hasValueInMeeting = (meeting) => {
         if (meeting != '') {
@@ -297,7 +300,7 @@ class Request_Form extends Component {
           }
 
           for (const key in originalRequest) {
-          axios
+            axios
               .patch(
                 axiosUrl + 'meeting/' + key + '/',
                 {
@@ -309,7 +312,7 @@ class Request_Form extends Component {
               .catch((err) => console.log(err));
           }
 
-          history.push("/request/waiting")
+          history.push('/request/waiting');
         } //if (this.state.message.date1 == '') end
       } //  else closing
     } //    if(result) closing
@@ -323,39 +326,59 @@ class Request_Form extends Component {
     let pickupsView;
 
     if (this.state.allItems !== '商品が投稿されていません') {
-      itemsView = Object.keys(this.state.allItems).map((parent_id) => {
-        return (
-          <>
-            <input name="joinItem" value={parent_id} type="radio" onChange={this.handleChange} />
-            <label>{this.state.allItems[parent_id].name}</label>
-          </>
-        );
-      });
+      itemsView = (
+        <StyledULtag>
+          {Object.keys(this.state.allItems).map((parent_id) => {
+            return (
+              <li>
+                <input
+                  name="joinItem"
+                  value={parent_id}
+                  type="radio"
+                  onChange={this.handleChange}
+                />
+                <label>{this.state.allItems[parent_id].name}</label>
+              </li>
+            );
+          })}
+        </StyledULtag>
+      );
     } else {
       itemsView = (
         <>
           <p>{this.state.allItems}</p>
           <a href="/give/add">商品を出品する(出品された商品から、引き換え商品は選択されます)</a>
         </>
-        )
+      );
     }
 
     if (this.state.allPickup !== '未登録') {
-      pickupsView = this.state.allPickup.map((pickupObj) => {
-        return (
-          <>
-            <input name="pickup" value={pickupObj.name} type="radio" onChange={this.handleChange} />
-            <label>{pickupObj.name}</label>
-          </>
-        );
-      });
+      pickupsView = (
+        <StyledULtag>
+          {this.state.allPickup.map((pickupObj) => {
+            return (
+              <li>
+                <input
+                  name="pickup"
+                  value={pickupObj.name}
+                  type="radio"
+                  onChange={this.handleChange}
+                />
+                <label>{pickupObj.name}</label>
+              </li>
+            );
+          })}
+        </StyledULtag>
+      );
     } else {
       pickupsView = (
-      <>
-        <p>{this.state.allPickup}</p>
-        <a href={"/give/detail/" + this.props.hostItem}>ホストユーザーにコメントで相談してみましょう</a>
-      </>
-        )
+        <>
+          <p>{this.state.allPickup}</p>
+          <a href={'/give/detail/' + this.props.hostItem}>
+            ホストユーザーにコメントで相談してみましょう
+          </a>
+        </>
+      );
     }
 
     if (this.state.loading === true) {
@@ -363,43 +386,93 @@ class Request_Form extends Component {
     } else {
       return (
         <div>
-          <div>
+          <Choice_Div>
             <h3>引き換える商品(あなたの出品リストより)</h3>
             {itemsView}
             <p>{this.state.message.joinItem}</p>
-          </div>
-          <div>
+          </Choice_Div>
+          <Choice_Div>
             <h3>ピックアップ地点(出品者のピックアップ地点より)</h3>
             {pickupsView}
             <p>{this.state.message.pickup}</p>
-          </div>
-          <div>
+          </Choice_Div>
+          <Choice_Div>
             <h3>取引希望日時(第3希望まで選んでください)</h3>
-            <p>
+            <div>
               <p>{this.state.message.date1}</p>
               <label>日程候補1</label>
-              <input name="date1" type="datetime-local" onChange={this.handleChange} />
-            </p>
-            <p>
-              <p>{this.state.message.date2}</p>
+              <DateTimeForm>
+                <label>
+                  <input
+                    name="date1"
+                    type="date"
+                    onChange={this.handleChange}
+                  />
+                </label>
+              </DateTimeForm>
+              <DateTimeForm>
+                <label>
+                  <input
+                    name="time1"
+                    type="time"
+                    onChange={this.handleChange}
+                  />
+                </label>
+              </DateTimeForm>
+            </div>
+            <div>
               <label>日程候補2</label>
-              <input name="date2" type="datetime-local" onChange={this.handleChange} />
-            </p>
-            <p>
-              <p>{this.state.message.date3}</p>
+              <DateTimeForm>
+                <label>
+                  <input
+                    name="date2"
+                    type="date"
+                    onChange={this.handleChange}
+                  />
+                </label>
+              </DateTimeForm>
+              <DateTimeForm>
+                <label>
+                  <input
+                    name="time2"
+                    type="time"
+                    onChange={this.handleChange}
+                  />
+                </label>
+              </DateTimeForm>
+            </div>
+            <div>
               <label>日程候補3</label>
-              <input name="date3" type="datetime-local" onChange={this.handleChange} />
-            </p>
-          </div>
+              <DateTimeForm>
+                <label>
+                  <input
+                    name="date3"
+                    type="date"
+                    onChange={this.handleChange}
+                  />
+                </label>
+              </DateTimeForm>
+              <DateTimeForm>
+                <label>
+                  <input
+                    name="time3"
+                    type="time"
+                    onChange={this.handleChange}
+                  />
+                </label>
+              </DateTimeForm>
+            </div>
+          </Choice_Div>
           <div>
             <h3>補足</h3>
             <textarea name="note" id="" cols="30" rows="10" onChange={this.handleChange}></textarea>
           </div>
-          <MiddleButton
-            btn_name="リクエストを送る"
+          <SubmitButton
             btn_type="submit"
             btn_click={this.handleSubmit}
-          />
+          >
+            リクエストを送る
+          </SubmitButton>
         </div>
       );
     }
@@ -407,3 +480,63 @@ class Request_Form extends Component {
 }
 
 export default Request_Form;
+
+const Choice_Div = styled.div`
+  padding: 1rem 0rem;
+  border-top: 2px solid ${Colors.accent1};
+`;
+
+const StyledULtag = styled.ul`
+  list-style: none;
+  margin-top: 1rem;
+
+  li {
+    margin-left: 6rem;
+    font-size: 1.3rem;
+
+    input[type='radio'] {
+      transform: scale(1.4);
+      margin-right: 1rem;
+    }
+  }
+`;
+
+const DateTimeForm = styled.div`
+  label {
+    position: relative;
+    display: inline-block;
+    width: 15rem;
+    height: 2rem;
+    border: 2px solid #ccc;
+    border-radius: 0.4rem;
+  }
+  input[type='datetime-local'] {
+    position: relative;
+    padding: 0 10px;
+    width: 15rem;
+    height: 2rem;
+    border: 0;
+    background: transparent;
+    box-sizing: border-box;
+    font-size: 1.3rem;
+    color: #999;
+  }
+`;
+
+const SubmitButton = styled(MiddleButton)`
+  display: block;
+  margin: 10px auto;
+  background: ${(props) => (!props.btn_disable ? '#8DD6FF' : '#E0F4FF')};
+  color: ${(props) => (!props.btn_disable ? '#466A80' : '#BDCFDA')};
+  box-shadow: 4px 3px ${Colors.accent1};
+
+  &:hover:enabled {
+    background-color: #a8e0ff;
+    transition: all 200ms linear;
+  }
+
+  &:active:enabled {
+    box-shadow: 0px 0px 0px;
+    transform: translate(4px, 3px);
+  }
+`;

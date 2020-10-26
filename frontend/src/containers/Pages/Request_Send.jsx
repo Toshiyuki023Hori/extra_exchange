@@ -3,9 +3,11 @@ import { Redirect } from 'react-router-dom';
 import styled from 'styled-components';
 import axios from 'axios';
 import Header from '../Organisms/Header';
+import Footer from '../Organisms/Footer';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Item_Table from '../../presentational/shared/Item_Table';
 import Request_Form from '../Organisms/Request_Form';
+import { mixinHeaderSpace } from '../../presentational/shared/static/CSSvariables';
 
 class Request_Send extends Component {
   constructor(props) {
@@ -26,7 +28,7 @@ class Request_Send extends Component {
       itemsForState = {
         [id]: {
           ...itemsForState[id],
-          [key]: value
+          [key]: value,
         },
       };
     };
@@ -48,13 +50,12 @@ class Request_Send extends Component {
 
     await axios
       .get(localhostUrl + 'giveitem/?parent_item=' + parent_id)
-      .then((res) =>{
-        setValueToItems(parent_id, "give_id", res.data[0].id)
-        setValueToItems(parent_id, 'state', res.data[0].state,)
-        setValueToItems(parent_id, 'category', res.data[0].category,)
-        setValueToItems(parent_id, 'detail', res.data[0].detail)
-      }
-      )
+      .then((res) => {
+        setValueToItems(parent_id, 'give_id', res.data[0].id);
+        setValueToItems(parent_id, 'state', res.data[0].state);
+        setValueToItems(parent_id, 'category', res.data[0].category);
+        setValueToItems(parent_id, 'detail', res.data[0].detail);
+      })
       .catch((err) => console.log(err));
 
     await axios
@@ -91,13 +92,20 @@ class Request_Send extends Component {
       return (
         <>
           <Header loginUser={this.state.loginUser} />
-          <Item_Table item={this.state.hostItem} parent_id={this.props.match.params.parent_id} />
-          <Request_Form
-            joinUser={this.state.loginUser}
-            hostUser={this.state.hostUser}
-            hostItem={this.props.match.params.parent_id}
-            axiosUrl="http://localhost:8000/api/"
-          />
+          <Body>
+            <h1>取引リクエスト</h1>
+            <Styled_Item_Table
+              item={this.state.hostItem}
+              parent_id={this.props.match.params.parent_id}
+            />
+            <Request_Form
+              joinUser={this.state.loginUser}
+              hostUser={this.state.hostUser}
+              hostItem={this.props.match.params.parent_id}
+              axiosUrl="http://localhost:8000/api/"
+            />
+          </Body>
+          <Footer />
         </>
       );
     }
@@ -105,3 +113,14 @@ class Request_Send extends Component {
 }
 
 export default Request_Send;
+
+const Body = styled.div`
+  ${mixinHeaderSpace};
+  width: 77%;
+  margin-left: auto;
+  margin-right: auto;
+`;
+
+const Styled_Item_Table = styled(Item_Table)`
+  margin: 0.7rem auto 1.5rem auto;
+`;
