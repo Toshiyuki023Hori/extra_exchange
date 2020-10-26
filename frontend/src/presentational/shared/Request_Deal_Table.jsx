@@ -135,7 +135,7 @@ class Request_Deal_Table extends Component {
       );
     } else {
       return (
-        <div>
+        <div className={this.props.className}>
           <TableSelf>
             <thead>
               <tr>{tableHead}</tr>

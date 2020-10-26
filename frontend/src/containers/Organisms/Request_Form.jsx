@@ -14,8 +14,11 @@ class Request_Form extends Component {
         joinItem: '',
         pickup: '',
         date1: '',
+        time1:'',
         date2: '',
+        time2:'',
         date3: '',
+        time3:'',
         note: '',
       },
       message: {
@@ -402,32 +405,74 @@ class Request_Form extends Component {
                 <label>
                   <input
                     name="date1"
-                    type="datetime-local"
+                    type="date"
+                    onChange={this.handleChange}
+                  />
+                </label>
+              </DateTimeForm>
+              <DateTimeForm>
+                <label>
+                  <input
+                    name="time1"
+                    type="time"
                     onChange={this.handleChange}
                   />
                 </label>
               </DateTimeForm>
             </div>
             <div>
-              <p>{this.state.message.date2}</p>
               <label>日程候補2</label>
-              <input name="date2" type="datetime-local" onChange={this.handleChange} />
+              <DateTimeForm>
+                <label>
+                  <input
+                    name="date2"
+                    type="date"
+                    onChange={this.handleChange}
+                  />
+                </label>
+              </DateTimeForm>
+              <DateTimeForm>
+                <label>
+                  <input
+                    name="time2"
+                    type="time"
+                    onChange={this.handleChange}
+                  />
+                </label>
+              </DateTimeForm>
             </div>
             <div>
-              <p>{this.state.message.date3}</p>
               <label>日程候補3</label>
-              <input name="date3" type="datetime-local" onChange={this.handleChange} />
+              <DateTimeForm>
+                <label>
+                  <input
+                    name="date3"
+                    type="date"
+                    onChange={this.handleChange}
+                  />
+                </label>
+              </DateTimeForm>
+              <DateTimeForm>
+                <label>
+                  <input
+                    name="time3"
+                    type="time"
+                    onChange={this.handleChange}
+                  />
+                </label>
+              </DateTimeForm>
             </div>
           </Choice_Div>
           <div>
             <h3>補足</h3>
             <textarea name="note" id="" cols="30" rows="10" onChange={this.handleChange}></textarea>
           </div>
-          <MiddleButton
-            btn_name="リクエストを送る"
+          <SubmitButton
             btn_type="submit"
             btn_click={this.handleSubmit}
-          />
+          >
+            リクエストを送る
+          </SubmitButton>
         </div>
       );
     }
@@ -475,5 +520,23 @@ const DateTimeForm = styled.div`
     box-sizing: border-box;
     font-size: 1.3rem;
     color: #999;
+  }
+`;
+
+const SubmitButton = styled(MiddleButton)`
+  display: block;
+  margin: 10px auto;
+  background: ${(props) => (!props.btn_disable ? '#8DD6FF' : '#E0F4FF')};
+  color: ${(props) => (!props.btn_disable ? '#466A80' : '#BDCFDA')};
+  box-shadow: 4px 3px ${Colors.accent1};
+
+  &:hover:enabled {
+    background-color: #a8e0ff;
+    transition: all 200ms linear;
+  }
+
+  &:active:enabled {
+    box-shadow: 0px 0px 0px;
+    transform: translate(4px, 3px);
   }
 `;
