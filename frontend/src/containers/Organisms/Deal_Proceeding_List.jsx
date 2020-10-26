@@ -17,7 +17,7 @@ class Deal_Proceeding_List extends Component {
   }
 
   async componentDidMount() {
-    const { axiosUrl,hostOrJoinUrl, loginUserKey, notLoginUserKey, } = this.props;
+    const { axiosUrl, hostOrJoinUrl, loginUserKey, notLoginUserKey } = this.props;
     let requestDeals = {};
     let requestDealData = '';
     let dealsForState = {};
@@ -29,7 +29,7 @@ class Deal_Proceeding_List extends Component {
 
     // loginUser = hostUserのRequest_Dealを全件取得
     await axios
-      .get(axiosUrl + 'requestdeal/?' +  hostOrJoinUrl  + '=' + this.state.loginUser.id)
+      .get(axiosUrl + 'requestdeal/?' + hostOrJoinUrl + '=' + this.state.loginUser.id)
       .then((res) => {
         if (res.data.length > 0) {
           requestDealData = res.data;
@@ -128,18 +128,22 @@ class Deal_Proceeding_List extends Component {
       return <CircularProgress />;
     } else {
       return (
-          <div>
-              <Request_Deal_Table
-                requestDeal={this.state.allDeals}
-                loginUser={this.state.loginUser}
-                joinUserUrl="/deal/join/"
-                hostUserUrl="/deal/host/"
-                requestOrDeal="deal"
-              />
-          </div>
+        <Wrapper>
+          <Request_Deal_Table
+            requestDeal={this.state.allDeals}
+            loginUser={this.state.loginUser}
+            joinUserUrl="/deal/join/"
+            hostUserUrl="/deal/host/"
+            requestOrDeal="deal"
+          />
+        </Wrapper>
       );
     }
   }
 }
 
 export default Deal_Proceeding_List;
+
+const Wrapper = styled.div`
+  margin:2rem auto;
+`;

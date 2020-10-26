@@ -155,6 +155,7 @@ const TableSelf = styled.table`
   width: 70%;
   border: solid 2px;
   border-collapse: collapse;
+  margin:0 auto;
 `;
 
 const TableHead = styled.th`

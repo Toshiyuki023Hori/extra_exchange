@@ -143,6 +143,7 @@ export default Request_Waiting;
 
 const Body = styled.div`
   ${mixinHeaderSpace};
+  min-height: 30rem;
 `;
 
 const StyledH2tag = styled.h2`
@@ -152,8 +153,6 @@ const StyledH2tag = styled.h2`
 
 const Styled_Request_Deal_Table = styled(Request_Deal_Table)`
   margin: 2rem 0rem;
-  display: flex;
-  justify-content: center;
 `;
 
 const LinkDiv = styled.div`
@@ -165,5 +164,25 @@ const LinkDiv = styled.div`
     text-decoration: none;
     font-size: 1.15rem;
     color: ${Colors.characters};
-  }
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0px;
+      width: 100%;
+      height: 2px;
+      background: ${Colors.characters};
+      transform: scale(0, 1);
+      transform-origin: center top;
+      transition: transform 0.3s;
+    }
+
+    &:hover {
+      font-weight: 700;
+    }
+    &:hover::after {
+      transform: scale(1, 1);
+    }
 `;
