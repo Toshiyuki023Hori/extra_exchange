@@ -6,6 +6,7 @@ import { Redirect } from 'react-router-dom';
 import Header from '../Organisms/Header';
 import Footer from '../Organisms/Footer';
 import Request_Description from '../Organisms/Request_Description';
+import MiddleButton from '../../presentational/shared/MiddleButton';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { Colors, mixinHeaderSpace } from '../../presentational/shared/static/CSSvariables';
 
@@ -22,6 +23,7 @@ class Request_Detail extends Component {
       allMeeting: '',
       request: '',
     };
+    this.deleteRequest = this.deleteRequest.bind(this);
   }
 
   async componentDidMount() {
@@ -135,6 +137,24 @@ class Request_Detail extends Component {
       this.setState({ loading: false });
     } // else closing
   }
+  // componentDidMount Closing
+
+  deleteRequest = () => {
+    const token = localStorage.getItem('token');
+    const authHeader = {
+      headers: {
+        Authorization: 'Token ' + token,
+      },
+    };
+    const result = window.confirm('本当にこのリクエストを削除してもよろしいですか?');
+
+    if (result) {
+      axios
+        .delete('http://localhost:8000/api/requestdeal/' + this.props.match.params.requestDeal_id)
+        .then((res) => history.push('/request/waiting'))
+        .catch((err) => window.alert(err.response.data.request_deal));
+    }
+  };
 
   render() {
     const { isAuthenticated } = this.props;
@@ -150,6 +170,7 @@ class Request_Detail extends Component {
     } = this.state;
     let meetingList;
     let requestStatusView;
+    let deleteButton;
 
     const convertData = (dataTime) => {
       const year = dataTime.slice(0, 4);
@@ -169,8 +190,16 @@ class Request_Detail extends Component {
       );
     } else if (request.accepted === true) {
       requestStatusView = <p>承認</p>;
+
+      deleteButton = <AcceptedButton btn_disable="true">承認済のため削除不可</AcceptedButton>;
     } else if (request.accepted === false) {
       requestStatusView = <p>未承認</p>;
+
+      deleteButton = (
+        <DeleteButton btn_type="submit" btn_click={this.deleteRequest}>
+          リクエストを取り消す
+        </DeleteButton>
+      );
     }
 
     if (allMeeting.length > 0) {
@@ -215,6 +244,7 @@ class Request_Detail extends Component {
               {requestStatusView}
             </RequestStatusDiv>
           </Body>
+          {deleteButton}
           <Footer />
         </div>
       );
@@ -283,7 +313,7 @@ const NoteDiv = styled.div`
     margin-top: 0.4rem;
     margin-left: 2rem;
     font-size: 1.15rem;
-    white-space:pre-wrap:
+    white-space: pre-wrap;
   }
 `;
 
@@ -310,4 +340,30 @@ const RequestStatusDiv = styled.div`
     margin-left: 2rem;
     font-size: 1.15rem;
   }
+`;
+
+const DeleteButton = styled(MiddleButton)`
+  display: block;
+  margin: 1.5rem auto;
+  background: ${Colors.accent2};
+  color: ${Colors.subcolor1};
+  box-shadow: 4px 3px ${Colors.accent1};
+
+  &:hover {
+    background-color: #6792ab;
+    transition: all 200ms linear;
+  }
+
+  &:active {
+    box-shadow: 0px 0px 0px;
+    transform: translate(4px, 3px);
+  }
+`;
+
+const AcceptedButton = styled(MiddleButton)`
+  display: block;
+  margin: 1.5rem auto;
+  background: #b6cbd7;
+  color: ${Colors.subcolor1};
+  box-shadow: 4px 3px ${Colors.accent1};
 `;

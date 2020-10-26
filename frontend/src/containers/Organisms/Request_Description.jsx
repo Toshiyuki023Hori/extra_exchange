@@ -94,7 +94,7 @@ const Styled_Item_Table = styled(Item_Table)`
 
 const PickupPlaceDiv = styled.div`
   margin-left: 1rem;
-  margin-top: 0.65rem;
+  margin-top: 1.5rem;
 
   h2 {
     display: inline-block;
