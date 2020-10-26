@@ -268,9 +268,9 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(mapStateToProps, mapDispatchToProps)(Register_Form);
 
 export const Wrapper = styled.div`
-  ${mixinHeaderSpace};
+  margin-top:10rem;
   width: 100%;
-  height:70vh;
+  height:40rem;
 `;
 
 export const InputArea = styled.div`

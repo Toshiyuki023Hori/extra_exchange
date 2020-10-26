@@ -56,7 +56,7 @@ export default User_ChangePass;
 const Body = styled.div`
   ${mixinHeaderSpace};
   display: flex;
-  height: 70vh;
+  height:30rem;
 `;
 
 const Styled_User_ChangePass_Form = styled(User_ChangePass_Form)`
