@@ -14,11 +14,11 @@ class Request_Form extends Component {
         joinItem: '',
         pickup: '',
         date1: '',
-        time1:'',
+        time1: '',
         date2: '',
-        time2:'',
+        time2: '',
         date3: '',
-        time3:'',
+        time3: '',
         note: '',
       },
       message: {
@@ -161,22 +161,35 @@ class Request_Form extends Component {
     let reqDeal_id;
 
     let result = window.confirm(
-      'こちらのリクエストを送信しますか？\n送信後は編集は行えません(削除をすることはできます)。'
+      'こちらのリクエストを送信しますか？\n送信後は編集は行えません(削除は可能です)。'
     );
 
     if (result) {
-      // inputに入力されているmeetingTimeをarrayにまとめるfunction
-      const hasValueInMeeting = (meeting) => {
-        if (meeting != '') {
-          meetingList = [...meetingList, meeting];
-        } else {
-        }
+      const concatDateAndTime = (date, time) => {
+        let dateTime = date + 'T' + time;
+        meetingList = [...meetingList, dateTime];
       };
 
-      // 全inputに実行 = 未入力のinputを除外する役割も担当
-      hasValueInMeeting(this.state.info.date1);
-      hasValueInMeeting(this.state.info.date2);
-      hasValueInMeeting(this.state.info.date3);
+      if (this.state.info.date1 != '' && this.state.info.time1 != '') {
+        concatDateAndTime(this.state.info.date1, this.state.info.time1);
+      } else {
+      }
+      if (this.state.info.date2 != '' && this.state.info.time2 != '') {
+        concatDateAndTime(this.state.info.date2, this.state.info.time2);
+      } else {
+      }
+      if (this.state.info.date3 != '' && this.state.info.time3 != '') {
+        concatDateAndTime(this.state.info.date3, this.state.info.time3);
+      } else {
+      }
+
+      const isEmpty = (date, time) => {
+        if (date == '' || time == '') {
+          return true;
+        } else {
+          return false;
+        }
+      };
 
       // validation時にエラーメッセージを代入するfunction
       const setMessageToState = (key, value) => {
@@ -202,9 +215,9 @@ class Request_Form extends Component {
         setMessageToState('pickup', 'ピックアップ場所を選んでください。');
         // Validation(date未入力)
       } else if (
-        this.state.info.date1 == '' &&
-        this.state.info.date2 == '' &&
-        this.state.info.date3 == ''
+        isEmpty(this.state.info.date1, this.state.info.time1) &&
+        isEmpty(this.state.info.date2, this.state.info.time2) &&
+        isEmpty(this.state.info.date3, this.state.info.time3)
       ) {
         setMessageToState('date1', '取引日時を決めてください。');
       } else {
@@ -403,20 +416,12 @@ class Request_Form extends Component {
               <label>日程候補1</label>
               <DateTimeForm>
                 <label>
-                  <input
-                    name="date1"
-                    type="date"
-                    onChange={this.handleChange}
-                  />
+                  <input name="date1" type="date" onChange={this.handleChange} />
                 </label>
               </DateTimeForm>
               <DateTimeForm>
                 <label>
-                  <input
-                    name="time1"
-                    type="time"
-                    onChange={this.handleChange}
-                  />
+                  <input name="time1" type="time" onChange={this.handleChange} />
                 </label>
               </DateTimeForm>
             </div>
@@ -424,20 +429,12 @@ class Request_Form extends Component {
               <label>日程候補2</label>
               <DateTimeForm>
                 <label>
-                  <input
-                    name="date2"
-                    type="date"
-                    onChange={this.handleChange}
-                  />
+                  <input name="date2" type="date" onChange={this.handleChange} />
                 </label>
               </DateTimeForm>
               <DateTimeForm>
                 <label>
-                  <input
-                    name="time2"
-                    type="time"
-                    onChange={this.handleChange}
-                  />
+                  <input name="time2" type="time" onChange={this.handleChange} />
                 </label>
               </DateTimeForm>
             </div>
@@ -445,20 +442,12 @@ class Request_Form extends Component {
               <label>日程候補3</label>
               <DateTimeForm>
                 <label>
-                  <input
-                    name="date3"
-                    type="date"
-                    onChange={this.handleChange}
-                  />
+                  <input name="date3" type="date" onChange={this.handleChange} />
                 </label>
               </DateTimeForm>
               <DateTimeForm>
                 <label>
-                  <input
-                    name="time3"
-                    type="time"
-                    onChange={this.handleChange}
-                  />
+                  <input name="time3" type="time" onChange={this.handleChange} />
                 </label>
               </DateTimeForm>
             </div>
@@ -467,10 +456,7 @@ class Request_Form extends Component {
             <h3>補足</h3>
             <textarea name="note" id="" cols="30" rows="10" onChange={this.handleChange}></textarea>
           </div>
-          <SubmitButton
-            btn_type="submit"
-            btn_click={this.handleSubmit}
-          >
+          <SubmitButton btn_type="submit" btn_click={this.handleSubmit}>
             リクエストを送る
           </SubmitButton>
         </div>
