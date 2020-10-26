@@ -48,6 +48,7 @@ class Category_Page extends Component {
         axiosUrl="http://localhost:8000/api/"
         h2title="カテゴリの投稿一覧"
         category={this.state.category}
+        position_left='16rem'
       />
     );
 

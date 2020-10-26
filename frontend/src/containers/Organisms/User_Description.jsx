@@ -31,7 +31,7 @@ class User_Description extends Component {
         <Wrapper>
           <Icon_Div>
             <Icon icon={user.icon} img_width="70px" img_height="70px" img_radius="50%" />
-            <h1>{user.username}</h1>
+            <StyledAtag href={'/user/' + user.id}>{user.username}</StyledAtag>
           </Icon_Div>
           <Want_Item_List
             owner={user}
@@ -51,6 +51,19 @@ export default User_Description;
 const Wrapper = styled.div`
   margin-top:2rem;
   border-top: 2px solid ${Colors.accent1};
+`;
+
+const StyledAtag = styled.a`
+  font-size:2rem;
+  display:inline-block;
+  text-decoration:none;
+  color:${Colors.accent1};
+  margin-left:1rem;
+  cursor:pointer;
+
+  &:hover{
+    font-weight:bolder;
+  }
 `;
 
 const Icon_Div = styled.div`

@@ -4,8 +4,10 @@ import styled from 'styled-components';
 import history from '../../history';
 import { Redirect } from 'react-router-dom';
 import Header from '../Organisms/Header';
+import Footer from '../Organisms/Footer';
 import Request_Description from '../Organisms/Request_Description';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { Colors, mixinHeaderSpace } from '../../presentational/shared/static/CSSvariables';
 
 class Request_Detail extends Component {
   constructor(props) {
@@ -187,31 +189,33 @@ class Request_Detail extends Component {
       return (
         <div>
           <Header loginUser={loginUser} />
-          <Request_Description
-            h1Title="送信済リクエスト詳細"
-            firstPartTitle="あなたの引き換え商品"
-            firstPart={joinItem.name}
-            secondPartTitle="リクエスト商品"
-            tableItem={hostItem}
-            tableKey={requestDeal.hostItem}
-            swiperImages={itemImages}
-            pickup={requestDeal.pickups}
-          />
-          <div>
-            <h2>希望時間</h2>
-            <ul>{meetingList}</ul>
-          </div>
-          {
-            this.state.request.note &&
-            <div>
-              <h2>補足</h2>
-              <p>{this.state.request.note}</p>
-            </div>
-          }
-          <div>
-            <h2>リクエスト状況</h2>
-            {requestStatusView}
-          </div>
+          <Body>
+            <Styled_Request_Description
+              h1Title="送信済リクエスト詳細"
+              firstPartTitle="あなたの引き換え商品"
+              firstPart={joinItem.name}
+              secondPartTitle="リクエスト商品"
+              tableItem={hostItem}
+              tableKey={requestDeal.hostItem}
+              swiperImages={itemImages}
+              pickup={requestDeal.pickups}
+            />
+            <MeetingDiv>
+              <h2>希望時間</h2>
+              <ul>{meetingList}</ul>
+            </MeetingDiv>
+            {this.state.request.note && (
+              <NoteDiv>
+                <h2>補足</h2>
+                <p>{this.state.request.note}</p>
+              </NoteDiv>
+            )}
+            <RequestStatusDiv>
+              <h2>リクエスト状況</h2>
+              {requestStatusView}
+            </RequestStatusDiv>
+          </Body>
+          <Footer />
         </div>
       );
     }
@@ -219,3 +223,91 @@ class Request_Detail extends Component {
 }
 
 export default Request_Detail;
+
+const Body = styled.div`
+  ${mixinHeaderSpace};
+  width: 77%;
+  margin-left: auto;
+  margin-right: auto;
+`;
+
+const Styled_Request_Description = styled(Request_Description)`
+  padding-top: 1rem;
+`;
+
+const MeetingDiv = styled.div`
+  margin-left: 1rem;
+  margin-top: 0.65rem;
+
+  h2 {
+    display: inline-block;
+    position: relative;
+
+    &::before {
+      content: '';
+      height: 3px;
+      width: 100%;
+      position: absolute;
+      top: 2rem;
+      background: ${Colors.subcolor1};
+    }
+  }
+
+  ul {
+    margin-top: 0.4rem;
+    margin-left: 2rem;
+    font-size: 1.15rem;
+    list-style: none;
+  }
+`;
+
+const NoteDiv = styled.div`
+  margin-left: 1rem;
+  margin-top: 0.65rem;
+
+  h2 {
+    display: inline-block;
+    position: relative;
+
+    &::before {
+      content: '';
+      height: 3px;
+      width: 100%;
+      position: absolute;
+      top: 2rem;
+      background: ${Colors.subcolor1};
+    }
+  }
+
+  p {
+    margin-top: 0.4rem;
+    margin-left: 2rem;
+    font-size: 1.15rem;
+    white-space:pre-wrap:
+  }
+`;
+
+const RequestStatusDiv = styled.div`
+  margin-left: 1rem;
+  margin-top: 0.65rem;
+
+  h2 {
+    display: inline-block;
+    position: relative;
+
+    &::before {
+      content: '';
+      height: 3px;
+      width: 100%;
+      position: absolute;
+      top: 2rem;
+      background: ${Colors.subcolor1};
+    }
+  }
+
+  p {
+    margin-top: 0.4rem;
+    margin-left: 2rem;
+    font-size: 1.15rem;
+  }
+`;
