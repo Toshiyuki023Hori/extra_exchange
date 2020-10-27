@@ -89,7 +89,7 @@ const SecondPartDiv = styled.div`
 `;
 
 const Styled_Item_Table = styled(Item_Table)`
-  margin: 1rem auto 1rem auto;
+  margin: 1rem auto;
 `;
 
 const PickupPlaceDiv = styled.div`

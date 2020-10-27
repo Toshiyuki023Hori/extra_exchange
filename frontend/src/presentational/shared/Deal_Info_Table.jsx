@@ -21,7 +21,7 @@ class Deal_Info_Table extends Component {
 
     if(joinOrHost === "join"){
         tableView = (
-        <TableSelf>
+        <TableSelf className={this.props.className}>
           <tr>
             <TableHead>ホスト</TableHead>
             <TableData>{item.hostUser}</TableData>
@@ -49,7 +49,7 @@ class Deal_Info_Table extends Component {
         )
       } else if(joinOrHost === "host") {
         tableView = (
-        <TableSelf>
+        <TableSelf className={this.props.className}>
           <tr>
             <TableHead>ジョインユーザー</TableHead>
             <TableData>{item.joinUser}</TableData>
@@ -87,7 +87,7 @@ class Deal_Info_Table extends Component {
 export default Deal_Info_Table;
 
 const TableSelf = styled.table`
-  width: 44%;
+  width: 60%;
   border: solid 2px;
   border-collapse: collapse;
 `;

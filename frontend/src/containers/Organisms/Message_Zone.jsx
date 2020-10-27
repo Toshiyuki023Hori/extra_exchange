@@ -14,8 +14,10 @@ class Message_Zone extends Component {
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.deleteMessage = this.deleteMessage.bind(this);
   }
 
+  // Dealが持つMessageを全て取得し、stateにセットするfunction
   setMessages = () => {
     const { axiosUrl, deal_id } = this.props;
     axios
@@ -28,19 +30,18 @@ class Message_Zone extends Component {
         }
       })
       .catch((err) => console.log(err));
-  };
+  }; // setMessages closing
 
   componentDidMount() {
     this.setMessages();
-  }
-  
+  } // componentDidMount closing
 
   handleChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
 
     this.setState({ [name]: value });
-  };
+  }; // handleChangeClosing
 
   handleSubmit = async () => {
     const { deal_id, loginUser, axiosUrl } = this.props;
@@ -62,10 +63,31 @@ class Message_Zone extends Component {
         authHeader
       )
       .then((res) => console.log(res.data))
-      .catch((err) => window.alert(err.response.data));
+      .catch((err) => window.alert('未記入で送信はできません。'));
 
+    // submit後に画面にも反映させたいので、stateを更新
     this.setMessages();
     this.setState({ message: '' });
+  }; // handleSubmit closing
+
+  deleteMessage = async (message_id, messageOwner) => {
+    const token = localStorage.getItem('token');
+    const authHeader = {
+      headers: {
+        Authorization: 'Token ' + token,
+      },
+    };
+    const result = window.confirm('このメッセージを削除してもよろしいですか?');
+
+    if (result && this.props.loginUser.id == messageOwner) {
+      await axios
+        .delete(this.props.axiosUrl + 'private/' + message_id, authHeader)
+        .then((res) => console.log(res.data))
+        .catch((err) => window.alert('コメントの削除に失敗しました'));
+      this.setMessages();
+    } else {
+      window.alert('メッセージは、メッセージを投稿したユーザー自身でしか削除できません。');
+    }
   };
 
   render() {
@@ -83,6 +105,8 @@ class Message_Zone extends Component {
             background={Colors.accent2}
             text={messageObj.message}
             commenter={messageObj.owner}
+            isHost={messageObj.owner == this.props.hostUser}
+            onClick={() => this.deleteMessage(messageObj.id, messageObj.owner)}
           />
         );
       });
@@ -92,20 +116,21 @@ class Message_Zone extends Component {
       return null;
     } else {
       return (
-        <CommentWrapper>
+        <div>
           <h3>メッセージ</h3>
-          {messagesView}
-          <input
-            value={message}
-            type="text"
-            name="message"
-            onChange={this.handleChange}
-            placeholder="メッセージを入力してください"
-          />
-          <button type="submit" onClick={this.handleSubmit}>
-            送信
-          </button>
-        </CommentWrapper>
+          <CommentDiv>{messagesView}</CommentDiv>
+          <SubmitDiv>
+            <textarea
+              value={message}
+              name="message"
+              onChange={this.handleChange}
+              placeholder="メッセージを入力してください"
+            />
+            <button type="submit" onClick={this.handleSubmit}>
+              送信
+            </button>
+          </SubmitDiv>
+        </div>
       );
     }
   }
@@ -113,8 +138,39 @@ class Message_Zone extends Component {
 
 export default Message_Zone;
 
-const CommentWrapper = styled.div`
-  width: 77%;
-  margin-left: auto;
-  margin-right: auto;
+const CommentDiv = styled.div`
+  margin-top: 1rem;
+`;
+
+const SubmitDiv = styled.div`
+  display: flex;
+  justify-content: center;
+
+  textarea {
+    display: block;
+    height: 3rem;
+    width: 80%;
+    border: 1px solid ${Colors.characters};
+    resize: none;
+    outline: none;
+
+    &::placeholder {
+      color: ${Colors.characters};
+      vertical-align: center;
+      position: relative;
+      top: 0.75rem;
+    }
+  }
+
+  button {
+    display: block;
+    width: 10%;
+    height: 3rem;
+    color: ${Colors.subcolor1};
+    border-top: 1px solid ${Colors.accent2};
+    border-right: 1px solid ${Colors.accent2};
+    border-bottom: 1px solid ${Colors.accent2};
+    background: ${Colors.accent1};
+    outline: none;
+  }
 `;
