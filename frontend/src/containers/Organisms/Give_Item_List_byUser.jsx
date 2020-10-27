@@ -101,6 +101,7 @@ class Give_Item_List_byUser extends Component {
                   [parent_id]: {
                     ...parentItems[parent_id],
                     give_id: res.data[0].id,
+                    doneDeal:res.data[0].doneDeal,
                     pickups: pickupList,
                   },
                 }; // parentItems(スプレッド) closing
@@ -193,6 +194,8 @@ class Give_Item_List_byUser extends Component {
             bland={currentItems[parent_id]['bland']}
             image={currentItems[parent_id]['image']}
             pickups={currentItems[parent_id]['pickups']}
+            doneDeal={currentItems[parent_id]['doneDeal']}
+            fromListByUser='true'
           />
         );
       });

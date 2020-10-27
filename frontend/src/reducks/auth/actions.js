@@ -130,6 +130,7 @@ export const authSignup = (username, email, password) => {
         // getUserId内でauthSuccessが実行され、auth_SUCCESSへuid, tokenがセット
         dispatch(checkAuthTimeout(3600));
         dispatch(getUserId(username));
+        history.push('/about');
       })
       .catch((err) => {
         console.log(err.response);

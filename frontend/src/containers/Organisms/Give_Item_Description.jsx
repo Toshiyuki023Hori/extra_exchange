@@ -149,10 +149,12 @@ class Give_Item_Description extends Component {
 
   render() {
     const { parentItem, giveItem, pickups, images, loading, sentRequest } = this.state;
+    const owner = parentItem.owner;
     let editButton;
     let deleteButton;
     let requestButton;
     let pickupView;
+    let alertMessage;
 
     // dateTimeを表示用にフォーマット。
     const formatDataForDisplay = (dataTime) => {
@@ -162,6 +164,8 @@ class Give_Item_Description extends Component {
       const day = dataTime.slice(8, 10);
       return `${year}年${month}月${day}日`;
     };
+
+    const isOwner = owner == this.props.loginUser.id;
 
     // ピックアップの表示分岐
     if (pickups.length !== 0) {
@@ -176,33 +180,73 @@ class Give_Item_Description extends Component {
       pickupView = <UnregisteredPtag>未登録</UnregisteredPtag>;
     }
 
-    // 訪問者がownerか否かで表示を変える。
-    if (parentItem.owner === this.props.loginUser.id) {
-      editButton = (
-        <SubmitButton btn_type="button" btn_click={this.jumpToEdit}>
-          編集
-        </SubmitButton>
-      );
-      deleteButton = (
-        <BackButton btn_type="button" btn_click={this.handleDelete}>
-          削除
-        </BackButton>
-      );
-    } else {
-      // ownerじゃないなら編集・削除はできない
-      if (sentRequest === false) {
+    // 取引完了かを基準に条件分岐
+    if (this.state.giveItem.doneDeal) {
+      // Owner以外なら交換完了の文章を表示
+      if (this.props.loginUser == 'なし' || !isOwner) {
         requestButton = (
-          <SubmitButton btn_click={this.jumpToRequest}>リクエストを送る</SubmitButton>
-        );
-        // sentRequestがtrueなら送信済なので、二重で送信させない。
-      } else {
-        requestButton = (
-          <SubmitButton btn_click={this.jumpToRequest} btn_disable={sentRequest}>
-            リクエスト送信済
+          <SubmitButton btn_type="button" btn_click={this.jumpToRequest} btn_disable="true">
+            交換済み
           </SubmitButton>
         );
+
+        alertMessage = <AlertPtag>この商品はすでに交換が完了しています</AlertPtag>;
+      } // Ownerなら編集・削除不可の文章を表示
+      else if (isOwner) {
+        editButton = (
+          <SubmitButton btn_type="button" btn_click={this.jumpToEdit} btn_disable="true">
+            編集
+          </SubmitButton>
+        );
+
+        deleteButton = (
+          <BackButton btn_type="button" btn_click={this.handleDelete} btn_disable="true">
+            削除
+          </BackButton>
+        );
+
+        alertMessage = <AlertPtag>交換済みアイテムの編集・削除はできません</AlertPtag>;
       }
     }
+    // 交換完了パターン終了
+    else if (!this.state.giveItem.doneDeal) {
+      // ゲストにはリクエスト送信を許可しない
+      if (this.props.loginUser == 'なし') {
+        requestButton = (
+          <SubmitButton btn_type="button" btn_click={this.jumpToRequest} btn_disable="true">
+            リクエストを送る
+          </SubmitButton>
+        );
+
+        alertMessage = <AlertPtag>リクエストを送るにはユーザー登録が必要です</AlertPtag>;
+      } //Owner は編集・削除ボタンの表示
+      else if (isOwner) {
+        editButton = (
+          <SubmitButton btn_type="button" btn_click={this.jumpToEdit}>
+            編集
+          </SubmitButton>
+        );
+        deleteButton = (
+          <BackButton btn_type="button" btn_click={this.handleDelete}>
+            削除
+          </BackButton>
+        );
+      } // 通常のユーザーはリクエスト送信済かで分岐
+      else if (!isOwner) {
+        if (sentRequest) {
+          requestButton = (
+            <SubmitButton btn_click={this.jumpToRequest} btn_disable={sentRequest}>
+              リクエスト送信済
+            </SubmitButton>
+          );
+        } else {
+          requestButton = (
+            <SubmitButton btn_click={this.jumpToRequest}>リクエストを送る</SubmitButton>
+          );
+        }
+      }
+    } // 交換未完了パターン終了
+
     if (loading === true) {
       return <CircularProgress />;
     }
@@ -218,6 +262,7 @@ class Give_Item_Description extends Component {
           <CategoryTag category_name={giveItem.category} />
           <PickupPtag>ピックアップ地点</PickupPtag>
           {pickupView}
+          {alertMessage}
           <ButtonDiv>
             {editButton}
             {deleteButton}
@@ -303,4 +348,16 @@ const BackButton = styled(MiddleButton)`
     box-shadow: 0px 0px 0px;
     transform: translate(4px, 3px);
   }
+
+  &:disabled {
+    background: #b6cbd7;
+  }
+`;
+
+const AlertPtag = styled.p`
+  margin: 1.5rem auto;
+  width: 23em;
+  font-size: 1.2rem;
+  color: ${Colors.accent1};
+  text-align:center;
 `;
