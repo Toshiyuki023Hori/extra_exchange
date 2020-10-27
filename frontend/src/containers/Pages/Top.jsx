@@ -66,14 +66,14 @@ class Top extends Component {
     if (this.state.categories != '') {
       giveItemView = this.state.categories.map((category) => {
         return (
-          <Give_Item_List
+          <Styled_Give_Item_List
             id={'#' + category.id}
             axiosUrl="http://localhost:8000/api/"
             h2title="の投稿一覧"
             category={category}
             margin_top="20px"
             margin_bottom="20px"
-            position_left="2rem"
+            position_left="3rem"
           />
         );
       });
@@ -133,6 +133,8 @@ const Wrapper = styled.div`
 `;
 
 const Category_Bar = styled.div`
+  width:95%;
+  margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
@@ -175,4 +177,10 @@ const Others = styled.p`
       font-weight: bold;
     }
   }
+`;
+
+const Styled_Give_Item_List = styled(Give_Item_List)`
+  width:95%;
+  margin-left:auto;
+  margin-right:auto;
 `;

@@ -8,6 +8,7 @@ import Header from '../Organisms/Header';
 import Footer from '../Organisms/Footer';
 import Request_Description from '../Organisms/Request_Description';
 import MiddleButton from '../../presentational/shared/MiddleButton';
+import ValidationMessage from '../../presentational/shared/ValidationMessage';
 import {
   Colors,
   mixinHeaderSpace,
@@ -319,8 +320,14 @@ class Request_Confirm extends Component {
               <MeetingDiv>
                 <h2>希望時間</h2>
                 {meetingList}
-                <p>{this.state.message.meetingTime}</p>
               </MeetingDiv>
+              <ValidationMessage
+                errorMessage={this.state.message.meetingTime}
+                isShowup={this.state.message.meetingTime != ''}
+                text_color="#FF737A"
+                margin="1rem auto"
+                bg_color="#FFBFC2"
+              />
               {this.state.request.note && (
                 <NoteDiv>
                   <h2>補足</h2>

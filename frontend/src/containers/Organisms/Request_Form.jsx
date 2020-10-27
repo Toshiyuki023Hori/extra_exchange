@@ -545,7 +545,7 @@ const DateTimeForm = styled.div`
     box-sizing: border-box;
     font-size: 1.3rem;
     color: ${Colors.characters};
-    appearance: none;
+    outline: none;
   }
   input[type='time'] {
     position: relative;
@@ -557,7 +557,7 @@ const DateTimeForm = styled.div`
     box-sizing: border-box;
     font-size: 1.3rem;
     color: ${Colors.characters};
-    appearance: none;
+    outline: none;
   }
 `;
 

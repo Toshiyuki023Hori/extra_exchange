@@ -104,4 +104,5 @@ const Styled_Category_List = styled(Category_List)`
 const Styled_Give_Item_List = styled(Give_Item_List)`
   padding: 20px 15px;
   border-bottom: none;
+  flex:1;
 `;

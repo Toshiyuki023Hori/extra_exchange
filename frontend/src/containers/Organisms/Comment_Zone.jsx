@@ -69,7 +69,7 @@ class Comment_Zone extends Component {
     this.setState({ comment: '' });
   };
 
-  deleteComment = async (comment_id, comment_owner) => {
+  deleteComment = async (comment_id, commentOwner) => {
     const token = localStorage.getItem('token');
     const authHeader = {
       headers: {
@@ -78,8 +78,11 @@ class Comment_Zone extends Component {
     };
     const result = window.confirm('このコメントを削除してよろしいですか?');
 
-    if (result && comment_owner == this.props.loginUser.id) {
-      await axios.delete(this.props.axiosUrl + 'comment/' + comment_id, authHeader);
+    if (result && commentOwner == this.props.loginUser.id) {
+      await axios
+        .delete(this.props.axiosUrl + 'comment/' + comment_id, authHeader)
+        .then((res) => console.log(res.data))
+        .catch((err) => window.alert('コメントの削除に失敗しました'));
       this.setComments();
     } else {
       window.alert('コメントは、コメントを投稿したユーザー自身でしか削除できません。');

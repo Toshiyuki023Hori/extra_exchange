@@ -38,7 +38,7 @@ export default function Item_Table(props) {
 }
 
 const TableSelf = styled.table`
-  width: 44%;
+  width: 60%;
   border: solid 2px;
   border-collapse: collapse;
 `;

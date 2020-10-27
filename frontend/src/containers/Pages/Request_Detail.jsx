@@ -187,8 +187,8 @@ class Request_Detail extends Component {
     if (request.denied === true) {
       requestStatusView = (
         <>
-          <p>拒否</p>
-          <p>{request.deniedReason}</p>
+          <StatusPtag>拒否</StatusPtag>
+          <ReasonPtag>{request.deniedReason}</ReasonPtag>
         </>
       );
 
@@ -198,11 +198,11 @@ class Request_Detail extends Component {
         </DeleteButton>
       );
     } else if (request.accepted === true) {
-      requestStatusView = <p>承認</p>;
+      requestStatusView = <StatusPtag>承認</StatusPtag>;
 
       deleteButton = <AcceptedButton btn_disable="true">承認済のため削除不可</AcceptedButton>;
     } else if (request.accepted === false) {
-      requestStatusView = <p>未承認</p>;
+      requestStatusView = <StatusPtag>未承認</StatusPtag>;
 
       deleteButton = (
         <DeleteButton btn_type="submit" btn_click={this.deleteRequest}>
@@ -376,4 +376,15 @@ const AcceptedButton = styled(MiddleButton)`
   background: #b6cbd7;
   color: ${Colors.subcolor1};
   box-shadow: 4px 3px ${Colors.accent1};
+`;
+
+const StatusPtag = styled.p`
+  font-weight: bolder;
+  font-size: 1.1rem;
+`;
+
+const ReasonPtag = styled.p`
+  padding:1rem;
+  border:3.5px dashed ${Colors.accent1};
+  border-radius:1rem;
 `;
