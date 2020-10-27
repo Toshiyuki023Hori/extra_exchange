@@ -227,7 +227,7 @@ class Give_Item_List extends Component {
 export default Give_Item_List;
 
 const Wrapper = styled.div`
-  width:100%;
+  /* width:100%; */
   margin-top:${(props) => props.margin_top};
   margin-bottom:${(props) => props.margin_bottom};
   margin-left:${(props) => props.margin_left};

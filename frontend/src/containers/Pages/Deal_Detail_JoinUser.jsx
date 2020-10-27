@@ -121,7 +121,7 @@ class Deal_Detail_JoinUser extends Component {
 
     if (result) {
       axios
-        .delete(localhostUrl + 'deal/' + this.state.deal.id, authHeader)
+        .delete(localhostUrl + 'requestdeal/' + this.state.requestDeal.id, authHeader)
         .then((res) => {
           window.alert('削除に成功しました。');
           history.push('/deal/proceeding/join');
@@ -139,25 +139,22 @@ class Deal_Detail_JoinUser extends Component {
     // 取引成立報告後はボタンを切り替える
     if (this.state.deal.joinUserAccept) {
       submitButton = (
-        <MiddleButton
-          btn_name="報告済み"
-          btn_type="submit"
-          btn_click={this.handleSubmit}
-          btn_disable="true"
-        />
+        <SubmitButton btn_type="submit" btn_click={this.handleSubmit} btn_disable="true">
+          報告済み
+        </SubmitButton>
       );
 
-      deleteButton = <MiddleButton btn_name="報告後は削除できません" btn_disable="true" />;
+      deleteButton = <DeleteButton btn_disable="true">報告後は削除できません</DeleteButton>;
     } else {
       submitButton = (
-        <MiddleButton btn_name="取引成立を報告" btn_type="submit" btn_click={this.handleSubmit} />
+        <SubmitButton btn_type="submit" btn_click={this.handleSubmit}>
+          取引成立を報告
+        </SubmitButton>
       );
       deleteButton = (
-        <MiddleButton
-          btn_name="取引をキャンセルする"
-          btn_type="submit"
-          btn_click={this.deleteDeal}
-        />
+        <DeleteButton btn_type="submit" btn_click={this.deleteDeal}>
+          取引をキャンセルする
+        </DeleteButton>
       );
     }
 
@@ -179,12 +176,16 @@ class Deal_Detail_JoinUser extends Component {
               axiosUrl="http://localhost:8000/api/"
               hostUser={this.state.requestDeal.hostUser}
             />
-            <div>
+            <SubmitDiv>
               <h3>取引完了までの流れ</h3>
-              <p>ジョインユーザーの取引成立の報告 → ホストユーザーの取引完了の報告 → 終了</p>
-              {submitButton}
-              {deleteButton}
-            </div>
+              <Explanation>
+                ジョインユーザーの取引成立の報告 → ホストユーザーの取引完了の報告 → 終了
+              </Explanation>
+              <ButtonDiv>
+                {submitButton}
+                {deleteButton}
+              </ButtonDiv>
+            </SubmitDiv>
           </Body>
           <Footer />
         </div>
@@ -204,4 +205,65 @@ const Body = styled.div`
 
 const Styled_Deal_Info_Table = styled(Deal_Info_Table)`
   margin: 1rem auto;
+`;
+
+const SubmitDiv = styled.div`
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 3px solid ${Colors.accent1};
+`;
+
+const Explanation = styled.p`
+  display: block;
+  position: relative;
+  padding: 0.3rem 0.6rem;
+  border: 2.5px solid #70aacc;
+  width: 40em;
+  margin: 2rem auto;
+  text-align: center;
+  font-size: 1.2rem;
+`;
+
+const SubmitButton = styled(MiddleButton)`
+  display: block;
+  background: ${(props) => (!props.btn_disable ? '#8DD6FF' : '#E0F4FF')};
+  color: ${(props) => (!props.btn_disable ? '#466A80' : '#BDCFDA')};
+  box-shadow: 4px 3px ${Colors.accent1};
+
+  &:hover:enabled {
+    background-color: #a8e0ff;
+    transition: all 200ms linear;
+  }
+
+  &:active:enabled {
+    box-shadow: 0px 0px 0px;
+    transform: translate(4px, 3px);
+  }
+`;
+
+const DeleteButton = styled(MiddleButton)`
+  display: block;
+  background: ${Colors.accent2};
+  color: ${Colors.subcolor1};
+  box-shadow: 4px 3px ${Colors.accent1};
+
+  &:hover {
+    background-color: #6792ab;
+    transition: all 200ms linear;
+  }
+
+  &:active {
+    box-shadow: 0px 0px 0px;
+    transform: translate(4px, 3px);
+  }
+
+  &:disabled {
+    background:#b6cbd7;
+  }
+`;
+
+const ButtonDiv = styled.div`
+  margin-top: 2rem;
+  display: flex;
+  justify-content: space-evenly;
 `;

@@ -116,7 +116,7 @@ class Message_Zone extends Component {
       return null;
     } else {
       return (
-        <div>
+        <Wrapper>
           <h3>メッセージ</h3>
           <CommentDiv>{messagesView}</CommentDiv>
           <SubmitDiv>
@@ -130,13 +130,18 @@ class Message_Zone extends Component {
               送信
             </button>
           </SubmitDiv>
-        </div>
+        </Wrapper>
       );
     }
   }
 }
 
 export default Message_Zone;
+
+const Wrapper = styled.div`
+  border-top:3px solid ${Colors.accent1};
+  padding-top:1rem;
+`;
 
 const CommentDiv = styled.div`
   margin-top: 1rem;
