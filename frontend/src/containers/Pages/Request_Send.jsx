@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import styled from 'styled-components';
+import history from '../../history';
 import axios from 'axios';
 import Header from '../Organisms/Header';
 import Footer from '../Organisms/Footer';
@@ -47,6 +48,10 @@ class Request_Send extends Component {
           this.setState({ hostUser: resParent.data.owner });
         })
       );
+
+    if (itemsForState[parent_id].owner == this.state.loginUser.id) {
+      history.push('/top');
+    }
 
     await axios
       .get(localhostUrl + 'giveitem/?parent_item=' + parent_id)
