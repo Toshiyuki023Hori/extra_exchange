@@ -222,16 +222,6 @@ const SubMenuDiv = styled.div`
     opacity: 0;
     z-index: 31;
 
-<<<<<<< HEAD
-  a{
-    text-decoration:none;
-    color:${Colors.characters};
-
-    &:hover{
-      font-weight:700;
-    }
-  }
-=======
     a {
       text-decoration: none;
       color: ${Colors.characters};
@@ -240,7 +230,6 @@ const SubMenuDiv = styled.div`
         font-weight: 700;
       }
     }
->>>>>>> e92a7b90e4c625806d3bc8f447a28b7c9a8c3b4a
 
     &:hover {
       top: 22px;
