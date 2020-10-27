@@ -232,7 +232,7 @@ class Request_Confirm extends Component {
           },
           authHeader
         )
-        .then((res) => console.log(res.data))
+        .then((res) => history.push('/request/applied'))
         .catch((err) => console.log(err));
     }
   };
@@ -264,11 +264,9 @@ class Request_Confirm extends Component {
     );
 
     const denyButton = (
-      <DeleteButton
-        btn_name="リクエストを拒否する"
-        btn_type="submit"
-        btn_click={this.denyRequest}
-      />
+      <DeleteButton btn_type="submit" btn_click={this.denyRequest}>
+        リクエストを拒否する
+      </DeleteButton>
     );
 
     const formatDataForDisplay = (dataTime) => {

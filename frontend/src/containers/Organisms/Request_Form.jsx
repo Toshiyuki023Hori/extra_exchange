@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import history from '../../history';
-import { CircularProgress } from '@material-ui/core';
 import MiddleButton from '../../presentational/shared/MiddleButton';
-import { Colors } from '../../presentational/shared/static/CSSvariables';
+import ValidationMessage from '../../presentational/shared/ValidationMessage';
+import { CircularProgress } from '@material-ui/core';
+import { Colors, mixinTextArea } from '../../presentational/shared/static/CSSvariables';
 
 class Request_Form extends Component {
   constructor(props) {
@@ -14,11 +15,11 @@ class Request_Form extends Component {
         joinItem: '',
         pickup: '',
         date1: '',
-        time1:'',
+        time1: '',
         date2: '',
-        time2:'',
+        time2: '',
         date3: '',
-        time3:'',
+        time3: '',
         note: '',
       },
       message: {
@@ -57,6 +58,7 @@ class Request_Form extends Component {
               parentItems = { ...parentItems, [parentObj.id]: { name: parentObj.name } };
             });
           } else {
+            // GiveItem, WantItem両方未登録
             itemsForState = '商品が投稿されていません';
           }
           // pickupを登録しているかで条件分岐
@@ -93,7 +95,7 @@ class Request_Form extends Component {
               } //    if(res.data.length !== 0) closing
             }) //     then closing
             .catch((err) => console.log(err));
-          //  axios.get Fin
+          //        axios.get Fin
         }) //       map closing
       ); //         Promise.all Closing
 
@@ -121,6 +123,7 @@ class Request_Form extends Component {
         }) // map closing
       ); //    Promise all closing
     } else {
+      // GiveItemを出品していない場合
       itemsForState = '商品が投稿されていません';
     }
 
@@ -161,22 +164,36 @@ class Request_Form extends Component {
     let reqDeal_id;
 
     let result = window.confirm(
-      'こちらのリクエストを送信しますか？\n送信後は編集は行えません(削除をすることはできます)。'
+      'こちらのリクエストを送信しますか？\n送信後は編集は行えません(削除は可能です)。'
     );
 
     if (result) {
-      // inputに入力されているmeetingTimeをarrayにまとめるfunction
-      const hasValueInMeeting = (meeting) => {
-        if (meeting != '') {
-          meetingList = [...meetingList, meeting];
-        } else {
-        }
+      const concatDateAndTime = (date, time) => {
+        let dateTime = date + 'T' + time;
+        meetingList = [...meetingList, dateTime];
       };
 
-      // 全inputに実行 = 未入力のinputを除外する役割も担当
-      hasValueInMeeting(this.state.info.date1);
-      hasValueInMeeting(this.state.info.date2);
-      hasValueInMeeting(this.state.info.date3);
+      if (this.state.info.date1 != '' && this.state.info.time1 != '') {
+        concatDateAndTime(this.state.info.date1, this.state.info.time1);
+      } else {
+      }
+      if (this.state.info.date2 != '' && this.state.info.time2 != '') {
+        concatDateAndTime(this.state.info.date2, this.state.info.time2);
+      } else {
+      }
+      if (this.state.info.date3 != '' && this.state.info.time3 != '') {
+        concatDateAndTime(this.state.info.date3, this.state.info.time3);
+      } else {
+      }
+
+      // Validation時の条件分岐に使用するfunction
+      const isEmpty = (date, time) => {
+        if (date == '' || time == '') {
+          return true;
+        } else {
+          return false;
+        }
+      };
 
       // validation時にエラーメッセージを代入するfunction
       const setMessageToState = (key, value) => {
@@ -184,7 +201,7 @@ class Request_Form extends Component {
       };
 
       // Validationに引っかかった後に、再送信をした後、前回のValidationの影響を消すため。
-      this.setState({
+      await this.setState({
         message: {
           joinItem: '',
           pickup: '',
@@ -202,9 +219,9 @@ class Request_Form extends Component {
         setMessageToState('pickup', 'ピックアップ場所を選んでください。');
         // Validation(date未入力)
       } else if (
-        this.state.info.date1 == '' &&
-        this.state.info.date2 == '' &&
-        this.state.info.date3 == ''
+        isEmpty(this.state.info.date1, this.state.info.time1) &&
+        isEmpty(this.state.info.date2, this.state.info.time2) &&
+        isEmpty(this.state.info.date3, this.state.info.time3)
       ) {
         setMessageToState('date1', '取引日時を決めてください。');
       } else {
@@ -264,7 +281,7 @@ class Request_Form extends Component {
               console.log(res);
               reqDeal_id = res.data.id;
             })
-            .catch((err) => console.log(err.responsee));
+            .catch((err) => console.log(err.response));
 
           // Requestモデルの作成
           await axios
@@ -346,8 +363,10 @@ class Request_Form extends Component {
     } else {
       itemsView = (
         <>
-          <p>{this.state.allItems}</p>
-          <a href="/give/add">商品を出品する(出品された商品から、引き換え商品は選択されます)</a>
+          <NotHaveText>{this.state.allItems}</NotHaveText>
+          <NotHaveLink href="/give/add">
+            商品を出品する(出品された商品から、引き換え商品は選択されます)
+          </NotHaveLink>
         </>
       );
     }
@@ -373,10 +392,10 @@ class Request_Form extends Component {
     } else {
       pickupsView = (
         <>
-          <p>{this.state.allPickup}</p>
-          <a href={'/give/detail/' + this.props.hostItem}>
-            ホストユーザーにコメントで相談してみましょう
-          </a>
+          <NotHaveText>{this.state.allPickup}</NotHaveText>
+          <NotHaveLink href={'/give/detail/' + this.props.hostItem}>
+            ホストユーザーにコメントでピックアップ地点の登録をお願いしましょう
+          </NotHaveLink>
         </>
       );
     }
@@ -389,88 +408,83 @@ class Request_Form extends Component {
           <Choice_Div>
             <h3>引き換える商品(あなたの出品リストより)</h3>
             {itemsView}
-            <p>{this.state.message.joinItem}</p>
+            <ValidationMessage
+              errorMessage={this.state.message.joinItem}
+              isShowup={this.state.message.joinItem != ''}
+              text_color="#FF737A"
+              margin="10px 0px 0px 155px"
+              bg_color="#FFBFC2"
+            />
           </Choice_Div>
           <Choice_Div>
             <h3>ピックアップ地点(出品者のピックアップ地点より)</h3>
             {pickupsView}
-            <p>{this.state.message.pickup}</p>
+            <ValidationMessage
+              errorMessage={this.state.message.pickup}
+              isShowup={this.state.message.pickup != ''}
+              text_color="#FF737A"
+              margin="10px 0px 0px 155px"
+              bg_color="#FFBFC2"
+            />
           </Choice_Div>
           <Choice_Div>
             <h3>取引希望日時(第3希望まで選んでください)</h3>
-            <div>
-              <p>{this.state.message.date1}</p>
+
+            <Meetingd_Div>
               <label>日程候補1</label>
               <DateTimeForm>
                 <label>
-                  <input
-                    name="date1"
-                    type="date"
-                    onChange={this.handleChange}
-                  />
+                  <input name="date1" type="date" onChange={this.handleChange} />
                 </label>
               </DateTimeForm>
               <DateTimeForm>
                 <label>
-                  <input
-                    name="time1"
-                    type="time"
-                    onChange={this.handleChange}
-                  />
+                  <input name="time1" type="time" onChange={this.handleChange} />
                 </label>
               </DateTimeForm>
-            </div>
-            <div>
+            </Meetingd_Div>
+
+            <Meetingd_Div>
               <label>日程候補2</label>
               <DateTimeForm>
                 <label>
-                  <input
-                    name="date2"
-                    type="date"
-                    onChange={this.handleChange}
-                  />
+                  <input name="date2" type="date" onChange={this.handleChange} />
                 </label>
               </DateTimeForm>
               <DateTimeForm>
                 <label>
-                  <input
-                    name="time2"
-                    type="time"
-                    onChange={this.handleChange}
-                  />
+                  <input name="time2" type="time" onChange={this.handleChange} />
                 </label>
               </DateTimeForm>
-            </div>
-            <div>
+            </Meetingd_Div>
+
+            <Meetingd_Div>
               <label>日程候補3</label>
               <DateTimeForm>
                 <label>
-                  <input
-                    name="date3"
-                    type="date"
-                    onChange={this.handleChange}
-                  />
+                  <input name="date3" type="date" onChange={this.handleChange} />
                 </label>
               </DateTimeForm>
               <DateTimeForm>
                 <label>
-                  <input
-                    name="time3"
-                    type="time"
-                    onChange={this.handleChange}
-                  />
+                  <input name="time3" type="time" onChange={this.handleChange} />
                 </label>
               </DateTimeForm>
-            </div>
+            </Meetingd_Div>
+
+            <ValidationMessage
+              errorMessage={this.state.message.date1}
+              isShowup={this.state.message.date1 != ''}
+              text_color="#FF737A"
+              margin="10px 0px 0px 155px"
+              bg_color="#FFBFC2"
+            />
           </Choice_Div>
-          <div>
+          <Choice_Div>
             <h3>補足</h3>
-            <textarea name="note" id="" cols="30" rows="10" onChange={this.handleChange}></textarea>
-          </div>
-          <SubmitButton
-            btn_type="submit"
-            btn_click={this.handleSubmit}
-          >
+            <StyledTextArea name="note" onChange={this.handleChange}></StyledTextArea>
+          </Choice_Div>
+          <SubmitButton btn_type="submit" btn_click={this.handleSubmit}>
             リクエストを送る
           </SubmitButton>
         </div>
@@ -488,7 +502,7 @@ const Choice_Div = styled.div`
 
 const StyledULtag = styled.ul`
   list-style: none;
-  margin-top: 1rem;
+  margin-top: 1.8rem;
 
   li {
     margin-left: 6rem;
@@ -501,16 +515,27 @@ const StyledULtag = styled.ul`
   }
 `;
 
+const Meetingd_Div = styled.div`
+  margin-left: 5.5rem;
+  margin-top: 1rem;
+
+  label {
+    font-size: 1.1rem;
+  }
+`;
+
 const DateTimeForm = styled.div`
+  margin-top: 0.6rem;
+
   label {
     position: relative;
     display: inline-block;
     width: 15rem;
     height: 2rem;
-    border: 2px solid #ccc;
+    border: 2px solid ${Colors.accent1};
     border-radius: 0.4rem;
   }
-  input[type='datetime-local'] {
+  input[type='date'] {
     position: relative;
     padding: 0 10px;
     width: 15rem;
@@ -519,8 +544,30 @@ const DateTimeForm = styled.div`
     background: transparent;
     box-sizing: border-box;
     font-size: 1.3rem;
-    color: #999;
+    color: ${Colors.characters};
+    appearance: none;
   }
+  input[type='time'] {
+    position: relative;
+    padding: 0 10px;
+    width: 15rem;
+    height: 2rem;
+    border: 0;
+    background: transparent;
+    box-sizing: border-box;
+    font-size: 1.3rem;
+    color: ${Colors.characters};
+    appearance: none;
+  }
+`;
+
+const StyledTextArea = styled.textarea`
+  ${mixinTextArea};
+  margin: 0.4rem auto 0rem auto;
+  width: 75%;
+  display: block;
+  font-size: 1.15rem;
+  white-space: pre-wrap;
 `;
 
 const SubmitButton = styled(MiddleButton)`
@@ -538,5 +585,22 @@ const SubmitButton = styled(MiddleButton)`
   &:active:enabled {
     box-shadow: 0px 0px 0px;
     transform: translate(4px, 3px);
+  }
+`;
+
+const NotHaveText = styled.p`
+  margin-top: 1.2rem;
+  margin-left: 4rem;
+`;
+
+const NotHaveLink = styled.a`
+  display: inline-block;
+  margin-top: 1.2rem;
+  margin-left: 4rem;
+  text-decoration: none;
+  color: ${Colors.accent1};
+
+  &:hover {
+    font-weight: bolder;
   }
 `;

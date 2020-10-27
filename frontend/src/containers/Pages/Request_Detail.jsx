@@ -150,7 +150,10 @@ class Request_Detail extends Component {
 
     if (result) {
       axios
-        .delete('http://localhost:8000/api/requestdeal/' + this.props.match.params.requestDeal_id)
+        .delete(
+          'http://localhost:8000/api/requestdeal/' + this.props.match.params.requestDeal_id,
+          authHeader
+        )
         .then((res) => history.push('/request/waiting'))
         .catch((err) => window.alert(err.response.data.request_deal));
     }
@@ -187,6 +190,12 @@ class Request_Detail extends Component {
           <p>拒否</p>
           <p>{request.deniedReason}</p>
         </>
+      );
+
+      deleteButton = (
+        <DeleteButton btn_type="submit" btn_click={this.deleteRequest}>
+          リクエストを取り消す
+        </DeleteButton>
       );
     } else if (request.accepted === true) {
       requestStatusView = <p>承認</p>;
@@ -339,6 +348,7 @@ const RequestStatusDiv = styled.div`
     margin-top: 0.4rem;
     margin-left: 2rem;
     font-size: 1.15rem;
+    white-space: pre-wrap;
   }
 `;
 
