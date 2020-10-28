@@ -477,7 +477,7 @@ class Give_Item_Add_Form extends Component {
                   name="detail"
                   value={info.detail}
                   onChange={this.handleChange}
-                  placeholder="最大800字"
+                  placeholder="最大800字(任意)"
                 ></StyledTextArea>
               </RequireLiTag>
 

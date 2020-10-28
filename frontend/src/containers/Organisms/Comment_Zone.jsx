@@ -126,7 +126,7 @@ class Comment_Zone extends Component {
               placeholder={
                 this.props.loginUser === 'なし'
                   ? 'コメント機能は登録ユーザーのみがご利用になれます'
-                  : 'コメントを入力してください'
+                  : '商品について質問してみましょう'
               }
               disabled={this.props.loginUser === 'なし'}
             />

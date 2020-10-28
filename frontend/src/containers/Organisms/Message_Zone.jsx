@@ -124,7 +124,7 @@ class Message_Zone extends Component {
               value={message}
               name="message"
               onChange={this.handleChange}
-              placeholder="メッセージを入力してください"
+              placeholder="取引当日までの打ち合わせをしましょう"
             />
             <button type="submit" onClick={this.handleSubmit}>
               送信
@@ -139,8 +139,8 @@ class Message_Zone extends Component {
 export default Message_Zone;
 
 const Wrapper = styled.div`
-  border-top:3px solid ${Colors.accent1};
-  padding-top:1rem;
+  border-top: 3px solid ${Colors.accent1};
+  padding-top: 1rem;
 `;
 
 const CommentDiv = styled.div`
