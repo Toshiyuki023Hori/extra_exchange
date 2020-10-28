@@ -302,7 +302,7 @@ class Want_Item_Add_Form extends Component {
 
           <TextLiTag>
             <label>商品参考URL</label>
-            <InputForm name="url" type="text" value={info.url} onChange={this.handleChange} />
+            <InputForm name="url" type="text" value={info.url} onChange={this.handleChange} placeholder='URLをつけることで相手に欲しいもののイメージを伝えることができます(任意)'/>
           </TextLiTag>
 
           <TextLiTag>

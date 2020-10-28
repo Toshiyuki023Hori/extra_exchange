@@ -53,6 +53,14 @@ class Top extends Component {
       return <Header loginUser={value} />;
     };
 
+    const judgeLastIndex = (idx) => {
+      if(this.state.categories.length-1 == idx){
+        return true;
+      }else{
+        return false;
+      }
+    };
+
     if (this.state.categories != '') {
       categoryList = this.state.categories.map((category) => {
         return (
@@ -64,9 +72,10 @@ class Top extends Component {
     }
 
     if (this.state.categories != '') {
-      giveItemView = this.state.categories.map((category) => {
+      giveItemView = this.state.categories.map((category, idx) => {
         return (
           <Styled_Give_Item_List
+            key={idx}
             id={'#' + category.id}
             axiosUrl="http://localhost:8000/api/"
             h2title="の投稿一覧"
@@ -74,6 +83,7 @@ class Top extends Component {
             margin_top="20px"
             margin_bottom="20px"
             position_left="3rem"
+            noBorder={judgeLastIndex(idx)}
           />
         );
       });

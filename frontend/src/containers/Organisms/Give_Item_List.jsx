@@ -244,7 +244,7 @@ const Wrapper = styled.div`
   margin-left: ${(props) => props.margin_left};
   margin-right: ${(props) => props.margin_right};
   padding-bottom: 30px;
-  border-bottom: solid 2px ${Colors.accent1};
+  border-bottom: ${(props) => props.noBorder ? 'none' : 'solid 2px'+Colors.accent1 };
 
   h2 {
     margin-left: 10px;
