@@ -79,7 +79,7 @@ class Header extends Component {
                 btn_text_color="#D9F1FF"
                 btn_click={this.jumpToPostGive}
               />
-              <SmallButton
+              <Styled_SmallButton
                 btn_name="通知"
                 btn_border="#466A80"
                 btn_back="#8DD6FF"
@@ -267,4 +267,15 @@ const AuthButtonDiv = styled.div`
   justify-content: space-around;
   align-items: flex-end;
   height: 80%;
+`;
+
+const Styled_SmallButton = styled(SmallButton)`
+  position: relative;
+  &::before {
+    content: '開発中';
+    position: absolute;
+    font-size: 0.6em;
+    right: 5px;
+    bottom: 26px;
+  }
 `;
