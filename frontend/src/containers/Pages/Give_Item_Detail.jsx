@@ -52,7 +52,8 @@ class Give_Item_Detail extends Component {
     const { loginUser, parentItem, giveItem } = this.state;
     let userDescription;
     let giveItemList;
-    // Give_Itemのオーナーが閲覧していた場合、編集と削除を許可。
+    // Give_Itemのオーナー = ログインユーザー -> 出品ユーザーの情報表示しない
+    // Give_Itemのオーナー != ログインユーザー -> 出品ユーザーの情報表示。しかし、編集削除は非表示
     if (parentItem.owner !== loginUser.id) {
       userDescription = (
         <User_Description
