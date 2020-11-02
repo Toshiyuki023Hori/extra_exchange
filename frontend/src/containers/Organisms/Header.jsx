@@ -6,7 +6,7 @@ import axios from 'axios';
 // 以下各ディレクトリからimport
 import * as actions from '../../reducks/auth/actions';
 import SearchBox from '../../presentational/shared/SearchBox';
-import Logo from '../../assets/Logo.png';
+import Logo from '../../assets/Logo1.png';
 import SmallButton from '../../presentational/shared/SmallButton';
 import { Colors } from '../../presentational/shared/static/CSSvariables';
 
