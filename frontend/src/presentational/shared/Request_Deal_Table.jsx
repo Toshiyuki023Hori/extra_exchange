@@ -156,18 +156,19 @@ const Wrapper = styled.div`
 `;
 
 const TableSelf = styled.table`
-  width: 80%;
+  width: 85%;
   border: solid 2px;
   border-collapse: collapse;
   margin:0 auto;
 `;
 
 const TableHead = styled.th`
-  background: #F0F8FF;
+  background: #f0f8ff;
   color: black;
   font-weight: bold;
-  padding: 24px 21px;
+  padding: 16px 21px;
   border: 2px solid;
+  font-size: 0.8rem;
 `;
 
 const TableData = styled.td`
