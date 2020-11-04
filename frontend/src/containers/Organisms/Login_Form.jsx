@@ -142,7 +142,11 @@ class Login_Form extends React.Component {
               btn_shadow={Colors.accent1}
             />
           </ExtendsInputArea>
-
+          <div>
+            <StyledPtag>[ゲストアカウント1] ユーザーネーム:guest1 / パスワード:password000</StyledPtag>
+            <StyledPtag>[ゲストアカウント2] ユーザーネーム:guest2 / パスワード:password000</StyledPtag>
+            <StyledPtag>[ゲストアカウント3] ユーザーネーム:guest3 / パスワード:password000</StyledPtag>
+          </div>
         </Wrapper>
       </>
     );
@@ -171,4 +175,10 @@ const ExtendsFormArea = styled(FormArea)`
 
 const ExtendsInputArea = styled(InputArea)`
   height:380px;
+`;
+
+const StyledPtag = styled.p`
+  text-align:center;
+  color:${Colors.accent1};
+  margin-top:1em;
 `;
