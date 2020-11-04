@@ -1,16 +1,22 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import history from '../../history';
 import { Colors } from './static/CSSvariables';
 import tag from '../../assets/tag.png';
 
 class CategoryTag extends Component {
   constructor(props) {
     super(props);
+    this.jumpToCategory = this.jumpToCategory.bind(this);
   }
+
+  jumpToCategory = (category_id) => {
+    history.push('/category/' + category_id);
+  };
 
   render() {
     return (
-      <Category_Div>
+      <Category_Div onClick={() => this.jumpToCategory(this.props.category_id)}>
         <Image src={tag} alt="タグマーク" />
         <p>{this.props.category_name}</p>
       </Category_Div>
@@ -28,6 +34,7 @@ const Category_Div = styled.div`
   align-items: center;
   padding: 0.4rem;
   border-radius: 0.77rem;
+  cursor:pointer;
 
   p {
     margin-left: 0.4rem;

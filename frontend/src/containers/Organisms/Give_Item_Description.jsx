@@ -17,6 +17,7 @@ class Give_Item_Description extends Component {
       giveItem: '',
       pickups: [],
       images: [],
+      category_id:'',
       sentRequest: false,
     };
     this.jumpToEdit = this.jumpToEdit.bind(this);
@@ -51,6 +52,7 @@ class Give_Item_Description extends Component {
         axios.spread((resParent, resGive) => {
           this.setDataToState('parentItem', resParent.data);
           this.setDataToState('giveItem', resGive.data[0]);
+          this.setDataToState('category_id', resGive.data[0].category);
           setGiveItem(resGive.data[0].id);
         })
       )
@@ -148,7 +150,7 @@ class Give_Item_Description extends Component {
   }; //    handleDelete Closing
 
   render() {
-    const { parentItem, giveItem, pickups, images, loading, sentRequest } = this.state;
+    const { parentItem, giveItem, pickups, images, loading, category_id, sentRequest } = this.state;
     const owner = parentItem.owner;
     let editButton;
     let deleteButton;
@@ -259,7 +261,7 @@ class Give_Item_Description extends Component {
           <InfoPtag>状態 : {giveItem.state}</InfoPtag>
           <InfoPtag>ブランド : {parentItem.bland}</InfoPtag>
           {giveItem.detail && <DetailPtag>{giveItem.detail}</DetailPtag>}
-          <CategoryTag category_name={giveItem.category} />
+          <CategoryTag category_id={category_id} category_name={giveItem.category} />
           <PickupPtag>ピックアップ地点</PickupPtag>
           {pickupView}
           {alertMessage}
