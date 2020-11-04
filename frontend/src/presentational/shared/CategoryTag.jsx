@@ -29,8 +29,11 @@ const Category_Div = styled.div`
   padding: 0.4rem;
   border-radius: 0.77rem;
 
-  p{
-      margin-left:0.4rem;
+  p {
+    margin-left: 0.4rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 `;
 

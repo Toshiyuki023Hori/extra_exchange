@@ -36,7 +36,7 @@ const StyledButton = styled.button`
   background: ${(props) => props.btn_back};
   color: ${(props) => props.btn_text_color};
 
-  &:hover{
-    opacity:0.7;
+  &:hover {
+    opacity: 0.7;
   }
 `;
