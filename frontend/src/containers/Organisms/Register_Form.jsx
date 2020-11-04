@@ -240,6 +240,9 @@ class Register_Form extends React.Component {
               btn_shadow={Colors.accent1}
             />
           </InputArea>
+          <StyledDiv>
+            <a href="/login">評価者の方はゲスト用アカウントをご用意しております。</a>
+          </StyledDiv>
         </Wrapper>
       </>
     );
@@ -268,16 +271,16 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(mapStateToProps, mapDispatchToProps)(Register_Form);
 
 export const Wrapper = styled.div`
-  margin-top:10rem;
+  margin-top: 10rem;
   width: 100%;
-  height:40rem;
+  height: 40rem;
 `;
 
 export const InputArea = styled.div`
   background-color: ${Colors.subcolor1};
   width: 70%;
   margin: 10px auto 0px auto;
-  height: 480px;
+  height: 515px;
   display: grid;
   grid-template-rows: 4fr 1fr;
   grid-template-columns: 1fr;
@@ -332,5 +335,19 @@ export const SubmitButton = styled(LargeButton)`
   &:active:enabled {
     box-shadow: 0px 0px 0px;
     transform: translate(4px, 3px);
+  }
+`;
+
+const StyledDiv = styled.div`
+  display:flex;
+  justify-content:center;
+
+  a{
+    color: ${Colors.accent1};
+    width:27em;
+
+    &:hover {
+      font-weight: bolder;
+    }
   }
 `;
