@@ -101,7 +101,7 @@
 - React 16.3.1
   - React Redux(redux-thunx)
   - styled-components(polished)
-- HTML/CSS(Sass)
+- HTML/CSS(SCSS)
 - JavaScript
 
 ### バックエンド
