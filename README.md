@@ -214,15 +214,102 @@
 
   **1.`お金を介さない取引について`**
 
-  私は以前より、人がモノを購入する時、特に消費者同士でそれがやり取りされる時、お金以外を取引に用いても良いと考えていました。ある人にとって「いらない」と感じたモノAが、他の人から見ればとても「欲しい」モノであること可能性は十分にあります。逆に、モノAを欲しがる人がいらないと感じるモノBがモノAの持ち主にとってほしいモノもあります。このように、お互いの需給が一致すればわらしべ長者のように物々交換によって取引が成立し、モノを手に入れる手段により幅が出ます。これを実現できるようなサービスがあれば、より生活しやすくなるだろうと私は考えており、また、自分でこのような生活を豊かにするサービスを作りたいと考えておりました。
+   私は以前より、人がモノを購入する時、特に消費者同士でそれがやり取りされる時、お金以外を取引に用いても良いと考えていました。ある人にとって「いらない」と感じたモノAが、他の人から見ればとても「欲しい」モノであること可能性は十分にあります。逆に、モノAを欲しがる人がいらないと感じるモノBがモノAの持ち主にとってほしいモノもあります。
+   このように、お互いの需給が一致すればわらしべ長者のように物々交換によって取引が成立し、モノを手に入れる手段により幅が出ます。これを実現できるようなサービスがあれば、より生活しやすくなるだろうと私は考えており、また、自分でこのような生活を豊かにするサービスを作りたいと考えておりました。
 
   **2.`アメリカでの発見について`**
-  私はアメリカ留学中に、「アメリカでは人同士が直接会って商品の受け渡しをする事がよくある」ということを知りました。アメリカのアプリの一つ`OfferUp`というアプリは、近くに住む住人同士で商品の売買ができるサービスです。近くに住んでいるという特性から、このアプリの利用者は直接会って商品を受け取っていました。また、アメリカの文化として、不要なモノを家の前に置いておき、目に止まった人へ譲る若しくは売るというものがあります。これらはどれも生活範囲が近いことを利用した、直接相対の取引です。これは、「空き箱を送り、交換相手を騙す」という物々交換を郵送で行う場合に起こり得る問題を解決するものだと私は考えました。
+   
+   私はアメリカ留学中に、「アメリカでは人同士が直接会って商品の受け渡しをする事がよくある」ということを知りました。アメリカのアプリの一つ`OfferUp`というアプリは、近くに住む住人同士で商品の売買ができるサービスです。近くに住んでいるという特性から、このアプリの利用者は直接会って商品を受け取っていました。また、アメリカの文化として、不要なモノを家の前に置いておき、目に止まった人へ譲る若しくは売るというものがあります。
+   これらはどれも生活範囲が近いことを利用した、直接相対の取引です。これは、「空き箱を送り、交換相手を騙す」という物々交換を郵送で行う場合に起こり得る問題を解決するものだと私は考えました。
 
-以上より、私は自身の以前のアイデアと留学での経験を結びつけ、私が「社会にあったらいいな」と考えた本アプリを制作いたしました。
+**以上より、私は自身の以前のアイデアと留学での経験を結びつけ、私が「社会にあったらいいな」と考えた本アプリを制作いたしました。**
 
 ## 構成図
 
 ![structure](https://raw.github.com/wiki/Toshiyuki023Hori/extra_exchange/gifs/drawing_structure.jpg)
 
 ## ローカル環境の構築手順
+
+**私は、Macを使用しているため環境構築にはMacを使用することを推奨いたします。**
+
+**エラー対応の結果、パッケージを直接編集したため、ローカル環境の構築がやや煩雑になっています。**
+
+1. ディレクトリを作り、そのディレクトリ内でターミナルを開き、`git init`コマンドを入力する。
+
+2. 同ディレクトリ内で、`git clone https://github.com/Toshiyuki023Hori/extra_exchange.git`を入力する。
+
+3. `cd extra_exchange`でディレクトリを移動した後、`python3 -m venv venv`を入力し、仮想環境を作成する。
+
+4. 以下のコマンドを入力し、仮想環境を有効化する。
+  * (Mac)`source venv/bin/activate`
+  * (Windows)`venv\Scripts\activate`
+
+5. `pip install -r requirements.txt`でパッケージをダウンロードする。
+
+6. インストール後、`cd frontend`でディレクトリを移動した後、`npm install`でパッケージをダウンロードする。
+
+7. `settings.py`96行目の、`DATABASES`を任意のものに変える。
+
+8. `venv`内の、`rest_auth/registration/serializers.py`の、`RegisterSerializer`を以下のものに書き換える([参考](https://qiita.com/Toshiyuki023Hori/items/3a329854f6c7b81b1d56))。
+
+```
+class RegisterSerializer(serializers.Serializer):
+    username = serializers.CharField(
+        max_length=get_username_max_length(),
+        min_length=allauth_settings.USERNAME_MIN_LENGTH,
+        required=allauth_settings.USERNAME_REQUIRED
+    )
+    email = serializers.EmailField(required=allauth_settings.EMAIL_REQUIRED)
+#
+# password1とpassword2を削除してpasswordフィールド一つのみにしています。
+#
+    password = serializers.CharField(write_only=True)
+
+    def validate_username(self, username):
+        username = get_adapter().clean_username(username)
+        return username
+
+    def validate_email(self, email):
+        email = get_adapter().clean_email(email)
+        if allauth_settings.UNIQUE_EMAIL:
+            if email and email_address_exists(email):
+                raise serializers.ValidationError(
+                    _("A user is already registered with this e-mail address."))
+        return email
+
+    def validate_password(self, password):
+        return get_adapter().clean_password(password)
+
+    def custom_signup(self, request, user):
+        pass
+
+    def get_cleaned_data(self):
+        return {
+            'username': self.validated_data.get('username', ''),
+            'password': self.validated_data.get('password', ''),
+            'email': self.validated_data.get('email', '')
+        }
+
+    def save(self, request):
+        adapter = get_adapter()
+        user = adapter.new_user(request)
+        self.cleaned_data = self.get_cleaned_data()
+        adapter.save_user(request, user, self)
+        self.custom_signup(request, user)
+        setup_user_email(request, user, [])
+        return user
+```
+
+9. `allauth/account/adapter.py`の`save_user`メソッド内の`password1`を`password`に書き換える。
+
+10. `extra_exchange`ディレクトリ直下で、仮想環境が有効化されている時に、`python manage.py makemigrations`を入力する。
+
+11. `python manage.py migrate`を入力する。
+
+12. `python manage.py runserver`を入力する。
+
+13. `frontend`ディレクトリ直下で、`npm start`を入力する。
+
+14. `localhost:3000/registration`からユーザーを作成する。
+
+15. `frontend/src/containers/Pages/Top.jsx`22行目の通り、`メンズ服、レディース服、ゲーム`をカテゴリに追加するか、任意のカテゴリーのクエリを作成して、作成したクエリと同名になるよう`Top.jsx`22行目と書き換える。
