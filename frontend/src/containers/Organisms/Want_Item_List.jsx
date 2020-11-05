@@ -216,7 +216,10 @@ const NotHaveText = styled.p`
 const SpanText = styled.span`
   display: inline-block;
   margin-right: 60px;
-  width: 300px;
+  width: 25em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const LinkText = styled.a`
@@ -225,7 +228,10 @@ const LinkText = styled.a`
   color: ${Colors.accent1};
   margin-right: 60px;
   display: inline-block;
-  width: 300px;
+  width: 25em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   &:hover {
     font-weight: 700;
