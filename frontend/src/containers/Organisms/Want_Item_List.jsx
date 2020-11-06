@@ -220,6 +220,9 @@ const SpanText = styled.span`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  vertical-align: middle;
+  position: relative;
+  bottom: 0.1em;
 `;
 
 const LinkText = styled.a`
@@ -232,6 +235,9 @@ const LinkText = styled.a`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  vertical-align: middle;
+  position: relative;
+  bottom: 0.1em;
 
   &:hover {
     font-weight: 700;
