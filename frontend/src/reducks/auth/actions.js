@@ -72,7 +72,7 @@ export const checkAuthTimeout = (expirationTime) => {
   };
 };
 
-export const getUserId = (username) => {
+export const getUserId = (username, loginOrRegister) => {
   return (dispatch) => {
     axios
       .get('http://localhost:8000/api/user')
@@ -82,7 +82,11 @@ export const getUserId = (username) => {
         const uid = currentUser.id;
         localStorage.setItem('uid', uid);
         dispatch(authSuccess(localStorage.getItem('token'), uid));
-        history.push('/user/' + uid);
+        if(loginOrRegister === 'login'){
+          history.push('/user/' + uid);
+        } else if (loginOrRegister === 'register'){
+          history.push('/about');
+        }
       })
       .catch((err) => {
         localStorage.removeItem('uid');
@@ -104,7 +108,7 @@ export const authLogin = (username, password) => {
         localStorage.setItem('token', token);
         localStorage.setItem('expirationDate', expirationDate);
         dispatch(checkAuthTimeout(3600));
-        dispatch(getUserId(username));
+        dispatch(getUserId(username, 'login'));
       })
       .catch((err) => {
         console.log(err.response);
@@ -129,8 +133,7 @@ export const authSignup = (username, email, password) => {
         localStorage.setItem('expirationDate', expirationDate);
         // getUserId内でauthSuccessが実行され、auth_SUCCESSへuid, tokenがセット
         dispatch(checkAuthTimeout(3600));
-        dispatch(getUserId(username));
-        history.push('/about');
+        dispatch(getUserId(username, 'register'));
       })
       .catch((err) => {
         console.log(err.response);
