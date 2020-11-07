@@ -80,12 +80,14 @@ export const getUserId = (username, loginOrRegister) => {
         const users = res.data;
         const currentUser = users.filter((user) => user.username === username)[0];
         const uid = currentUser.id;
+        const isGuest = username.includes('guest');
         localStorage.setItem('uid', uid);
         dispatch(authSuccess(localStorage.getItem('token'), uid));
-        if(loginOrRegister === 'login'){
-          history.push('/user/' + uid);
-        } else if (loginOrRegister === 'register'){
+        if (loginOrRegister === 'register' || isGuest){
           history.push('/about');
+        }
+        else if(loginOrRegister === 'login'){
+          history.push('/user/' + uid);
         }
       })
       .catch((err) => {
